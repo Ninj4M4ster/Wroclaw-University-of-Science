@@ -1,14 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int drukujProstokat(int n){
+void drukujProstokat(int n){
     for(int i=0; i<n; i++){
         for(int j=0; j<2*n; j++){
             printf("*");
         }
         printf("\n");
     }
-    return 0;
 }
 
 int main()
@@ -21,7 +20,7 @@ int main()
     scanf("%d", &n);
 
     if(n < 1 || n > 20){
-        printf("Wprowadzono niepoprawna liczbe");
+        printf("Wprowadzono niepoprawna liczbe\n");
     }
     else
         drukujProstokat(n);
