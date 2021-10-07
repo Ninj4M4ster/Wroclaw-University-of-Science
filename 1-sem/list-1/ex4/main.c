@@ -23,7 +23,7 @@ int main()
     scanf("%d", &n);
 
     if(n<1){
-        printf("Wprowadzono niepoprawna liczbe");
+        printf("Wprowadzono niepoprawna liczbe\n");
     }
     else
         drukujTrojkat(n);
