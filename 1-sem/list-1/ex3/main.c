@@ -8,6 +8,7 @@ int drukujProstokat(int n){
         }
         printf("\n");
     }
+    return 0;
 }
 
 int main()
