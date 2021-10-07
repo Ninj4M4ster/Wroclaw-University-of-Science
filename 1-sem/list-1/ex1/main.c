@@ -4,7 +4,7 @@
 void printString(int end, char napis[]){
     for(int i=0; i <= end; i++){
         printf("%c ", napis[i]);}
-};
+}
 
 int main()
 {

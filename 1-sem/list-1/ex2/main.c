@@ -1,6 +1,23 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+float wbez(float a, float b){
+    if(a < b)
+    	return b - a;
+    else
+    	return a - b;
+}
+
+float pierwiastek(float a) {
+    float pole = a;
+    float b = 1;
+    while(wbez(a, b) > 0.000001){
+    	a = (a + b)/2;
+    	b = pole / a;
+    }
+    return a;
+}
+
 int main()
 {
     float a=0, b=0, c=0;
@@ -27,9 +44,10 @@ int main()
         printf("Rozwiazaniem rownania jest liczba %f", rozwiazanie);
     }
     else{
-        float rozwiazanie1 = (-b - sqrt(delta)) / (2 * a);
-        float rozwiazanie2 = (-b + sqrt(delta)) / (2 * a);
+        float rozwiazanie1 = (-b - pierwiastek(delta)) / (2 * a);
+        float rozwiazanie2 = (-b + pierwiastek(delta)) / (2 * a);
         printf("Rozwiazaniami rownania sa liczby %f i %f", rozwiazanie1, rozwiazanie2);
     }
+    printf("\n");
     return 0;
 }
