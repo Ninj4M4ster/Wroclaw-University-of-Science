@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+/* autor - Jakub Drzewiecki */
+
 void printString(int end, char napis[]){
     for(int i=0; i <= end; i++){
         printf("%c ", napis[i]);}

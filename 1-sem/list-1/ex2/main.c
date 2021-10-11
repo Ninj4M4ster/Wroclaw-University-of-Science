@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+/* autor - Jakub Drzewiecki */
+
 float wbez(float a, float b){
     if(a < b)
     	return b - a;
