@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+// autor - Jakub Drzewiecki
+
 int NWD(int a, int b){
     int c;
     while(b != 0){
@@ -18,7 +20,7 @@ int main()
     for(float i=1; i<=1000; i++){
         ile = 0;
         for(int a=1; a<=i; a++){
-            for(int b=a; b<=i; b++){
+            for(int b=1; b<=i; b++){
                 if(NWD(a, b) == 1){
                     ile += 1;
                 }

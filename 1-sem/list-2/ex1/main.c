@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+// autor - Jakub Drzewiecki
+
 void rozmienNominal(int* zlote, int nominal, int czyZlotowki){
     int i = 0;
     while(*zlote >= nominal){

@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+// autor - Jakub Drzewiecki
+
 int main()
 {
     int n, i = 0;
@@ -9,13 +11,17 @@ int main()
 
     printf("Wprowadz liczbe n: ");
     scanf("%d", &n);
-    while(i < n){
-        printf("Wprowadz %d liczbe: ", i+1);
-        scanf("%f", &x);
-        suma += x;
-        i ++;
+    if(n>0){
+        while(i < n){
+            printf("Wprowadz %d liczbe: ", i+1);
+            scanf("%f", &x);
+            suma += x;
+            i ++;
+        }
+        suma = suma / n;
+        printf("Srednia arytmetyczna wynosi %f\n", suma);
     }
-    suma = suma / n;
-    printf("Srednia arytmetyczna wynosi %f", suma);
+    else
+        printf("Wprowadzono niepoprawne dane\n");
     return 0;
 }
