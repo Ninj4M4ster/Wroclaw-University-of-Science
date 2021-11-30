@@ -3,7 +3,7 @@ LIBS += -lm
 
 all: main
 
-main: main.o f.o
+main: main.o rozwiazanie.o f.o
 	clang $(CFLAGS) -o main main.o rozwiazanie.o f.o $(LIBS)
 
 main.o: main.c
