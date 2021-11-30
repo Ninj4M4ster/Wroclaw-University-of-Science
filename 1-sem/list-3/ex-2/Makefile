@@ -1,16 +1,19 @@
+CFLAGS += -O3 -g3 -Wextra --pedantic -std=c11
+LIBS += -lm
+
 all: main
 
 main: main.o f.o
-	clang -o main main.o f.o math.o
+	clang $(CFLAGS) -o main main.o rozwiazanie.o f.o $(LIBS)
 
 main.o: main.c
-	clang -c main.c
+	clang $(CFLAGS) -c main.c
+
+rozwiazanie.o: rozwiazanie.c
+	clang $(CFLAGS) -c rozwiazanie.c
 
 f.o: f.c
-	clang -c f.c
-
-math.o: math.c
-	clang -c math.c
+	clang $(CFLAGS) -c f.c
 
 clean:
 	rm -f main *.o *~
