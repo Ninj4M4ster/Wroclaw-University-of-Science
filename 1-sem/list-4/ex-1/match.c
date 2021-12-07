@@ -1,7 +1,8 @@
 // autor - Jakub Drzewiecki
 
 #include "funs.h"
-#include <cstring>
+#include <string.h>
+#include <stdbool.h>
 
 bool match(char* wzorzec, char* lancuch){
     int i=0, j=0;
@@ -15,7 +16,7 @@ bool match(char* wzorzec, char* lancuch){
                 return true;
             if(wzorzec[i] == '*')
                 continue;
-            tmp_i = i;
+            int tmp_i = i;
             while(wzorzec[i] != '*' && i < strlen(wzorzec)){         // liczymy dlugosc wzorca do kolejnego znaku gwiazdki lub konca wzorca
                 i++;
             }
@@ -26,12 +27,12 @@ bool match(char* wzorzec, char* lancuch){
             }
             else {
                 while(j <= strlen(lancuch) - dlugosc_sprawdzanego_ciagu){       // sprawdzamy kolejne znaki lancucha, az j bedzie krotsze od dlugosci porownywanego wzorca
-                    int kolejny_znak_lancucha = 0
+                    int kolejny_znak_lancucha = 0;
                     for(int k = tmp_i; k < tmp_i + dlugosc_sprawdzanego_ciagu; k++){
-                        if(wzorzec[k] == '?')
-                            kolejny_znak_lancucha++;
-                            continue;
-                        else if(wzorzec[k] != lancuch[j + kolejny_znak_lancucha])
+                        if(wzorzec[k] == '?') {
+                          kolejny_znak_lancucha++;
+                          continue;
+                        } else if(wzorzec[k] != lancuch[j + kolejny_znak_lancucha])
                             break;
                         kolejny_znak_lancucha++;
                     }
