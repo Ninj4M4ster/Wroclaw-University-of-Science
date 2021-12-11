@@ -7,23 +7,21 @@
 double rozwiazanie(double a, double b, double eps){
   assert(a<b);
   double c = (a + b) / 2.0;
-  double wynik = 0;
-  while (fabs(c - wynik) > eps) {
-    wynik = c;
-    if (f(wynik) == 0)
-      return wynik;
+  while (fabs(a - b) > eps) {
+    c = (a+b) / 2;
+    if (f(c) == 0)
+      return c;
     if (f(a) < 0) {     // f(a) < f(b)
-      if (f(wynik) < 0)
+      if (f(c) < 0)
         a = c;
       else
         b = c;
     } else {
-      if (f(wynik) < 0)         // f(a) > f(b)
+      if (f(c) < 0)         // f(a) > f(b)
         b = c;
       else
         a = c;
     }
-    c = (a + b) / 2.0;
   }
-  return c;
+  return a;
 }
