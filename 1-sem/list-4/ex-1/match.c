@@ -5,7 +5,7 @@
 #include <stdbool.h>
 
 bool match(char* wzorzec, char* lancuch){
-    int i=0, j=0;
+    unsigned int i=0, j=0;
     while(i < strlen(wzorzec) && j < strlen(lancuch)) {
         if (wzorzec[i] == '?') {
             i++;
