@@ -12,4 +12,4 @@ mastermind.o: mastermind.c
 	clang $(CFLAGS) -c mastermind.c
 
 clean:
-	rm -f mani *.o *~
+	rm -f main *.o *~
