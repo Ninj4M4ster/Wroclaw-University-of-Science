@@ -35,6 +35,7 @@ void mastermind(){
       printf("You're cheating!");
       return;
     }
+
 // checking if number after shuffling is on a good position
     if(red > prev_red && red + white == 4 && prev_red + prev_white == 4){
       if(shfl_index != -1) {
@@ -47,6 +48,7 @@ void mastermind(){
         guessed_count += 1;
       }
     }
+
 // checking if number was not changed for a few times and it remains on good position
     int count_same_nmb = 0;
     if(red + white == 4){
@@ -89,10 +91,35 @@ void mastermind(){
         }
       }
     }
+
+// checking if position of numbers before shuffling returns higher 'red' value then now
+    if(red < prev_red && red + white == 4 && prev_red + prev_white == 4){
+      char tmp = guess[shfl_index];
+      guess[shfl_index] = guess[second_shfl_ind];
+      guess[second_shfl_ind] = tmp;
+
+      int first_index = -1, second_index = -1, srch_index = 0;
+      while(!(first_index != -1 && second_index != -1) && srch_index < 4){
+        if(numbers_indexes[srch_index] == shfl_index)
+          first_index = srch_index;
+        else if(numbers_indexes[srch_index] == second_shfl_ind)
+          second_index = srch_index;
+        srch_index += 1;
+      }
+      numbers_indexes[first_index] = second_shfl_ind;
+      numbers_indexes[second_index] = shfl_index;
+
+      if(red + 1 < prev_red){
+        guessed_numbers[shfl_index] = 0;
+        guessed_numbers[second_shfl_ind] = 0;
+      }
+    }
+
 // shuffling numbers
-    if(white > 0 && red+white < 4 || white > 1 && red+white == 4){
+    if(white > 0 && red + white < 4 || white > 1 && red + white == 4){
       if(shfl_index == -1 || shfl_index == 3)
         shfl_index = 0;
+
       // finding two numbers to shuffle
       while(1){
         if(shfl_index == 4)
@@ -110,11 +137,11 @@ void mastermind(){
           break;
         second_shfl_ind += 1;
       }
-
       char tmp = guess[shfl_index];
       guess[shfl_index] = guess[second_shfl_ind];
       guess[second_shfl_ind] = tmp;
-// changing positions of numbers in numbers_indexed
+
+      // changing positions of numbers in numbers_indexed
       int first_index = -1, second_index = -1, srch_index = 0;
       while(!(first_index != -1 && second_index != -1) && srch_index < 4){
         if(numbers_indexes[srch_index] == shfl_index)
@@ -130,6 +157,7 @@ void mastermind(){
       shfl_index = second_shfl_ind;
       second_shfl_ind = tmp_ind;
     }
+
 // if sum of red and white equals 4, we've got all chosen numbers
 // else we raise value of numbers that are not chosen by user
     if(red + white < 4){
