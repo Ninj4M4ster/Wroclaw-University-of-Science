@@ -27,7 +27,7 @@ int main(int argc, char* argv[]) {
             for(int i=2; i < argc; i++) {
                 if(czyLiczba(argv[i]) == false)
                     std::cout << argv[i] << " - nieprawidlowa dana" << std::endl;
-                else if(atoi(argv[i]) > tablica.podajIlosc() || atoi(argv[i]) < 0)
+                else if(atoi(argv[i]) >= tablica.podajIlosc() || atoi(argv[i]) < 0)
                     std::cout << argv[i] << " - liczba spoza zakresu" << std::endl;
                 else
                     std::cout << argv[i] << " - " << tablica.liczba(atoi(argv[i])) << std::endl;
