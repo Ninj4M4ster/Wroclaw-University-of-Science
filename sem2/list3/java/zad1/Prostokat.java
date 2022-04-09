@@ -1,4 +1,4 @@
-package list3;
+package sem2.list3.java.zad1;
 
 public class Prostokat extends Czworokat {
     

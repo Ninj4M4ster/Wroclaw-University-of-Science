@@ -1,4 +1,4 @@
-package list3;
+package sem2.list3.java.zad1;
 
 public class Test {
     public static void main(String[] argv) {
@@ -61,6 +61,9 @@ public class Test {
                                         System.out.println("Pole prostokata: " + prostokat.pole());
                                         System.out.println();
                                     }
+                                    else {
+                                        throw new NieprawidloweArgumenty(bok1 + ", " + bok2 + ", " + bok3 + ", " + bok4 + " - argumenty nie pasuja do kwadratu i prostokata");
+                                    }
                                 } else if(kat > 0.0d && kat < 180.0d && (bok1 == bok2 && bok2 == bok3 && bok3 == bok4)) {
                                     Romb romb = new Romb(bok1, bok2, bok3, bok4, kat);
                                     System.out.println("Obwod rombu: " + romb.obwod());
@@ -77,7 +80,7 @@ public class Test {
                                 }
                                 double bok = Double.parseDouble(argv[j]);
                                 j += 1;
-                                if(bok < 0)
+                                if(bok <= 0)
                                     throw new NieprawidloweArgumenty(bok + " - promien kola musi miec wartosc wieksza od zera");
                                 Kolo kolo = new Kolo(bok);
                                 System.out.println("Obwod kola: " + kolo.obwod());
@@ -107,7 +110,7 @@ public class Test {
                                 if(bok <= 0)
                                     throw new NieprawidloweArgumenty(bok + " - bok szesciokata musi miec wartosc wieksza od zera");
                                 Szesciokat szesciokat = new Szesciokat(bok);
-                                System.out.println("Obwod pieciokata: " + szesciokat.obwod());
+                                System.out.println("Obwod szesciokata: " + szesciokat.obwod());
                                 System.out.println("Pole szesciokata: " + szesciokat.pole());
                                 System.out.println();
                             }
@@ -129,7 +132,7 @@ public class Test {
         if(napis == null)
             return false;
         try {
-            double wartosc = Double.parseDouble(napis);
+            Double.parseDouble(napis);
         }
         catch(NumberFormatException e) {
             return false;

@@ -1,4 +1,4 @@
-package list3;
+package sem2.list3.java.zad1;
 import static java.lang.Math.*;
 
 public class Szesciokat implements Figura {

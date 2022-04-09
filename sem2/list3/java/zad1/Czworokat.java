@@ -1,4 +1,4 @@
-package list3;
+package sem2.list3.java.zad1;
 
 abstract class Czworokat implements Figura {
 
@@ -8,7 +8,7 @@ abstract class Czworokat implements Figura {
     protected double _bok4;
     protected double _kat;
 
-    public Czworokat(double bok1, double bok2, double bok3, double bok4, double kat) {
+    protected Czworokat(double bok1, double bok2, double bok3, double bok4, double kat) {
         _bok1 = bok1;
         _bok2 = bok2;
         _bok3 = bok3;
@@ -19,5 +19,4 @@ abstract class Czworokat implements Figura {
     public double obwod() {
         return _bok1 + _bok2 + _bok3 + _bok4;
     }
-    public abstract double pole();
 }
