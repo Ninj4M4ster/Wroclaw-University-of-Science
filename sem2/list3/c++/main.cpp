@@ -135,7 +135,7 @@ int main(int argc, char* argv[]) {
                             double bok = std::atof(argv[j]);
                             j += 1;
                             if(bok <= 0) {
-                                std::stringstream wiaomosc_bledu;
+                                std::stringstream wiadomosc_bledu;
                                 wiadomosc_bledu << bok << " - bok szesciokata musi miec wartosc wieksza od zera";
                                 throw NieprawidloweArgumenty(wiadomosc_bledu.str());
                             }
