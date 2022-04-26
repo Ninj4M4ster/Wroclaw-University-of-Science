@@ -2,6 +2,7 @@ import zad1.NiepoprawneDane;
 
 import java.awt.event.*;
 import java.awt.Color;
+import java.awt.Font;
 import javax.swing.*;
 
 public class TrojkatPascala {
@@ -13,7 +14,7 @@ public class TrojkatPascala {
     private JLabel ramkaWiadomosciBledu;
 
     // wartosci statyczne
-    static final int STARTOWA_SZEROKOSC_OKNA = 1400;
+    static final int STARTOWA_SZEROKOSC_OKNA = 1700;
     static final int STARTOWA_DLUGOSC_OKNA = 135;
     static final int STARTOWA_POZYCJA_X = 50;
     static final int STARTOWA_POZYCJA_Y = 50;
@@ -33,26 +34,28 @@ public class TrojkatPascala {
 
         // potrzebne komponenty
         JLabel opisPola = new JLabel("Wprowadz liczbe wierszy trojkata (liczba od 1 do 30)");
-        opisPola.setBounds(425, 40, 300, 15);
+        opisPola.setBounds(570, 40, 300, 15); //575
 
         this.poleDoWprowadzania = new JTextField();
-        poleDoWprowadzania.setBounds(725, 30, 100, 35);
+        poleDoWprowadzania.setBounds(870, 30, 100, 35);  //875 
 
         JButton przyciskStart = new JButton("Utworz trojkat");
-        przyciskStart.setBounds(845, 30, 150, 35);
+        przyciskStart.setBounds(980, 30, 150, 35);  //975
 
         this.ramkaWiadomosciBledu = new JLabel("", SwingConstants.CENTER);
         this.ramkaWiadomosciBledu.setForeground(Color.red);
 
-        // obszar na trojkat razem z 
+        // obszar na trojkat razem z wierszami
         this.obszarTrojkata = new JPanel();
         this.obszarTrojkata.setLayout(null);
-        this.obszarTrojkata.setBounds(40, 85, STARTOWA_SZEROKOSC_OKNA - 80, 0);  // TODO: dodać wyglad typu obramowanie
+        this.obszarTrojkata.setBounds(10, 85, STARTOWA_SZEROKOSC_OKNA - 40, 0);
+        this.obszarTrojkata.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 
         this.wierszeTrojkata = new JLabel[30];
         for(int i=0; i < 30; i++) {
             this.wierszeTrojkata[i] = new JLabel("", SwingConstants.CENTER);
-            this.wierszeTrojkata[i].setBounds(10, 10 + 20 * i, STARTOWA_SZEROKOSC_OKNA - 80, 15);
+            this.wierszeTrojkata[i].setBounds(5, 10 + 25 * i, STARTOWA_SZEROKOSC_OKNA - 40, 15);
+            this.wierszeTrojkata[i].setFont(new Font(Font.SANS_SERIF, Font.BOLD, 15));
             this.obszarTrojkata.add(this.wierszeTrojkata[i]);
         }
         
@@ -77,9 +80,8 @@ public class TrojkatPascala {
         glowneOkno.setBounds(STARTOWA_POZYCJA_X, STARTOWA_POZYCJA_Y, STARTOWA_SZEROKOSC_OKNA, STARTOWA_DLUGOSC_OKNA);
         glowneOkno.setLayout(null);
         glowneOkno.setVisible(true);
-
-        //TODO: Dodać obsługę wydarzen gdy uzytkownik poszerzy i zwezi okno
     }
+    
     public static void main(String[] args) {
         new TrojkatPascala();
     }
@@ -97,8 +99,8 @@ public class TrojkatPascala {
                 if(iloscWierszy > 30)
                     throw new NiepoprawneDane("Wprowadzono liczbe wieksza od 30.");
                 int roznicaIlosciWierszy = iloscWierszy - this.aktualnaIloscWierszy;
-                this.aktualnaDlugoscOkna += roznicaIlosciWierszy * 20;
-                this.aktualnaWysokoscTrojkata = iloscWierszy*20 + 10;
+                this.aktualnaDlugoscOkna += roznicaIlosciWierszy * 25;
+                this.aktualnaWysokoscTrojkata = iloscWierszy*25 + 10;
                 if(!this.trojkatUtworzony)
                     this.aktualnaDlugoscOkna += 20;
 
@@ -106,7 +108,7 @@ public class TrojkatPascala {
                 this.aktualnaIloscWierszy = iloscWierszy;
 
                 this.glowneOkno.setSize(STARTOWA_SZEROKOSC_OKNA, this.aktualnaDlugoscOkna);
-                this.obszarTrojkata.setSize(STARTOWA_SZEROKOSC_OKNA - 80, this.aktualnaWysokoscTrojkata);
+                this.obszarTrojkata.setSize(STARTOWA_SZEROKOSC_OKNA - 40, this.aktualnaWysokoscTrojkata);
 
                 for(int i = 0; i < iloscWierszy; i ++) {
                     this.wierszeTrojkata[i].setText(obliczWiersz(i));
@@ -117,12 +119,12 @@ public class TrojkatPascala {
             this.ramkaWiadomosciBledu.setText(blad.getMessage());
             if(!bladWyswietlony) {
                 this.aktualnaDlugoscOkna += 35;
-                this.ramkaWiadomosciBledu.setBounds(40, 85, STARTOWA_SZEROKOSC_OKNA - 80, 15);
+                this.ramkaWiadomosciBledu.setBounds(10, 85, STARTOWA_SZEROKOSC_OKNA - 40, 15);
                 this.glowneOkno.add(this.ramkaWiadomosciBledu);
                 this.glowneOkno.setSize(STARTOWA_SZEROKOSC_OKNA, this.aktualnaDlugoscOkna);
 
                 this.aktualnaPozycjaYTrojkata += 35;
-                this.obszarTrojkata.setLocation(40, this.aktualnaPozycjaYTrojkata);
+                this.obszarTrojkata.setLocation(10, this.aktualnaPozycjaYTrojkata);
             
                 this.usunWiadomosc = new Timer(5, this::usunBlad);
                 this.usunWiadomosc.setInitialDelay(5000);
@@ -141,7 +143,7 @@ public class TrojkatPascala {
 
         
         this.aktualnaPozycjaYTrojkata -= 35;
-        this.obszarTrojkata.setLocation(40, this.aktualnaPozycjaYTrojkata);
+        this.obszarTrojkata.setLocation(10, this.aktualnaPozycjaYTrojkata);
 
         this.bladWyswietlony = false;
     }

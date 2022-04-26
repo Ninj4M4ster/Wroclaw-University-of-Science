@@ -1,4 +1,8 @@
 {
     "makefile.extensionOutputFolder": "./.vscode",
-    "C_Cpp.errorSquiggles": "Disabled"
+    "C_Cpp.errorSquiggles": "Disabled",
+    "java.project.sourcePaths": [
+        "sem2/list4/zad1",
+        "sem2/list4/zad2"
+    ]
 }
