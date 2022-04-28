@@ -14,10 +14,10 @@ public class TrojkatPascala {
     private JLabel ramkaWiadomosciBledu;
 
     // wartosci statyczne
-    static final int STARTOWA_SZEROKOSC_OKNA = 1700;
+    static final int STARTOWA_SZEROKOSC_OKNA = 1500;
     static final int STARTOWA_DLUGOSC_OKNA = 135;
-    static final int STARTOWA_POZYCJA_X = 50;
-    static final int STARTOWA_POZYCJA_Y = 50;
+    static final int STARTOWA_POZYCJA_X = 10;
+    static final int STARTOWA_POZYCJA_Y = 10;
 
     // zmienne pomocniczne
     private Timer usunWiadomosc;
@@ -54,8 +54,8 @@ public class TrojkatPascala {
         this.wierszeTrojkata = new JLabel[30];
         for(int i=0; i < 30; i++) {
             this.wierszeTrojkata[i] = new JLabel("", SwingConstants.CENTER);
-            this.wierszeTrojkata[i].setBounds(5, 10 + 25 * i, STARTOWA_SZEROKOSC_OKNA - 40, 15);
-            this.wierszeTrojkata[i].setFont(new Font(Font.SANS_SERIF, Font.BOLD, 15));
+            this.wierszeTrojkata[i].setBounds(5, 10 + 22 * i, STARTOWA_SZEROKOSC_OKNA - 40, 15);
+            this.wierszeTrojkata[i].setFont(new Font(Font.SANS_SERIF, Font.BOLD, 13));
             this.obszarTrojkata.add(this.wierszeTrojkata[i]);
         }
         
@@ -99,8 +99,8 @@ public class TrojkatPascala {
                 if(iloscWierszy > 30)
                     throw new NiepoprawneDane("Wprowadzono liczbe wieksza od 30.");
                 int roznicaIlosciWierszy = iloscWierszy - this.aktualnaIloscWierszy;
-                this.aktualnaDlugoscOkna += roznicaIlosciWierszy * 25;
-                this.aktualnaWysokoscTrojkata = iloscWierszy*25 + 10;
+                this.aktualnaDlugoscOkna += roznicaIlosciWierszy * 22;
+                this.aktualnaWysokoscTrojkata = iloscWierszy*22 + 10;
                 if(!this.trojkatUtworzony)
                     this.aktualnaDlugoscOkna += 20;
 
