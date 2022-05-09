@@ -1,7 +1,5 @@
 import java.io.IOException;
-
-import java.awt.Dimension;
-import java.awt.Toolkit;
+import java.util.function.IntConsumer;
 
 import javafx.application.Application;
 import javafx.scene.*;
@@ -14,7 +12,7 @@ import javafx.scene.paint.Color;
 import javafx.geometry.*;
 import javafx.beans.value.ObservableValue;
 import javafx.beans.value.ChangeListener;
-import javafx.event.EventHandler;
+import javafx.event.*;
 import javafx.collections.ObservableList;
 
 public class App extends Application {
@@ -24,55 +22,39 @@ public class App extends Application {
     private Scene scena;
     private Pane przestrzenRobocza;
     private BorderPane ukladAplikacji;
-    private enum TrybyMyszki {
-        KURSOR,
-        KOLO, 
-        PROSTOKAT, 
-        TROJKAT
-    }
-    private TrybyMyszki aktualnyTrybMyszki = TrybyMyszki.KURSOR;
 
     // przyciski wyboru figury
-    Button przyciskKursora;
-    Button przyciskProstokata;
-    Button przyciskKola;
-    Button przyciskTrojkata;
+    private NiestandardowyPrzycisk przyciskKursora;
+    private NiestandardowyPrzycisk przyciskProstokata;
+    private NiestandardowyPrzycisk przyciskKola;
+    private NiestandardowyPrzycisk przyciskTrojkata;
 
-    // zmienne pomocnicze dla okna
+    // zmienne pomocnicze rozmiarow okna
     private int aktualnaSzerokoscOkna = 800;
-    private int aktualnaWysokoscOkna = 500;
+    private int aktualnaWysokoscOkna = 500;    
 
-    // zmienne pomocnicze dla tworzenia ksztaltow
-    private double startowaPozycjaMyszkiX;
-    private double startowaPozycjaMyszkiY;
-    private Polygon tworzonyProstokat;
-    private Circle tworzoneKolo;
-    private Polygon tworzonyTrojkat;
-
-    // stala dla stylu przycisku nadpisujaca efekt niebieskiej obramowki
-    private static final String STYL_PRZYCISKU = """
-        -fx-background-color: -fx-shadow-highlight-color, -fx-outer-border, -fx-inner-border, -fx-body-color;
-        -fx-background-insets: 0 0 -1 0, 0, 1, 2;
-        -fx-background-radius: 5, 5, 4, 3;
-            """;
-
-    private static final String STYL_FIGUR_PRZYCISKOW = """
-        -fx-fill: white; -fx-stroke: black
-            """;
+    // kontrolery
+    KontrolerAplikacji kontrolerAplikacji;
 
     @Override
     public void start(Stage stage) throws IOException {
         root = new Group();
-
         scena = new Scene(root, aktualnaSzerokoscOkna, aktualnaWysokoscOkna);
 
         // uklad aplikacji
         ukladAplikacji = new BorderPane();
 
+        
+        // utworzenie kontrolera aplikacji
+        kontrolerAplikacji = new KontrolerAplikacji();
+
         // tworzenie widget'ow aplikacji
         utworzPasekMenu();
         utworzPrzyciski();
         utworzPrzestrzenRobocza();
+        
+        // odznaczenie wybranej figury
+        scena.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> kontrolerAplikacji.usunZaznaczenie(event));
 
         root.getChildren().add(ukladAplikacji);
 
@@ -103,102 +85,25 @@ public class App extends Application {
     private void utworzPrzyciski() {
         // utworzenie przyciskow odpowiedzialnych za tworzenie figur
 
-        // przycisk kursora razem z grafika
-        przyciskKursora = new Button();
-        przyciskKursora.setPrefSize(22, 22);
-        przyciskKursora.setDisable(true);
-        przyciskKursora.setStyle(STYL_PRZYCISKU);
+        // przycisk kursora
+        przyciskKursora = new NiestandardowyPrzycisk("kursor");
 
-        Polygon ksztaltKursora = new Polygon();
-        ksztaltKursora.getPoints().addAll(new Double[] {
-            2.0, 2.0,
-            15.0, 15.0, 
-            10.0, 15.0,
-            12.0, 20.0,
-            9.0, 21.0,
-            7.0, 15.0,
-            2.0, 18.0
-        });
-        ksztaltKursora.setStyle(STYL_FIGUR_PRZYCISKOW);
+        przyciskKursora.setOnMouseClicked(event -> kontrolerAplikacji.zmienTrybMyszki(event, "kursor"));
 
-        przyciskKursora.setGraphic(ksztaltKursora);
-        przyciskKursora.setOnMouseClicked((new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                uruchomPoprzedniPrzycisk();
-                aktualnyTrybMyszki = TrybyMyszki.KURSOR;
-                przyciskKursora.setDisable(true);
-            }
-        }));
+        // przycisk prostokata
+        przyciskProstokata = new NiestandardowyPrzycisk("prostokat");
 
-        // przycisk prostokata razem z grafika
-        przyciskProstokata = new Button();
-        przyciskProstokata.setPrefSize(22, 22);
+        przyciskProstokata.setOnMouseClicked(event -> kontrolerAplikacji.zmienTrybMyszki(event, "prostokat"));
 
-        przyciskProstokata.setStyle(STYL_PRZYCISKU);
+        // przycisk kola
+        przyciskKola = new NiestandardowyPrzycisk("kolo");
 
-        Rectangle ksztaltProstokata = new Rectangle();
-        ksztaltProstokata.setX(2.0);
-        ksztaltProstokata.setY(2.0);
-        ksztaltProstokata.setWidth(16.0);
-        ksztaltProstokata.setHeight(16.0);
-        ksztaltProstokata.setStyle(STYL_FIGUR_PRZYCISKOW);
-        przyciskProstokata.setGraphic(ksztaltProstokata);
+        przyciskKola.setOnMouseClicked(event -> kontrolerAplikacji.zmienTrybMyszki(event, "kolo"));
 
-        przyciskProstokata.setOnMouseClicked((new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                uruchomPoprzedniPrzycisk();
-                aktualnyTrybMyszki = TrybyMyszki.PROSTOKAT;
-                przyciskProstokata.setDisable(true);
-            }
-        }));
+        // przycisk trojkata
+        przyciskTrojkata = new NiestandardowyPrzycisk("trojkat");
 
-        // przycisk kola razem z grafika
-        przyciskKola = new Button();
-        przyciskKola.setPrefSize(22, 22);
-        przyciskKola.setStyle(STYL_PRZYCISKU);
-
-        Circle ksztaltKola = new Circle();
-        ksztaltKola.setCenterX(12.0);
-        ksztaltKola.setCenterY(12.0);
-        ksztaltKola.setRadius(8.0);
-        ksztaltKola.setStyle(STYL_FIGUR_PRZYCISKOW);
-
-        przyciskKola.setGraphic(ksztaltKola);
-
-        przyciskKola.setOnMouseClicked((new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                uruchomPoprzedniPrzycisk();
-                aktualnyTrybMyszki = TrybyMyszki.KOLO;
-                przyciskKola.setDisable(true);
-            }
-        }));
-
-        // przycisk trojkata razem z grafika
-        przyciskTrojkata = new Button();
-        przyciskTrojkata.setPrefSize(22, 22);
-        przyciskTrojkata.setStyle(STYL_PRZYCISKU);
-
-        Polygon ksztaltTrojkata = new Polygon();
-        ksztaltTrojkata.getPoints().addAll(new Double[] {
-            9.0, 2.0,
-            17.0, 17.0,
-            2.0, 17.0
-        });
-        ksztaltTrojkata.setStyle(STYL_FIGUR_PRZYCISKOW);
-
-        przyciskTrojkata.setGraphic(ksztaltTrojkata);
-
-        przyciskTrojkata.setOnMouseClicked((new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                uruchomPoprzedniPrzycisk();
-                aktualnyTrybMyszki = TrybyMyszki.TROJKAT;
-                przyciskTrojkata.setDisable(true);
-            }
-        }));
+        przyciskTrojkata.setOnMouseClicked(event -> kontrolerAplikacji.zmienTrybMyszki(event, "trojkat"));
 
         // dodanie przyciskow do ukladu VBox
         VBox ukladPrzyciskow = new VBox(przyciskKursora, przyciskProstokata, przyciskKola, przyciskTrojkata);
@@ -211,6 +116,9 @@ public class App extends Application {
         
         // dodanie przestrzeni przyciskow do glownej przestrzeni aplikacji
         ukladAplikacji.setRight(ukladPrzyciskow);
+
+        // przekazanie przyciskow do kontrolera aplikacji
+        kontrolerAplikacji.przekazPrzyciski(przyciskKursora, przyciskProstokata, przyciskKola, przyciskTrojkata);
     }
 
     private void utworzPrzestrzenRobocza() {
@@ -226,116 +134,157 @@ public class App extends Application {
 
         // wydarzenia na przestrzeni roboczej
 
-        // przytrzymanie przycisku myszy
-        przestrzenRobocza.setOnMousePressed((new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                if(event.isPrimaryButtonDown()) {                
-                    startowaPozycjaMyszkiX = event.getX();
-                    startowaPozycjaMyszkiY = event.getY();
-                    switch(aktualnyTrybMyszki) {
-                        case PROSTOKAT: {
-                            tworzonyProstokat = new Polygon();
-                            przestrzenRobocza.getChildren().add(tworzonyProstokat);
-                            tworzonyProstokat.getPoints().addAll(new Double[] {
-                                startowaPozycjaMyszkiX, startowaPozycjaMyszkiY,
-                                startowaPozycjaMyszkiX, startowaPozycjaMyszkiY,
-                                startowaPozycjaMyszkiX, startowaPozycjaMyszkiY,
-                                startowaPozycjaMyszkiX, startowaPozycjaMyszkiY
-                            });
-                            break;
-                        }
-                        case KOLO: {
-                            tworzoneKolo = new Circle();
-                            przestrzenRobocza.getChildren().add(tworzoneKolo);
-                            tworzoneKolo.setCenterX(startowaPozycjaMyszkiX);
-                            tworzoneKolo.setCenterY(startowaPozycjaMyszkiY);
-                            break;
-                        }
-                        case TROJKAT: {
-                            tworzonyTrojkat = new Polygon();
-                            przestrzenRobocza.getChildren().add(tworzonyTrojkat);
-                            tworzonyTrojkat.getPoints().addAll(new Double[] {
-                                startowaPozycjaMyszkiX, startowaPozycjaMyszkiY,
-                                startowaPozycjaMyszkiX, startowaPozycjaMyszkiY,
-                                startowaPozycjaMyszkiX, startowaPozycjaMyszkiY
-                            });
-                            break;
-                        }
-                        default:
-                            break;
-                    }
-                }
-                System.out.println(event.getPickResult());
-            }
-        }));
+        // przytrzymanie przycisku myszy, poczatek tworzenia figury
+        przestrzenRobocza.setOnMousePressed(event -> kontrolerAplikacji.nacisnietoMyszkaNaPrzestrzenRobocza(event, przestrzenRobocza));
 
         // przeciagniecie przycisku myszy
-        przestrzenRobocza.setOnMouseDragged((new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                if(event.isPrimaryButtonDown()) {
-                    switch(aktualnyTrybMyszki) {
-                        case PROSTOKAT: {
-                            ObservableList<Double> wspolrzedneProstokata = tworzonyProstokat.getPoints();
-                            // zmiana wspolrzednych rogow prostokata
-                            wspolrzedneProstokata.set(2, event.getX());
-
-                            wspolrzedneProstokata.set(4, event.getX());
-                            wspolrzedneProstokata.set(5, event.getY());
-                            
-                            wspolrzedneProstokata.set(7, event.getY());
-                            break;
-                        }
-                        case KOLO: {
-                            double wiekszaWartosc = Math.abs(event.getX() - startowaPozycjaMyszkiX) >=
-                            Math.abs(event.getY() - startowaPozycjaMyszkiY) ?
-                            Math.abs(event.getX() - startowaPozycjaMyszkiX) : Math.abs(event.getY() - startowaPozycjaMyszkiY);
-                            tworzoneKolo.setRadius(wiekszaWartosc);
-                            break;
-                        }
-                        case TROJKAT: {
-                            ObservableList<Double> wspolrzedneTrojkata = tworzonyTrojkat.getPoints();
-                            // zmiana wspolrzednych rogow trokata
-                            wspolrzedneTrojkata.set(1, event.getY());
-                            wspolrzedneTrojkata.set(2, (startowaPozycjaMyszkiX + event.getX()) / 2);
-                            wspolrzedneTrojkata.set(4, event.getX());
-                            wspolrzedneTrojkata.set(5, event.getY());
-                            break;
-                        }
-                        default: 
-                            break;
-                    }
-                }
-            }
-        }));
+        przestrzenRobocza.setOnMouseDragged(event -> kontrolerAplikacji.przesunietoMyszkeNaPrzestrzeniRoboczej(event));
 
         // puszczenie przycisku myszy
-        przestrzenRobocza.setOnMouseReleased((new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                switch(aktualnyTrybMyszki) {
-                    case PROSTOKAT: {
-                        tworzonyProstokat = null;
-                        break;
-                    }
-                    case KOLO: {
-                        tworzoneKolo = null;
-                        break;
-                    }
-                    case TROJKAT: {
-                        tworzonyTrojkat = null;
-                        break;
-                    }
-                    default: {
-                        break;
-                    }
-                }
-            }
-        }));
+        przestrzenRobocza.setOnMouseReleased(event -> kontrolerAplikacji.puszczonoPrzyciskNaPrzestrzeniRoboczej(event));
     }
 
-    private void uruchomPoprzedniPrzycisk() {
+    public static void main(String[] args) {
+        launch();
+    }
+    
+};
+
+// klasa odpowiadajaca za utworzenie przyciskow wyboru wykonywanego dzialania w aplikacji
+class NiestandardowyPrzycisk extends Button {
+
+    // stala dla stylu przycisku nadpisujaca efekt niebieskiej obramowki
+    private static final String STYL_PRZYCISKU = """
+        -fx-background-color: -fx-shadow-highlight-color, -fx-outer-border, -fx-inner-border, -fx-body-color;
+        -fx-background-insets: 0 0 -1 0, 0, 1, 2;
+        -fx-background-radius: 5, 5, 4, 3;
+            """;
+
+    // stala dla stylu figur sluzacych jako grafika przyciskow
+    private static final String STYL_FIGUR_PRZYCISKOW = """
+        -fx-fill: white; -fx-stroke: black
+            """;
+
+    NiestandardowyPrzycisk(String rodzaj) {
+        super();
+        this.setPrefSize(22,22);
+        this.setStyle(STYL_PRZYCISKU);
+        // utworzenie ksztaltu dla odpowiedniego przycisku
+        switch(rodzaj) {
+            case "kursor": {
+                // utworzenie ksztaltu kursora
+                Polygon ksztaltKursora = new Polygon();
+                ksztaltKursora.getPoints().addAll(new Double[] {
+                    2.0, 2.0,
+                    15.0, 15.0, 
+                    10.0, 15.0,
+                    12.0, 20.0,
+                    9.0, 21.0,
+                    7.0, 15.0,
+                    2.0, 18.0
+                });
+                ksztaltKursora.setStyle(STYL_FIGUR_PRZYCISKOW);
+                this.setGraphic(ksztaltKursora);
+                this.setDisable(true);
+                break;
+            }
+            case "prostokat": {
+                // utworzenie ksztaltu prostokata
+                Rectangle ksztaltProstokata = new Rectangle();
+                ksztaltProstokata.setX(2.0);
+                ksztaltProstokata.setY(2.0);
+                ksztaltProstokata.setWidth(16.0);
+                ksztaltProstokata.setHeight(16.0);
+                ksztaltProstokata.setStyle(STYL_FIGUR_PRZYCISKOW);
+                this.setGraphic(ksztaltProstokata);
+                break;
+            }
+            case "kolo" : {
+                // utworzenie ksztaltu kola
+                Circle ksztaltKola = new Circle();
+                ksztaltKola.setCenterX(12.0);
+                ksztaltKola.setCenterY(12.0);
+                ksztaltKola.setRadius(8.0);
+                ksztaltKola.setStyle(STYL_FIGUR_PRZYCISKOW);
+
+                this.setGraphic(ksztaltKola);
+                break;
+            }
+            case "trojkat" : {
+                // utworzenie ksztaltu trojkata
+                Polygon ksztaltTrojkata = new Polygon();
+                ksztaltTrojkata.getPoints().addAll(new Double[] {
+                    9.0, 2.0,
+                    17.0, 17.0,
+                    2.0, 17.0
+                });
+                ksztaltTrojkata.setStyle(STYL_FIGUR_PRZYCISKOW);
+
+                this.setGraphic(ksztaltTrojkata);
+                break;
+            }
+            default: {
+                break;
+            }
+        }
+        
+    }    
+};
+
+class KontrolerAplikacji {
+
+    // zmienne pomocnicze dla przyciskow
+    private NiestandardowyPrzycisk przyciskKursora;
+    private NiestandardowyPrzycisk przyciskProstokata;
+    private NiestandardowyPrzycisk przyciskKola;
+    private NiestandardowyPrzycisk przyciskTrojkata;
+
+    // zmienne pomocnicze trybu myszki
+    private enum TrybyMyszki {
+        KURSOR,
+        KOLO, 
+        PROSTOKAT, 
+        TROJKAT
+    }
+    private TrybyMyszki aktualnyTrybMyszki = TrybyMyszki.KURSOR;
+
+    // zmienne pomocniczne dla tworzonych figur
+    private double startowaPozycjaMyszkiX;
+    private double startowaPozycjaMyszkiY;
+    private Polygon tworzonyWielokat;
+    private Circle tworzoneKolo;
+
+    // zmienne pomocniczne dla wybierania i przesuwania ksztaltow
+    private Polygon wybranyWielokat = null;
+    private Circle wybraneKolo = null;
+    private Double startowaPozycjaPrzesuwaniaX;
+    private Double startowaPozycjaPrzesuwaniaY;
+
+    // konstruktor
+    public void przekazPrzyciski(NiestandardowyPrzycisk przyciskKursora_,
+            NiestandardowyPrzycisk przyciskProstokata_,
+            NiestandardowyPrzycisk przyciskKola_,
+            NiestandardowyPrzycisk przyciskTrojkata_) {
+        przyciskKursora = przyciskKursora_;
+        przyciskProstokata = przyciskProstokata_;
+        przyciskKola = przyciskKola_;
+        przyciskTrojkata = przyciskTrojkata_;
+    }
+
+    // usuniecie zaznaczenia z wybranej wczesniej figury
+    public void usunZaznaczenie(MouseEvent event) {
+        if(wybranyWielokat != null) {
+            wybranyWielokat.setStroke(null);
+            wybranyWielokat = null;
+        }
+        if(wybraneKolo != null) {
+            wybraneKolo.setStroke(null);
+            wybraneKolo = null;
+        }
+    }
+
+    // powrotne uruchomienie poprzedniego przycisku po utworzeniu figury
+    public void uruchomPoprzedniPrzycisk() {
         switch(aktualnyTrybMyszki) {
             case KURSOR:
                 przyciskKursora.setDisable(false);
@@ -352,8 +301,243 @@ public class App extends Application {
         }
     }
 
-    public static void main(String[] args) {
-        launch();
+    // zmiana trybu myszki na wybrana z przycisku figure
+    public void zmienTrybMyszki(MouseEvent event, String figura) {
+        uruchomPoprzedniPrzycisk();
+        switch(figura) {
+            case "kursor":
+                aktualnyTrybMyszki = TrybyMyszki.KURSOR;
+                przyciskKursora.setDisable(true);
+                break;
+            case "prostokat":
+                aktualnyTrybMyszki = TrybyMyszki.PROSTOKAT;
+                przyciskProstokata.setDisable(true);
+                break;
+            case "kolo":
+                aktualnyTrybMyszki = TrybyMyszki.KOLO;
+                przyciskKola.setDisable(true);
+                break;
+            case "trojkat":
+                aktualnyTrybMyszki = TrybyMyszki.TROJKAT;
+                przyciskTrojkata.setDisable(true);
+                break;
+            default:
+                break;
+        }
     }
-    
+
+    public void nacisnietoMyszkaNaPrzestrzenRobocza(MouseEvent event, Pane przestrzenRobocza) {
+        if(event.isPrimaryButtonDown()) {                
+            startowaPozycjaMyszkiX = event.getX();
+            startowaPozycjaMyszkiY = event.getY();
+            switch(aktualnyTrybMyszki) {
+                case PROSTOKAT: {
+                    tworzonyWielokat = new Polygon();
+                    przestrzenRobocza.getChildren().add(tworzonyWielokat);
+                    tworzonyWielokat.getPoints().addAll(new Double[] {
+                        startowaPozycjaMyszkiX, startowaPozycjaMyszkiY,
+                        startowaPozycjaMyszkiX, startowaPozycjaMyszkiY,
+                        startowaPozycjaMyszkiX, startowaPozycjaMyszkiY,
+                        startowaPozycjaMyszkiX, startowaPozycjaMyszkiY
+                    });
+                    break;
+                }
+                case KOLO: {
+                    tworzoneKolo = new Circle();
+                    przestrzenRobocza.getChildren().add(tworzoneKolo);
+                    tworzoneKolo.setCenterX(startowaPozycjaMyszkiX);
+                    tworzoneKolo.setCenterY(startowaPozycjaMyszkiY);
+                    break;
+                }
+                case TROJKAT: {
+                    tworzonyWielokat = new Polygon();
+                    przestrzenRobocza.getChildren().add(tworzonyWielokat);
+                    tworzonyWielokat.getPoints().addAll(new Double[] {
+                        startowaPozycjaMyszkiX, startowaPozycjaMyszkiY,
+                        startowaPozycjaMyszkiX, startowaPozycjaMyszkiY,
+                        startowaPozycjaMyszkiX, startowaPozycjaMyszkiY
+                    });
+                    break;
+                }
+                default:
+                    break;
+            }
+        }
+    }
+
+    // obsluga przesuwania myszki przy tworzeniu nowej figury
+    public void przesunietoMyszkeNaPrzestrzeniRoboczej(MouseEvent event) {
+        if(event.isPrimaryButtonDown()) {
+            switch(aktualnyTrybMyszki) {
+                case PROSTOKAT: {
+                    ObservableList<Double> wspolrzedneProstokata = tworzonyWielokat.getPoints();
+                    // zmiana wspolrzednych rogow prostokata
+                    wspolrzedneProstokata.set(2, event.getX());
+
+                    wspolrzedneProstokata.set(4, event.getX());
+                    wspolrzedneProstokata.set(5, event.getY());
+                    
+                    wspolrzedneProstokata.set(7, event.getY());
+                    break;
+                }
+                case KOLO: {
+                    double wiekszaWartosc = Math.abs(event.getX() - startowaPozycjaMyszkiX) >=
+                    Math.abs(event.getY() - startowaPozycjaMyszkiY) ?
+                    Math.abs(event.getX() - startowaPozycjaMyszkiX) : Math.abs(event.getY() - startowaPozycjaMyszkiY);
+                    tworzoneKolo.setRadius(wiekszaWartosc);
+                    break;
+                }
+                case TROJKAT: {
+                    ObservableList<Double> wspolrzedneTrojkata = tworzonyWielokat.getPoints();
+                    // zmiana wspolrzednych rogow trojkata
+                    wspolrzedneTrojkata.set(1, event.getY());
+                    wspolrzedneTrojkata.set(2, (startowaPozycjaMyszkiX + event.getX()) / 2);
+                    wspolrzedneTrojkata.set(4, event.getX());
+                    wspolrzedneTrojkata.set(5, event.getY());
+                    break;
+                }
+                default: 
+                    break;
+            }
+        }
+    }
+
+    // obsluga wyczyszczenia zmiennych po utworzeniu nowej figury
+    public void puszczonoPrzyciskNaPrzestrzeniRoboczej(MouseEvent event) {
+        switch(aktualnyTrybMyszki) {
+            case KURSOR: {
+                break;
+            }
+            case KOLO: {
+                // dodanie funkcji przy nacisnieciu myszki na figurze
+                tworzoneKolo.setOnMousePressed(mouseEvent -> this.wybranoFigure(mouseEvent));
+                
+                // dodanie funkcji przy przesunieciu figury
+                tworzoneKolo.setOnMouseDragged(mouseEvent -> this.przesunietoFigure(mouseEvent));
+
+                // dodanie funkcji przy uzywaniu scrolla na figurze
+                tworzoneKolo.setOnScroll(mouseEvent -> this.uzytoScrollaNaFigurze(mouseEvent));
+                
+                tworzoneKolo = null;
+                break;
+            }
+            default: {
+                // dodanie funkcji przy nacisnieciu myszki na figurze
+                tworzonyWielokat.setOnMousePressed(mouseEvent -> this.wybranoFigure(mouseEvent));
+                
+                // dodanie funkcji przy przesunieciu figury
+                tworzonyWielokat.setOnMouseDragged(mouseEvent -> this.przesunietoFigure(mouseEvent));
+
+                // dodanie funkcji przy uzywaniu srolla na figure
+                tworzonyWielokat.setOnScroll(mouseEvent -> this.uzytoScrollaNaFigurze(mouseEvent));
+
+                
+                tworzonyWielokat = null;
+                break;
+            }
+        }
+        uruchomPoprzedniPrzycisk();
+        przyciskKursora.setDisable(true);
+        aktualnyTrybMyszki = TrybyMyszki.KURSOR;
+    }
+
+    // obsluga wyboru jednej z utworzonych figur
+    public void wybranoFigure(MouseEvent event) {
+        if(aktualnyTrybMyszki == TrybyMyszki.KURSOR && event.isPrimaryButtonDown()) {
+            startowaPozycjaPrzesuwaniaX = event.getSceneX();
+            startowaPozycjaPrzesuwaniaY = event.getSceneY();
+            if(event.getTarget() instanceof Polygon) {
+                wybranyWielokat = (Polygon)event.getTarget();
+            
+                // dodanie ramki
+                wybranyWielokat.setStroke(Color.BLUE);
+                wybranyWielokat.setStrokeWidth(4);
+                wybranyWielokat.getStrokeDashArray().addAll(8.0);
+                wybranyWielokat.toFront();
+            }
+            else if(event.getTarget() instanceof Circle) {
+                wybraneKolo = (Circle)event.getTarget();
+
+                // dodanie ramki
+                wybraneKolo.setStroke(Color.BLUE);
+                wybraneKolo.setStrokeWidth(4);
+                wybraneKolo.getStrokeDashArray().addAll(8.0);
+                wybraneKolo.toFront();
+            }
+        }
+    } 
+
+    // obsluga przesuwania wybranej figury
+    public void przesunietoFigure(MouseEvent event) {
+        if(aktualnyTrybMyszki == TrybyMyszki.KURSOR && event.isPrimaryButtonDown()) {
+            // obliczenie przesuniecia myszki i zaktualizowanie nowej pozycji do kolejnych obliczen
+            double roznicaX = event.getSceneX() - startowaPozycjaPrzesuwaniaX;
+            double roznicaY = event.getSceneY() - startowaPozycjaPrzesuwaniaY;
+            startowaPozycjaPrzesuwaniaX = event.getSceneX();
+            startowaPozycjaPrzesuwaniaY = event.getSceneY();
+
+            // wybor odpowiedniej figury do przesuniecia
+            if(wybraneKolo != null) {
+                wybraneKolo.setCenterX(wybraneKolo.getCenterX() + roznicaX);
+                wybraneKolo.setCenterY(wybraneKolo.getCenterY() + roznicaY);
+            }
+            else if(wybranyWielokat != null) {
+                ObservableList<Double> listaWspolrzednych = wybranyWielokat.getPoints();
+                for(int i=0; i < listaWspolrzednych.size(); i += 2) {
+                    listaWspolrzednych.set(i, listaWspolrzednych.get(i) + roznicaX);
+                    listaWspolrzednych.set(i + 1, listaWspolrzednych.get(i+1) + roznicaY);
+                }
+            }
+        }
+    }
+
+    // funkcja odpowiedzialna za powiekszenie wybranego trojkata
+    public void powiekszTrojkat(double wartosc, ObservableList<Double> listaWspolrzednych) {
+        // okreslenie w ktora strone zbudowana zostala figura
+        int wspolczynnikRozrostuFiguryY = listaWspolrzednych.get(1) > listaWspolrzednych.get(3) ? 1 : -1;
+        int wspolczynnikRozrostuFiguryX = listaWspolrzednych.get(0) < listaWspolrzednych.get(4) ? 1 : -1;
+
+        // przesuniecie wspolrzednych
+        listaWspolrzednych.set(0, listaWspolrzednych.get(0) + (wartosc * wspolczynnikRozrostuFiguryX * 0.5));
+        listaWspolrzednych.set(1, listaWspolrzednych.get(1) + (wartosc * wspolczynnikRozrostuFiguryY * -0.5));                                        
+        listaWspolrzednych.set(3, listaWspolrzednych.get(3) + (wartosc * wspolczynnikRozrostuFiguryY * 0.5));
+        listaWspolrzednych.set(4, listaWspolrzednych.get(4) + (wartosc * wspolczynnikRozrostuFiguryX * -0.5));
+        listaWspolrzednych.set(5, listaWspolrzednych.get(5) + (wartosc * wspolczynnikRozrostuFiguryY * -0.5));
+    }
+
+    // funkcja odpowiedzialna za powiekszenie wybranego prostokata
+    public void powiekszProstokat(double wartosc, ObservableList<Double> listaWspolrzednych) {
+        // okreslenie w ktora strone zbudowana zostala figura
+        int wspolczynnikRozrostuFiguryY = listaWspolrzednych.get(1) < listaWspolrzednych.get(7) ? 1 : -1;
+        int wspolczynnikRozrostuFiguryX = listaWspolrzednych.get(0) < listaWspolrzednych.get(2) ? 1 : -1;
+
+        // przesuniecie wspolrzednych
+        listaWspolrzednych.set(0, listaWspolrzednych.get(0) + (wartosc * wspolczynnikRozrostuFiguryX * 0.5));
+        listaWspolrzednych.set(1, listaWspolrzednych.get(1) + (wartosc * wspolczynnikRozrostuFiguryY * 0.5));
+        listaWspolrzednych.set(2, listaWspolrzednych.get(2) + (wartosc * wspolczynnikRozrostuFiguryX * -0.5));
+        listaWspolrzednych.set(3, listaWspolrzednych.get(3) + (wartosc * wspolczynnikRozrostuFiguryY * 0.5));
+        listaWspolrzednych.set(4, listaWspolrzednych.get(4) + (wartosc * wspolczynnikRozrostuFiguryX * -0.5));
+        listaWspolrzednych.set(5, listaWspolrzednych.get(5) + (wartosc * wspolczynnikRozrostuFiguryY * -0.5));
+        listaWspolrzednych.set(6, listaWspolrzednych.get(6) + (wartosc * wspolczynnikRozrostuFiguryX *0.5));
+        listaWspolrzednych.set(7, listaWspolrzednych.get(7) + (wartosc * wspolczynnikRozrostuFiguryY * -0.5));
+    }
+
+    // obsluga powiekszania i pomniejszania figury za pomoca scroll'a
+    public void uzytoScrollaNaFigurze(ScrollEvent scrollEvent) {
+        if(aktualnyTrybMyszki == TrybyMyszki.KURSOR) {
+            if(wybranyWielokat == scrollEvent.getTarget() && wybranyWielokat.getPoints().size() == 8) {
+                powiekszProstokat(scrollEvent.getDeltaY(), wybranyWielokat.getPoints());
+                
+            }
+            if(wybraneKolo == scrollEvent.getTarget()) {
+                wybraneKolo.setRadius(wybraneKolo.getRadius() + (scrollEvent.getDeltaY() * -0.5));
+            }
+            if(wybranyWielokat == scrollEvent.getTarget() && wybranyWielokat.getPoints().size() == 6) {
+                this.powiekszTrojkat(scrollEvent.getDeltaY(), wybranyWielokat.getPoints());
+            }
+        }
+    }
+
+
+
 }
