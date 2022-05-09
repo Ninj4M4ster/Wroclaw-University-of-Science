@@ -57,6 +57,9 @@ public class App extends Application {
     /**
      * Funkcja odpowiedzialna za utworzenie paska menu z mozliwoscia wyswietlenia informaji o aplikacji oraz 
      * instrukcji uzytkownika
+     * 
+     * @see KontrolerAplikacji#wyswietlInformacje
+     * @see KontrolerAplikacji#wyswietlInstrukcjeUzytkownika
      */
     private void utworzPasekMenu() {
         // pasek menu
@@ -66,7 +69,9 @@ public class App extends Application {
         // utworzenie przyciskow menu 
         Menu menuPomocy = new Menu("Pomoc");
         MenuItem info = new MenuItem("Info");
+        info.setOnAction(event -> kontrolerAplikacji.wyswietlInformacje(event));
         MenuItem instrukcja = new MenuItem("Instrukcja uzytkownika");
+        instrukcja.setOnAction(event -> kontrolerAplikacji.wyswietlInstrukcjeUzytkownika(event));
 
         // dodanie przyciskow menu do paska oraz paska menu do ukladu aplikacji
         menuPomocy.getItems().add(info);
@@ -294,6 +299,73 @@ class KontrolerAplikacji {
     private Circle wybraneKolo = null;
     private Double wspolrzednaXPrzesuwanejFigury;
     private Double wspolrzednaYPrzesuwanejFigury;
+
+    /**
+     * Funkcja odpowiedzialna za wyswietlenie informacji o programie oraz autorze.
+     * 
+     * @param event Wydarzenie wywolane przez wybranie jednego z opcji w menu.
+     */
+    public void wyswietlInformacje(ActionEvent event) {
+        Alert komunikat = new Alert(Alert.AlertType.INFORMATION);
+        komunikat.setTitle("Informacje");
+        komunikat.setHeaderText(null);
+        komunikat.setContentText("""
+                Prosty edytor graficzny.
+
+                Program sluzy do tworzenia oraz modyfikowania 
+                figur geometrycznych: prostokata, kola i trojkata.
+                Autor: Jakub Drzewiecki.
+            """);
+
+        komunikat.showAndWait();
+    }
+
+    /**
+     * Funkcja odpowiedzialna za wyswietlenie instrukcji uzytkownika.
+     * 
+     * @param event Wydarzenie wywolane przez wybranie jednego z opcji w menu.
+     */
+    public void wyswietlInstrukcjeUzytkownika(ActionEvent event) {
+        Alert komunikat = new Alert(Alert.AlertType.INFORMATION);
+        komunikat.setTitle("Instrukcja uzytkownika");
+        komunikat.setHeaderText(null);
+        komunikat.setContentText("""
+                W celu utworzenia figury wybierz jedna z figur 
+                na panelu bocznym, a nastepnie nacisnij i 
+                przytrzymaj lewy przycisk myszy na przestrzeni 
+                w centralnej czesci aplikacji i utworz wybrana 
+                figure przeciagajac i finalnie puszczajac lewy 
+                przycisk myszy.
+                
+
+                W celu modyfikacji jednej z utworzonych figur, 
+                wybierz przycisk z ikona kursora oraz nacisnij 
+                na wybrana figure. Mozliwe dzialania to:
+
+                - zmiana pozycji figury - nacisnij i przytrzymaj 
+                lewy przycisk myszy na wybranej figurze, 
+                a nastepnie przeciagnij myszka w wybrane 
+                miejsce na ekranie i pusc lewy przycisk myszy,
+
+                - zmiana rozmiaru figury - nacisnij lewym 
+                przyciskiem myszy na wybrana figure, 
+                pozostaw kursor na wybranej figurze 
+                oraz za pomoca rolki myszy powieksz lub 
+                pomniejsz figure (przewijajac w gore lub w dol),
+
+                - zmiana koloru figury - nacisnij prawym 
+                przyciskiem myszy na wybrana figure, a nastepnie 
+                wybierz docelowy kolor z palety,
+
+                - obrot figury - nacisnij lewym przyciskiem myszy 
+                na wybrana figure, a nastepnie nacisnij i 
+                przytrzymaj lewy przycisk myszy na kwadracie 
+                wyswietlonym nad figura, po czym obroc figure 
+                obracajac mysz wokol figury, a na koniec pusc 
+                lewy przycisk myszy.
+            """);
+        komunikat.showAndWait();
+    }
 
     /**
      * Funkcja odpowiedzialna za przypisanie zmiennym powstalych w aplikacji przyciskow.
