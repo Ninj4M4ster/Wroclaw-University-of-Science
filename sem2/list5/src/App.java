@@ -1,5 +1,4 @@
 import java.io.IOException;
-import java.util.function.IntConsumer;
 
 import javafx.application.Application;
 import javafx.scene.*;
@@ -18,16 +17,8 @@ import javafx.collections.ObservableList;
 public class App extends Application {
 
     // zmienne pomocnicze dla aplikacji
-    private Group root;
     private Scene scena;
-    private Pane przestrzenRobocza;
     private BorderPane ukladAplikacji;
-
-    // przyciski wyboru figury
-    private NiestandardowyPrzycisk przyciskKursora;
-    private NiestandardowyPrzycisk przyciskProstokata;
-    private NiestandardowyPrzycisk przyciskKola;
-    private NiestandardowyPrzycisk przyciskTrojkata;
 
     // zmienne pomocnicze rozmiarow okna
     private int aktualnaSzerokoscOkna = 800;
@@ -38,7 +29,7 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        root = new Group();
+        Group root = new Group();
         scena = new Scene(root, aktualnaSzerokoscOkna, aktualnaWysokoscOkna);
 
         // uklad aplikacji
@@ -63,6 +54,10 @@ public class App extends Application {
         stage.show();
     }
 
+    /**
+     * Funkcja odpowiedzialna za utworzenie paska menu z mozliwoscia wyswietlenia informaji o aplikacji oraz 
+     * instrukcji uzytkownika
+     */
     private void utworzPasekMenu() {
         // pasek menu
         MenuBar pasekMenu = new MenuBar();
@@ -82,32 +77,45 @@ public class App extends Application {
         ukladAplikacji.setTop(pasekMenu);
     }
 
+    /**
+     * Funkcja odpowiedzialna za utworzenie przyciskow wyboru tworzonej figury.
+     * 
+     * @see NiestandardowyPrzycisk
+     * @see KontrolerAplikacji#przekazPrzyciski
+     */
     private void utworzPrzyciski() {
         // utworzenie przyciskow odpowiedzialnych za tworzenie figur
 
         // przycisk kursora
-        przyciskKursora = new NiestandardowyPrzycisk("kursor");
+        NiestandardowyPrzycisk przyciskKursora = new NiestandardowyPrzycisk("kursor");
 
-        przyciskKursora.setOnMouseClicked(event -> kontrolerAplikacji.zmienTrybMyszki(event, "kursor"));
+        przyciskKursora.setOnMouseClicked(
+            event -> kontrolerAplikacji.zmienTrybMyszki(event, "kursor"));
 
         // przycisk prostokata
-        przyciskProstokata = new NiestandardowyPrzycisk("prostokat");
+        NiestandardowyPrzycisk przyciskProstokata = new NiestandardowyPrzycisk("prostokat");
 
-        przyciskProstokata.setOnMouseClicked(event -> kontrolerAplikacji.zmienTrybMyszki(event, "prostokat"));
+        przyciskProstokata.setOnMouseClicked(
+            event -> kontrolerAplikacji.zmienTrybMyszki(event, "prostokat"));
 
         // przycisk kola
-        przyciskKola = new NiestandardowyPrzycisk("kolo");
+        NiestandardowyPrzycisk przyciskKola = new NiestandardowyPrzycisk("kolo");
 
         przyciskKola.setOnMouseClicked(event -> kontrolerAplikacji.zmienTrybMyszki(event, "kolo"));
 
         // przycisk trojkata
-        przyciskTrojkata = new NiestandardowyPrzycisk("trojkat");
+        NiestandardowyPrzycisk przyciskTrojkata = new NiestandardowyPrzycisk("trojkat");
 
-        przyciskTrojkata.setOnMouseClicked(event -> kontrolerAplikacji.zmienTrybMyszki(event, "trojkat"));
+        przyciskTrojkata.setOnMouseClicked(
+            event -> kontrolerAplikacji.zmienTrybMyszki(event, "trojkat"));
 
         // dodanie przyciskow do ukladu VBox
-        VBox ukladPrzyciskow = new VBox(przyciskKursora, przyciskProstokata, przyciskKola, przyciskTrojkata);
-        ukladPrzyciskow.setStyle("-fx-background-color: #c2c2c2; -fx-border-width: 0 1 1 1; -fx-border-color: black; -fx-view-order: -2");
+        VBox ukladPrzyciskow = new VBox(przyciskKursora, przyciskProstokata,
+                                        przyciskKola, przyciskTrojkata);
+        ukladPrzyciskow.setStyle("""
+            -fx-background-color: #c2c2c2; -fx-border-width: 0 1 1 1; 
+            -fx-border-color: black; -fx-view-order: -2
+            """);
         ukladPrzyciskow.setSpacing(5);
         ukladPrzyciskow.setMargin(przyciskKursora, new Insets(15, 15, 15, 7));
         ukladPrzyciskow.setMargin(przyciskProstokata, new Insets(15, 7, 15, 6));
@@ -118,44 +126,63 @@ public class App extends Application {
         ukladAplikacji.setRight(ukladPrzyciskow);
 
         // przekazanie przyciskow do kontrolera aplikacji
-        kontrolerAplikacji.przekazPrzyciski(przyciskKursora, przyciskProstokata, przyciskKola, przyciskTrojkata);
+        kontrolerAplikacji.przekazPrzyciski(przyciskKursora, przyciskProstokata, 
+                                            przyciskKola, przyciskTrojkata);
     }
 
+    /**
+     * Funkcja odpowiedzialna za utworzenie przestrzeni roboczej aplikacji, czyli obszaru,
+     * w ktorym uzytkownik tworzyc bedzie figury.
+     * Funkcja ta przypisuje rowniez funkcje obslugujace wydarzenia przestrzeni oraz dodaje obsluge zmieniania
+     * rozmiaru obszaru roboczego przy zmienianiu wielkosci calego okna.
+     * 
+     * @see KontrolerAplikacji#nacisnietoMyszkaNaPrzestrzenRobocza
+     * @see KontrolerAplikacji#przesunietoMyszkeNaPrzestrzeniRoboczej
+     * @see KontrolerAplikacji#puszczonoPrzyciskNaPrzestrzeniRoboczej
+     */
     private void utworzPrzestrzenRobocza() {
         // przestrzen do tworzenia ksztaltow
-        przestrzenRobocza = new Pane();
+        Pane przestrzenRobocza = new Pane();
         przestrzenRobocza.setPrefSize(aktualnaSzerokoscOkna - 45, aktualnaWysokoscOkna);
         przestrzenRobocza.setStyle("-fx-background-color: white");
         ukladAplikacji.setCenter(przestrzenRobocza);
 
         // automatyczna zmiana rozmiaru przestrzeni roboczej 
-        scena.widthProperty().addListener((obs, oldVal, newVal) -> {przestrzenRobocza.setPrefWidth(newVal.doubleValue() - 45);});
-        scena.heightProperty().addListener((obs, oldVal, newVal) -> {przestrzenRobocza.setPrefHeight(newVal.doubleValue());});
+        scena.widthProperty().addListener((obs, oldVal, newVal) -> 
+            przestrzenRobocza.setPrefWidth(newVal.doubleValue() - 45));
+        scena.heightProperty().addListener((obs, oldVal, newVal) -> 
+            przestrzenRobocza.setPrefHeight(newVal.doubleValue()));
 
         // wydarzenia na przestrzeni roboczej
 
         // przytrzymanie przycisku myszy, poczatek tworzenia figury
-        przestrzenRobocza.setOnMousePressed(event -> kontrolerAplikacji.nacisnietoMyszkaNaPrzestrzenRobocza(event, przestrzenRobocza));
+        przestrzenRobocza.setOnMousePressed(event -> 
+            kontrolerAplikacji.nacisnietoMyszkaNaPrzestrzenRobocza(event, przestrzenRobocza));
 
         // przeciagniecie przycisku myszy
-        przestrzenRobocza.setOnMouseDragged(event -> kontrolerAplikacji.przesunietoMyszkeNaPrzestrzeniRoboczej(event));
+        przestrzenRobocza.setOnMouseDragged(event -> 
+            kontrolerAplikacji.przesunietoMyszkeNaPrzestrzeniRoboczej(event));
 
         // puszczenie przycisku myszy
-        przestrzenRobocza.setOnMouseReleased(event -> kontrolerAplikacji.puszczonoPrzyciskNaPrzestrzeniRoboczej(event));
+        przestrzenRobocza.setOnMouseReleased(event -> 
+            kontrolerAplikacji.puszczonoPrzyciskNaPrzestrzeniRoboczej(event));
     }
 
     public static void main(String[] args) {
         launch();
     }
     
-};
+}
 
-// klasa odpowiadajaca za utworzenie przyciskow wyboru wykonywanego dzialania w aplikacji
+/**
+ * Klasa odpowiedzialna za utworzenie przyciskow wyboru figury.
+ */
 class NiestandardowyPrzycisk extends Button {
 
     // stala dla stylu przycisku nadpisujaca efekt niebieskiej obramowki
     private static final String STYL_PRZYCISKU = """
-        -fx-background-color: -fx-shadow-highlight-color, -fx-outer-border, -fx-inner-border, -fx-body-color;
+        -fx-background-color: -fx-shadow-highlight-color, 
+            -fx-outer-border, -fx-inner-border, -fx-body-color;
         -fx-background-insets: 0 0 -1 0, 0, 1, 2;
         -fx-background-radius: 5, 5, 4, 3;
             """;
@@ -165,6 +192,11 @@ class NiestandardowyPrzycisk extends Button {
         -fx-fill: white; -fx-stroke: black
             """;
 
+    /**
+     * Konstruktor przycisku, ktory na podstawie wybranego rodzaju tworzy odpowiedni przycisk z recznie utworzona grafika.
+     * 
+     * @param rodzaj Zmienna jednoznacznie wyznaczajaca rodzaj przycisku.
+     */
     NiestandardowyPrzycisk(String rodzaj) {
         super();
         this.setPrefSize(22,22);
@@ -229,8 +261,11 @@ class NiestandardowyPrzycisk extends Button {
         }
         
     }    
-};
+}
 
+/**
+ * Klasa odpowiedzialna za obsluge wszystkich wydarzen w aplikacji.
+ */
 class KontrolerAplikacji {
 
     // zmienne pomocnicze dla przyciskow
@@ -249,18 +284,25 @@ class KontrolerAplikacji {
     private TrybyMyszki aktualnyTrybMyszki = TrybyMyszki.KURSOR;
 
     // zmienne pomocniczne dla tworzonych figur
-    private double startowaPozycjaMyszkiX;
-    private double startowaPozycjaMyszkiY;
+    private double startowaWspolrzednaX;
+    private double startowaWspolrzednaY;
     private Polygon tworzonyWielokat;
     private Circle tworzoneKolo;
 
     // zmienne pomocniczne dla wybierania i przesuwania ksztaltow
     private Polygon wybranyWielokat = null;
     private Circle wybraneKolo = null;
-    private Double startowaPozycjaPrzesuwaniaX;
-    private Double startowaPozycjaPrzesuwaniaY;
+    private Double wspolrzednaXPrzesuwanejFigury;
+    private Double wspolrzednaYPrzesuwanejFigury;
 
-    // konstruktor
+    /**
+     * Funkcja odpowiedzialna za przypisanie zmiennym powstalych w aplikacji przyciskow.
+     * 
+     * @param przyciskKursora_ Przycisk odpowiedzialny za zmiane trybu myszki na kursor.
+     * @param przyciskProstokata_ Przycisk odpowiedzialny za zmiane trybu myszki na tworzenie prostokata.
+     * @param przyciskKola_ Przycisk odpowiedzialny za zmiane trybu myszki na tworzenie kola.
+     * @param przyciskTrojkata_ Przycisk odpowiedzialny za zmiane trybu myszki na tworzenie trojkata.
+     */
     public void przekazPrzyciski(NiestandardowyPrzycisk przyciskKursora_,
             NiestandardowyPrzycisk przyciskProstokata_,
             NiestandardowyPrzycisk przyciskKola_,
@@ -271,7 +313,11 @@ class KontrolerAplikacji {
         przyciskTrojkata = przyciskTrojkata_;
     }
 
-    // usuniecie zaznaczenia z wybranej wczesniej figury
+    /**
+     * Funkcja odpowiedzialna za obsluge usuniecia zaznaczenia z wybranej przez uzytkownika wczesniej figury.
+     * 
+     * @param event Wydarzenie wywolane przez nacisniecie przycisku myszy.
+     */
     public void usunZaznaczenie(MouseEvent event) {
         if(wybranyWielokat != null) {
             wybranyWielokat.setStroke(null);
@@ -283,7 +329,9 @@ class KontrolerAplikacji {
         }
     }
 
-    // powrotne uruchomienie poprzedniego przycisku po utworzeniu figury
+    /**
+     * Funkcja odpowiedzialna za powrotne uruchomienie wylaczonego przycisku po utworzeniu przez uzytkownika nowej figury.
+     */
     public void uruchomPoprzedniPrzycisk() {
         switch(aktualnyTrybMyszki) {
             case KURSOR:
@@ -301,7 +349,13 @@ class KontrolerAplikacji {
         }
     }
 
-    // zmiana trybu myszki na wybrana z przycisku figure
+    /**
+     * Funkcja odpowiadajac za zmiane trybu myszy po nacisnieciu jednego z przyciskow wyboru figury.
+     * 
+     * @see KontrolerAplikacji#uruchomPoprzedniPrzycisk
+     * @param event Wydarzenie wywolane przez nacisniecie przycisku myszy.
+     * @param figura Ciag znakow jednoznacznie wyznaczajacy nacisniety przycisk wyboru figury.
+     */
     public void zmienTrybMyszki(MouseEvent event, String figura) {
         uruchomPoprzedniPrzycisk();
         switch(figura) {
@@ -326,36 +380,42 @@ class KontrolerAplikacji {
         }
     }
 
+    /**
+     * Funkcja odpowiadajaca za obsluge nacisniecia mysza na obszar roboczy w celu utworzenia nowej figury.
+     * 
+     * @param event Wydarzenie wywolane przez nacisniecie przycisku myszy.
+     * @param przestrzenRobocza Przestrzen w ktorej uzytkownik tworzy figury.
+     */
     public void nacisnietoMyszkaNaPrzestrzenRobocza(MouseEvent event, Pane przestrzenRobocza) {
         if(event.isPrimaryButtonDown()) {                
-            startowaPozycjaMyszkiX = event.getX();
-            startowaPozycjaMyszkiY = event.getY();
+            startowaWspolrzednaX = event.getX();
+            startowaWspolrzednaY = event.getY();
             switch(aktualnyTrybMyszki) {
                 case PROSTOKAT: {
                     tworzonyWielokat = new Polygon();
                     przestrzenRobocza.getChildren().add(tworzonyWielokat);
                     tworzonyWielokat.getPoints().addAll(new Double[] {
-                        startowaPozycjaMyszkiX, startowaPozycjaMyszkiY,
-                        startowaPozycjaMyszkiX, startowaPozycjaMyszkiY,
-                        startowaPozycjaMyszkiX, startowaPozycjaMyszkiY,
-                        startowaPozycjaMyszkiX, startowaPozycjaMyszkiY
+                        startowaWspolrzednaX, startowaWspolrzednaY,
+                        startowaWspolrzednaX, startowaWspolrzednaY,
+                        startowaWspolrzednaX, startowaWspolrzednaY,
+                        startowaWspolrzednaX, startowaWspolrzednaY
                     });
                     break;
                 }
                 case KOLO: {
                     tworzoneKolo = new Circle();
                     przestrzenRobocza.getChildren().add(tworzoneKolo);
-                    tworzoneKolo.setCenterX(startowaPozycjaMyszkiX);
-                    tworzoneKolo.setCenterY(startowaPozycjaMyszkiY);
+                    tworzoneKolo.setCenterX(startowaWspolrzednaX);
+                    tworzoneKolo.setCenterY(startowaWspolrzednaY);
                     break;
                 }
                 case TROJKAT: {
                     tworzonyWielokat = new Polygon();
                     przestrzenRobocza.getChildren().add(tworzonyWielokat);
                     tworzonyWielokat.getPoints().addAll(new Double[] {
-                        startowaPozycjaMyszkiX, startowaPozycjaMyszkiY,
-                        startowaPozycjaMyszkiX, startowaPozycjaMyszkiY,
-                        startowaPozycjaMyszkiX, startowaPozycjaMyszkiY
+                        startowaWspolrzednaX, startowaWspolrzednaY,
+                        startowaWspolrzednaX, startowaWspolrzednaY,
+                        startowaWspolrzednaX, startowaWspolrzednaY
                     });
                     break;
                 }
@@ -365,7 +425,11 @@ class KontrolerAplikacji {
         }
     }
 
-    // obsluga przesuwania myszki przy tworzeniu nowej figury
+    /**
+     * Funkcja odpowiadajaca za obsluge przesuwania myszki w trakcie tworzenia figury.
+     * 
+     * @param event Wydarzenie wywolane przez przesuwanie myszy w trakcie trzymania przycisku.
+     */
     public void przesunietoMyszkeNaPrzestrzeniRoboczej(MouseEvent event) {
         if(event.isPrimaryButtonDown()) {
             switch(aktualnyTrybMyszki) {
@@ -381,9 +445,12 @@ class KontrolerAplikacji {
                     break;
                 }
                 case KOLO: {
-                    double wiekszaWartosc = Math.abs(event.getX() - startowaPozycjaMyszkiX) >=
-                    Math.abs(event.getY() - startowaPozycjaMyszkiY) ?
-                    Math.abs(event.getX() - startowaPozycjaMyszkiX) : Math.abs(event.getY() - startowaPozycjaMyszkiY);
+                    double wiekszaWartosc = Math.abs(event.getX() - startowaWspolrzednaX) >=
+                        Math.abs(event.getY() - startowaWspolrzednaY) ?
+                            Math.abs(event.getX() - startowaWspolrzednaX) : 
+                                Math.abs(event.getY() - startowaWspolrzednaY);
+
+                    // zmiana promienia kola
                     tworzoneKolo.setRadius(wiekszaWartosc);
                     break;
                 }
@@ -391,7 +458,7 @@ class KontrolerAplikacji {
                     ObservableList<Double> wspolrzedneTrojkata = tworzonyWielokat.getPoints();
                     // zmiana wspolrzednych rogow trojkata
                     wspolrzedneTrojkata.set(1, event.getY());
-                    wspolrzedneTrojkata.set(2, (startowaPozycjaMyszkiX + event.getX()) / 2);
+                    wspolrzedneTrojkata.set(2, (startowaWspolrzednaX + event.getX()) / 2);
                     wspolrzedneTrojkata.set(4, event.getX());
                     wspolrzedneTrojkata.set(5, event.getY());
                     break;
@@ -402,7 +469,16 @@ class KontrolerAplikacji {
         }
     }
 
-    // obsluga wyczyszczenia zmiennych po utworzeniu nowej figury
+    /**
+     * Funkcja odpowiadajaca za obsluge usuniecia wartosci zmiennych po utworzeniu figury oraz 
+     * dodanie obslugi wydarzen do nowej figury.
+     * 
+     * @see KontrolerAplikacji#wybranoFigure
+     * @see KontrolerAplikacji#przesunietoFigure
+     * @see KontrolerAplikacji#uzytoScrollaNaFigurze
+     * @see KontrolerAplikacji#uruchomPoprzedniPrzycisk
+     * @param event Wydarzenie wywolane przez puszczenie przycisku myszy.
+     */
     public void puszczonoPrzyciskNaPrzestrzeniRoboczej(MouseEvent event) {
         switch(aktualnyTrybMyszki) {
             case KURSOR: {
@@ -426,7 +502,8 @@ class KontrolerAplikacji {
                 tworzonyWielokat.setOnMousePressed(mouseEvent -> this.wybranoFigure(mouseEvent));
                 
                 // dodanie funkcji przy przesunieciu figury
-                tworzonyWielokat.setOnMouseDragged(mouseEvent -> this.przesunietoFigure(mouseEvent));
+                tworzonyWielokat.setOnMouseDragged(mouseEvent -> 
+                    this.przesunietoFigure(mouseEvent));
 
                 // dodanie funkcji przy uzywaniu srolla na figure
                 tworzonyWielokat.setOnScroll(mouseEvent -> this.uzytoScrollaNaFigurze(mouseEvent));
@@ -441,11 +518,15 @@ class KontrolerAplikacji {
         aktualnyTrybMyszki = TrybyMyszki.KURSOR;
     }
 
-    // obsluga wyboru jednej z utworzonych figur
+    /**
+     * Funkcja odpowiedzialna za obsluge wyboru jednej z utworzonych figur na przestrzeni roboczej.
+     * 
+     * @param event Wydarzenie wywolane przez klikniecie myszy.
+     */
     public void wybranoFigure(MouseEvent event) {
         if(aktualnyTrybMyszki == TrybyMyszki.KURSOR && event.isPrimaryButtonDown()) {
-            startowaPozycjaPrzesuwaniaX = event.getSceneX();
-            startowaPozycjaPrzesuwaniaY = event.getSceneY();
+            wspolrzednaXPrzesuwanejFigury = event.getSceneX();
+            wspolrzednaYPrzesuwanejFigury = event.getSceneY();
             if(event.getTarget() instanceof Polygon) {
                 wybranyWielokat = (Polygon)event.getTarget();
             
@@ -467,14 +548,18 @@ class KontrolerAplikacji {
         }
     } 
 
-    // obsluga przesuwania wybranej figury
+    /**
+     * Funkcja odpowiedzialna za obsluge przesuwania wybranej figury.
+     * 
+     * @param event Wydarzenie wywolane przez klikniecie myszy.
+     */
     public void przesunietoFigure(MouseEvent event) {
         if(aktualnyTrybMyszki == TrybyMyszki.KURSOR && event.isPrimaryButtonDown()) {
             // obliczenie przesuniecia myszki i zaktualizowanie nowej pozycji do kolejnych obliczen
-            double roznicaX = event.getSceneX() - startowaPozycjaPrzesuwaniaX;
-            double roznicaY = event.getSceneY() - startowaPozycjaPrzesuwaniaY;
-            startowaPozycjaPrzesuwaniaX = event.getSceneX();
-            startowaPozycjaPrzesuwaniaY = event.getSceneY();
+            double roznicaX = event.getSceneX() - wspolrzednaXPrzesuwanejFigury;
+            double roznicaY = event.getSceneY() - wspolrzednaYPrzesuwanejFigury;
+            wspolrzednaXPrzesuwanejFigury = event.getSceneX();
+            wspolrzednaYPrzesuwanejFigury = event.getSceneY();
 
             // wybor odpowiedniej figury do przesuniecia
             if(wybraneKolo != null) {
@@ -491,49 +576,83 @@ class KontrolerAplikacji {
         }
     }
 
-    // funkcja odpowiedzialna za powiekszenie wybranego trojkata
-    public void powiekszTrojkat(double wartosc, ObservableList<Double> listaWspolrzednych) {
+    /**
+     * Funkcja odpowiedzialna za powiekszenie lub pomniejszenie wybranego przez uzytkownika trojkata.
+     * 
+     * @param wartosc Wartosc o jaka zostanie powiekszony lub pomniejszony trojkat.
+     * @param listaWspolrzednych Lista wspolrzednych wierzcholkow trojkata.
+     */
+    public void zmienRozmiarTrojkata(double wartosc, ObservableList<Double> listaWspolrzednych) {
         // okreslenie w ktora strone zbudowana zostala figura
-        int wspolczynnikRozrostuFiguryY = listaWspolrzednych.get(1) > listaWspolrzednych.get(3) ? 1 : -1;
-        int wspolczynnikRozrostuFiguryX = listaWspolrzednych.get(0) < listaWspolrzednych.get(4) ? 1 : -1;
+        int wspolczynnikRozrostuFiguryY = listaWspolrzednych.get(1) > 
+            listaWspolrzednych.get(3) ? 1 : -1;
+        int wspolczynnikRozrostuFiguryX = listaWspolrzednych.get(0) < 
+            listaWspolrzednych.get(4) ? 1 : -1;
 
         // przesuniecie wspolrzednych
-        listaWspolrzednych.set(0, listaWspolrzednych.get(0) + (wartosc * wspolczynnikRozrostuFiguryX * 0.5));
-        listaWspolrzednych.set(1, listaWspolrzednych.get(1) + (wartosc * wspolczynnikRozrostuFiguryY * -0.5));                                        
-        listaWspolrzednych.set(3, listaWspolrzednych.get(3) + (wartosc * wspolczynnikRozrostuFiguryY * 0.5));
-        listaWspolrzednych.set(4, listaWspolrzednych.get(4) + (wartosc * wspolczynnikRozrostuFiguryX * -0.5));
-        listaWspolrzednych.set(5, listaWspolrzednych.get(5) + (wartosc * wspolczynnikRozrostuFiguryY * -0.5));
+        listaWspolrzednych.set(0, listaWspolrzednych.get(0) + 
+            (wartosc * wspolczynnikRozrostuFiguryX * 0.5));
+        listaWspolrzednych.set(1, listaWspolrzednych.get(1) + 
+            (wartosc * wspolczynnikRozrostuFiguryY * -0.5));                                        
+        listaWspolrzednych.set(3, listaWspolrzednych.get(3) + 
+            (wartosc * wspolczynnikRozrostuFiguryY * 0.5));
+        listaWspolrzednych.set(4, listaWspolrzednych.get(4) + 
+            (wartosc * wspolczynnikRozrostuFiguryX * -0.5));
+        listaWspolrzednych.set(5, listaWspolrzednych.get(5) + 
+            (wartosc * wspolczynnikRozrostuFiguryY * -0.5));
     }
 
-    // funkcja odpowiedzialna za powiekszenie wybranego prostokata
-    public void powiekszProstokat(double wartosc, ObservableList<Double> listaWspolrzednych) {
+    /** 
+     * Funkcja odpowiedzialna za powiekszenie lub pomniejszenie wybranego przez uzytkownika prostokata.
+     * 
+     * @param wartosc Wartosc o jaka zostanie powiekszony lub pomniejszony prostokat.
+     * @param listaWspolrzednych Lista wspolrzednych wierzcholkow prostokata.
+     */
+    public void zmienRozmiarProstokata(double wartosc, ObservableList<Double> listaWspolrzednych) {
         // okreslenie w ktora strone zbudowana zostala figura
-        int wspolczynnikRozrostuFiguryY = listaWspolrzednych.get(1) < listaWspolrzednych.get(7) ? 1 : -1;
-        int wspolczynnikRozrostuFiguryX = listaWspolrzednych.get(0) < listaWspolrzednych.get(2) ? 1 : -1;
+        int wspolczynnikRozrostuFiguryY = 
+            listaWspolrzednych.get(1) < listaWspolrzednych.get(7) ? 1 : -1;
+        int wspolczynnikRozrostuFiguryX = 
+            listaWspolrzednych.get(0) <  listaWspolrzednych.get(2) ? 1 : -1;
 
         // przesuniecie wspolrzednych
-        listaWspolrzednych.set(0, listaWspolrzednych.get(0) + (wartosc * wspolczynnikRozrostuFiguryX * 0.5));
-        listaWspolrzednych.set(1, listaWspolrzednych.get(1) + (wartosc * wspolczynnikRozrostuFiguryY * 0.5));
-        listaWspolrzednych.set(2, listaWspolrzednych.get(2) + (wartosc * wspolczynnikRozrostuFiguryX * -0.5));
-        listaWspolrzednych.set(3, listaWspolrzednych.get(3) + (wartosc * wspolczynnikRozrostuFiguryY * 0.5));
-        listaWspolrzednych.set(4, listaWspolrzednych.get(4) + (wartosc * wspolczynnikRozrostuFiguryX * -0.5));
-        listaWspolrzednych.set(5, listaWspolrzednych.get(5) + (wartosc * wspolczynnikRozrostuFiguryY * -0.5));
-        listaWspolrzednych.set(6, listaWspolrzednych.get(6) + (wartosc * wspolczynnikRozrostuFiguryX *0.5));
-        listaWspolrzednych.set(7, listaWspolrzednych.get(7) + (wartosc * wspolczynnikRozrostuFiguryY * -0.5));
+        listaWspolrzednych.set(0, listaWspolrzednych.get(0) + 
+            (wartosc * wspolczynnikRozrostuFiguryX * 0.5));
+        listaWspolrzednych.set(1, listaWspolrzednych.get(1) + 
+            (wartosc * wspolczynnikRozrostuFiguryY * 0.5));
+        listaWspolrzednych.set(2, listaWspolrzednych.get(2) + 
+            (wartosc * wspolczynnikRozrostuFiguryX * -0.5));
+        listaWspolrzednych.set(3, listaWspolrzednych.get(3) + 
+            (wartosc * wspolczynnikRozrostuFiguryY * 0.5));
+        listaWspolrzednych.set(4, listaWspolrzednych.get(4) + 
+            (wartosc * wspolczynnikRozrostuFiguryX * -0.5));
+        listaWspolrzednych.set(5, listaWspolrzednych.get(5) + 
+            (wartosc * wspolczynnikRozrostuFiguryY * -0.5));
+        listaWspolrzednych.set(6, listaWspolrzednych.get(6) + 
+            (wartosc * wspolczynnikRozrostuFiguryX *0.5));
+        listaWspolrzednych.set(7, listaWspolrzednych.get(7) + 
+            (wartosc * wspolczynnikRozrostuFiguryY * -0.5));
     }
 
-    // obsluga powiekszania i pomniejszania figury za pomoca scroll'a
+    /**
+     * Funkcja obsługująca powiekszanie i pomniejszanie figur za pomocą scroll'a.
+     * 
+     * @see KontrolerAplikacji#zmienRozmiarProstokata
+     * @see KontrolerAplikacji#zmienRozmiarTrojkata
+     * @param scrollEvent Wydarzenie wywolane przez uzycie scroll'a.
+     */
     public void uzytoScrollaNaFigurze(ScrollEvent scrollEvent) {
         if(aktualnyTrybMyszki == TrybyMyszki.KURSOR) {
-            if(wybranyWielokat == scrollEvent.getTarget() && wybranyWielokat.getPoints().size() == 8) {
-                powiekszProstokat(scrollEvent.getDeltaY(), wybranyWielokat.getPoints());
-                
+            if(wybranyWielokat == scrollEvent.getTarget() && 
+              wybranyWielokat.getPoints().size() == 8) {
+                this.zmienRozmiarProstokata(scrollEvent.getDeltaY(), wybranyWielokat.getPoints());
             }
             if(wybraneKolo == scrollEvent.getTarget()) {
                 wybraneKolo.setRadius(wybraneKolo.getRadius() + (scrollEvent.getDeltaY() * -0.5));
             }
-            if(wybranyWielokat == scrollEvent.getTarget() && wybranyWielokat.getPoints().size() == 6) {
-                this.powiekszTrojkat(scrollEvent.getDeltaY(), wybranyWielokat.getPoints());
+            if(wybranyWielokat == scrollEvent.getTarget() &&
+              wybranyWielokat.getPoints().size() == 6) {
+                this.zmienRozmiarTrojkata(scrollEvent.getDeltaY(), wybranyWielokat.getPoints());
             }
         }
     }
