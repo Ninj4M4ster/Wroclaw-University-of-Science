@@ -721,7 +721,7 @@ class KontrolerAplikacji {
     }
 
     /**
-     * Funkcja obsługująca powiekszanie i pomniejszanie figur za pomocą scroll'a.
+     * Funkcja obslugujaca powiekszanie i pomniejszanie figur za pomoca scroll'a.
      * 
      * @see KontrolerAplikacji#srodekCiezkosciWybranejFigury
      * @see KontrolerAplikacji#znajdzWspolczynnikUstawieniaFigury
