@@ -5,7 +5,7 @@ This repository contains my work done during studies at Wroclaw University of Sc
 ### Programming languages in certain directories
   1. sem1:  
     a. C,  
-    b. cmake,  
+    b. Makefile,  
   2. sem2:  
     a. C++,  
     b. Java:  
