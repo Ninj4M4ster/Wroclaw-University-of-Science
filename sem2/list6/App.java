@@ -53,13 +53,13 @@ public class App extends Application{
     /**
      * Metoda uruchamiana przy zamykaniu okna. 
      * 
-     * @see KontrolerAplikacji#zatrzymajWatki
+     * @see KontrolerAplikacji#zakonczWatki
      * @throws Exception Blad przy zamykaniu okna
      */
     @Override
     public void stop() throws Exception {
         if(kontroler != null) {
-            kontroler.zatrzymajWatki();
+            kontroler.zakonczWatki();
         }
         super.stop();
     }

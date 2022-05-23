@@ -20,7 +20,9 @@ class PoleAplikacji extends Rectangle implements Runnable {
 
     private Thread watek;
 
+    // zmienne sluzace do kontroli watku
     private boolean aktywny;
+    private boolean klikniety = false;
 
     // zmienna przechowujaca element torusu odpowiadajacy danemu polu
     private ElementListy element_w_liscie;
@@ -32,6 +34,7 @@ class PoleAplikacji extends Rectangle implements Runnable {
      * Konstruktor odpowiedzialny za utworzenie pola aplikacji w odpowiednim miejscu 
      * oraz zmiane pozycji i rozmiaru przy rozszerzaniu okna.
      * 
+     * @see PoleAplikacji#zatrzymajWatek
      * @param numer_wiersza Indeks wiersza danego pola.
      * @param numer_kolumny Indeks kolumny danego pola.
      * @param parametry Parametry wprowadzone przy uruchamianiu aplikacji.
@@ -74,8 +77,7 @@ class PoleAplikacji extends Rectangle implements Runnable {
             }
         });
 
-        this.watek = new Thread(this, this.numer_wiersza + " - " + this.numer_kolumny);
-        this.watek.setDaemon(true);
+        this.setOnMousePressed(event -> this.zatrzymajWatek());
     }
 
     /**
@@ -90,9 +92,39 @@ class PoleAplikacji extends Rectangle implements Runnable {
     /**
      * Metoda odpowiedzialna za zatrzymanie dzialania watku.
      */
-    public void zatrzymaj() {
+    public void zakonczWatek() {
         this.aktywny = false;
     }
+
+
+    /**
+     * Metoda odpowiedzialna za zakonczenie pracy watku.
+     * 
+     * @see PoleAplikacji#start
+     * @see PoleAplikacji#zakonczWatek
+     * @param event Wydarzenie klikniecia myszy na pole aplikacji.
+     */
+    private void zatrzymajWatek() {
+        if(this.watek == null) {
+            this.klikniety = false;
+            this.start();
+        }
+        else {
+            this.zakonczWatek();
+            this.klikniety = true;
+            this.watek = null;
+        }
+    }
+
+    /**
+     * Metoda zwracajaca prawde, jesli pole bylo klikniete i jest nieaktywne, lub falsz w przeciwnym przypadku.
+     * 
+     * @return Czy pole bylo klikniete?
+     */
+    public boolean czyKlikniety() {
+        return this.klikniety;
+    }
+
 
     /**
      * Akcja wykonywana przez watek. Na podstawie wygenerowanego prawdopodobienstwa 
@@ -112,18 +144,20 @@ class PoleAplikacji extends Rectangle implements Runnable {
                 double wygenerowane_prawdopodobienstwo = kontroler_watkow.generujPrawdopodobienstwo();
                 Color nowy_kolor;
                 if(wygenerowane_prawdopodobienstwo <= this.prawdopodobienstwo) {
-                    System.out.println(this.numer_wiersza + " - " + this.numer_kolumny + ", zmieniam kolor na losowy");
                     nowy_kolor = kontroler_watkow.generujKolor();
                 } else {
-                    System.out.println(this.numer_wiersza + " - " + this.numer_kolumny + ", obliczam srednia kolorow");
                     nowy_kolor = this.kontroler_watkow.obliczSredniaKolorow(this.element_w_liscie);
                 }
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        setFill(nowy_kolor);
-                    }
-                });
+                if(this.klikniety == false) {
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            if(nowy_kolor != null)
+                                setFill(nowy_kolor);
+                            
+                        }
+                    });
+                }
             } catch(Exception e) {
                 System.out.println(e.getMessage());
             }
@@ -135,6 +169,8 @@ class PoleAplikacji extends Rectangle implements Runnable {
      * Metoda odpowiedzialna za uruchomienie watku.
      */
     public void start() {
+        this.watek = new Thread(this, this.numer_wiersza + " - " + this.numer_kolumny);
+        this.watek.setDaemon(true);
         this.watek.start();
     }
 

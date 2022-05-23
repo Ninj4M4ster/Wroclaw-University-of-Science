@@ -51,6 +51,7 @@ class KontrolerWatkow {
      * @see ElementListy#nastepnyPionowo
      * @see ElementListy#poprzedniPoziomo
      * @see ElementListy#poprzedniPionowo
+     * @see PoleAplikacji#czyKlikniety
      * @param element Pole, dla ktorego obliczany jest nowy kolor.
      * @return Sredni kolor obliczony z pol sasiadujacych z wybranym polem.
      */
@@ -58,17 +59,25 @@ class KontrolerWatkow {
         double wartosc_red = 0;
         double wartosc_blue = 0;
         double wartosc_green = 0;
+        int ilosc_aktywnych_sasiadow = 0;
         ElementListy[] elementy = {element.nastepnyPoziomo(), element.nastepnyPionowo(), 
             element.poprzedniPoziomo(), element.poprzedniPionowo()};
         // iteracja po kazdym sasiedzie wybranego pola
         for(ElementListy sasiad : elementy) {
             synchronized(sasiad) {
-                Color aktualny_kolor = (Color)sasiad.podajWatek().getFill();
-                wartosc_red += aktualny_kolor.getRed();
-                wartosc_blue += aktualny_kolor.getBlue();
-                wartosc_green += aktualny_kolor.getGreen();
+                if(sasiad.podajWatek().czyKlikniety() == false) {
+                    Color aktualny_kolor = (Color)sasiad.podajWatek().getFill();
+                    wartosc_red += aktualny_kolor.getRed();
+                    wartosc_blue += aktualny_kolor.getBlue();
+                    wartosc_green += aktualny_kolor.getGreen();
+                    ilosc_aktywnych_sasiadow += 1;
+                }
             }
         }
-        return Color.color(wartosc_red/4, wartosc_green/4, wartosc_blue/4);
+        if(ilosc_aktywnych_sasiadow == 0)
+            return null;
+        return Color.color(wartosc_red / ilosc_aktywnych_sasiadow, 
+                            wartosc_green / ilosc_aktywnych_sasiadow, 
+                            wartosc_blue / ilosc_aktywnych_sasiadow);
     }
 }

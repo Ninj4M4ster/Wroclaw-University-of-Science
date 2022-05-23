@@ -172,14 +172,15 @@ class KontrolerAplikacji {
      * @see ElementListy#podajWatek
      * @see ElementListy#nastepnyPoziomo
      * @see ElementListy#nastepnyPionowo
+     * @see PoleAplikacji#zakonczWatek
      */
-    public void zatrzymajWatki() {
+    public void zakonczWatki() {
         ElementListy glowa = lista_watkow.zwrocGlowe();
         ElementListy zmienna_pomocnicza_pionowa = glowa;
         do {
             ElementListy zmienna_pomocnicza_pozioma = zmienna_pomocnicza_pionowa;
             do {
-                zmienna_pomocnicza_pozioma.podajWatek().zatrzymaj();
+                zmienna_pomocnicza_pozioma.podajWatek().zakonczWatek();
                 zmienna_pomocnicza_pozioma = zmienna_pomocnicza_pozioma.nastepnyPoziomo();
             } while(zmienna_pomocnicza_pozioma != zmienna_pomocnicza_pionowa);
             zmienna_pomocnicza_pionowa = zmienna_pomocnicza_pionowa.nastepnyPionowo();
