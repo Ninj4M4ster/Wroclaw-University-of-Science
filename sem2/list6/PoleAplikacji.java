@@ -90,7 +90,7 @@ class PoleAplikacji extends Rectangle implements Runnable {
     }
 
     /**
-     * Metoda odpowiedzialna za zatrzymanie dzialania watku.
+     * Metoda odpowiedzialna za zakonczenie pracy watku.
      */
     public void zakonczWatek() {
         this.aktywny = false;
@@ -98,7 +98,7 @@ class PoleAplikacji extends Rectangle implements Runnable {
 
 
     /**
-     * Metoda odpowiedzialna za zakonczenie pracy watku.
+     * Metoda odpowiedzialna za obsluge zatrzymywania oraz uruchamiania watku po kliknieciu na pole.
      * 
      * @see PoleAplikacji#start
      * @see PoleAplikacji#zakonczWatek
