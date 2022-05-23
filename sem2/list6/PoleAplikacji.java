@@ -102,7 +102,6 @@ class PoleAplikacji extends Rectangle implements Runnable {
      * 
      * @see PoleAplikacji#start
      * @see PoleAplikacji#zakonczWatek
-     * @param event Wydarzenie klikniecia myszy na pole aplikacji.
      */
     private void zatrzymajWatek() {
         if(this.watek == null) {

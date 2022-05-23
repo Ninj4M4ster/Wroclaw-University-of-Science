@@ -22,8 +22,8 @@ class ListaDwukierunkowa {
      * @see ElementListy#poprzedniPoziomo
      * @see ElementListy#nastepnyPionowo
      * @see ElementListy#poprzedniPionowo
-     * @param nowy_obiekt 
-     * @param poziomo
+     * @param nowy_obiekt Pole aplikacji.
+     * @param poziomo Czy nowy obiekt ma zostac dodany poziomo?
      */
     public void dodaj(PoleAplikacji nowy_obiekt, boolean poziomo) {
         // pierwszy element listy

@@ -35,6 +35,7 @@ class KontrolerAplikacji {
      * @param parametry Parametry podane przez uzytkownika przy uruchamianiu.
      * @param scena Scena aplikacji.
      * @param root Korzen elementow aplikacji.
+     * @param aplikacja GUI aplikacji.
      */
     public KontrolerAplikacji(List<String> parametry, Scene scena, Group root, Application aplikacja) {
         this.scena = scena;
