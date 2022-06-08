@@ -89,7 +89,7 @@ void DrzewoBinarne::wstawWezel(struct wezel_drzewa &nowy_wezel) {
     }    
     struct wezel_drzewa *wezel_tymczasowy = this->korzen;
     while(true) {
-        // jesli pod polem wezla binarnego z wybranym typem nie znajduje sie wartosc, wezly nalezy scalic
+        // jesli pod polem wezla drzewa binarnego z wybranym typem nie znajduje sie wartosc, wezly nalezy scalic
         if(czyScalic(wezel_tymczasowy, nowy_wezel)) {
             scalWezly(wezel_tymczasowy, nowy_wezel);
             return;
@@ -168,7 +168,7 @@ bool DrzewoBinarne::czyWezelMniejszy(struct wezel_drzewa nowy_wezel, struct weze
         return nowy_wezel.wartosc_double < wezel_w_drzewie->wartosc_double;
     if(nowy_wezel.wartosc_string.empty() == false)
         return nowy_wezel.wartosc_string.compare(wezel_w_drzewie->wartosc_string) == -1 ? true : false;
-    return true;
+    return false;
 }
 
 /**
@@ -186,7 +186,7 @@ bool DrzewoBinarne::czyWezelRowny(struct wezel_drzewa nowy_wezel, struct wezel_d
         return nowy_wezel.wartosc_double == wezel_w_drzewie.wartosc_double;
     if(nowy_wezel.wartosc_string.empty() == false)
         return nowy_wezel.wartosc_string.compare(wezel_w_drzewie.wartosc_string) == 0 ? true : false;
-    return true;
+    return false;
 }
 
 /**
@@ -436,7 +436,8 @@ struct wezel_drzewa* DrzewoBinarne::szukajRightOrder(struct wezel_drzewa *aktual
         return znaleziony_wezel;
     if(aktualny_wezel != nullptr) {
         znaleziony_wezel = szukajRightOrder(aktualny_wezel->prawy, szukany_wezel, znaleziony_wezel);
-        znaleziony_wezel = szukajRightOrder(aktualny_wezel->lewy, szukany_wezel, znaleziony_wezel);
+        if(znaleziony_wezel != nullptr)
+            znaleziony_wezel = szukajRightOrder(aktualny_wezel->lewy, szukany_wezel, znaleziony_wezel);
         if(czyWezelRowny(szukany_wezel, *aktualny_wezel))
             znaleziony_wezel = aktualny_wezel;
     } 
@@ -460,7 +461,7 @@ void DrzewoBinarne::usunWezel(struct wezel_drzewa &wezel) {
         return;
     }
     usunWartoscWezla(szukany_wezel, wezel);
-    // sprawdzenie czy wezel nie jest pusty i nie ma pod soba innych wezlow
+    // sprawdzenie czy wezel jest pusty i nie ma pod soba innych wezlow
     if(szukany_wezel->lewy == nullptr && szukany_wezel->prawy == nullptr && czyWezelPusty(szukany_wezel)) {
         // sprawdzenie czy wezel nie jest korzeniem
         if(szukany_wezel->ojciec == nullptr) {
