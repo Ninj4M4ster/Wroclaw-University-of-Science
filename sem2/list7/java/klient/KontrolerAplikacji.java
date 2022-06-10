@@ -319,7 +319,7 @@ class KontrolerAplikacji {
                 else if(wiadomosc.equals("NIEPRAWIDLOWY_FORMAT"))
                     kontroler_wygladu.uruchomAnimacjePowiadomienia("Wprowadzono dane o nieprawidlowym formacie.");
                 else if(wiadomosc.equals("BRAK_WEZLA"))
-                    kontroler_wygladu.uruchomAnimacjePowiadomienia("Drzewo nie posiada zadnego wezla");
+                    kontroler_wygladu.uruchomAnimacjePowiadomienia("Drzewo nie posiada wezla z podana wartoscia");
                 else
                     kontroler_wygladu.uruchomAnimacjePowiadomienia(wiadomosc);
             } else {

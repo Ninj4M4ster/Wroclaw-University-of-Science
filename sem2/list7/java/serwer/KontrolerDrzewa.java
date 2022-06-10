@@ -23,6 +23,8 @@ class KontrolerDrzewa {
      * @return Status wykonanego polecenia lub sformatowany napis zawierajacy wszystkie wartosci w okreslonym typie drzewa.
      */
     public String przekazSformatowanyNapis(String wiadomosc) {
+        if(wiadomosc.split(" ").length > 3)
+            return "BLAD";
         String[] rozdzielone_napisy = wiadomosc.split(" ");
         int typ_drzewa = Integer.parseInt(rozdzielone_napisy[0]);
         int polecenie = Integer.parseInt(rozdzielone_napisy[1]);
@@ -61,6 +63,8 @@ class KontrolerDrzewa {
                                 return "BLAD";
                     } catch(NumberFormatException blad) {
                         return "NIEPRAWIDLOWY_FORMAT";
+                    } catch(NieprawidlowaWartosc blad) {
+                        return blad.getMessage();
                     }
                 } case DRZEWO_DOUBLE: {
                     try {
@@ -75,20 +79,25 @@ class KontrolerDrzewa {
                             return "BLAD";
                     } catch(NumberFormatException blad) {
                         return "NIEPRAWIDLOWY_FORMAT";
+                    } catch(NieprawidlowaWartosc blad) {
+                        return blad.getMessage();
                     }
                 } case DRZEWO_STRING: {
-                    boolean wynik;
-                    wartosc = wartosc.trim();
-                    // wartosc nie moze zawierac niektorych znakow potrzebnych potem do interpretowania napisu sluzacego do wyswietlania drzewa
-                    if(wartosc.contains("#/#") || wartosc.contains(" "))
-                        return "NIEPRAWIDLOWY_FORMAT";
-                    synchronized(this.drzewo) {
-                        wynik = this.drzewo.przekazWartosc(wartosc, polecenie);
+                    try {
+                        boolean wynik;
+                        // wartosc nie moze zawierac niektorych znakow potrzebnych potem do interpretowania napisu sluzacego do wyswietlania drzewa
+                        if(wartosc.contains("#/#"))
+                            return "NIEPRAWIDLOWY_FORMAT";
+                        synchronized(this.drzewo) {
+                            wynik = this.drzewo.przekazWartosc(wartosc, polecenie);
+                        }
+                        if(wynik)
+                            return "POWODZENIE";
+                        else
+                            return "BLAD";
+                    } catch(NieprawidlowaWartosc blad) {
+                        return blad.getMessage();
                     }
-                    if(wynik)
-                        return "POWODZENIE";
-                    else
-                        return "BLAD";
                 } default:
                     return "NIEPRAWIDLOWY_FORMAT";
             }

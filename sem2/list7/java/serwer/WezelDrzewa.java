@@ -1,11 +1,24 @@
 /**
  * Klasa reprezentujaca strukture pojedynczego wezla drzewa binarnego.
 */
-class WezelDrzewa {
-    public WezelDrzewa ojciec = null;
-    public WezelDrzewa lewy = null;
-    public WezelDrzewa prawy = null;
-    public Integer wartosc_int = null;
-    public Double wartosc_double = null;
-    public String wartosc_string = null;
+class WezelDrzewa<T> {
+    public WezelDrzewa ojciec;
+    public WezelDrzewa lewy;
+    public WezelDrzewa prawy;
+    public T wartosc;
+
+    public WezelDrzewa() {
+        this.ojciec = null;
+        this.lewy = null;
+        this.prawy = null;
+        this.wartosc = null;
+    }
+
+    public WezelDrzewa(WezelDrzewa<?> wezel) throws ClassCastException {
+        this.ojciec = wezel.ojciec;
+        this.lewy = wezel.lewy;
+        this.prawy = wezel.prawy;
+        this.wartosc = (T)wezel.wartosc;
+    }
+
 }
