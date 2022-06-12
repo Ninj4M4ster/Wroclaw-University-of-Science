@@ -426,11 +426,12 @@ class WygladAplikacji {
                 String[] rozdzielone_wiersze = sformatowane_drzewo.split("#/#");
                 int ilosc_wierszy = rozdzielone_wiersze.length;
                 String[][] wiersze = new String[ilosc_wierszy][];
-
                 for(int numer_wiersza = ilosc_wierszy - 1; numer_wiersza >= 0; numer_wiersza--) {
                     wiersze[numer_wiersza] = rozdzielone_wiersze[numer_wiersza].trim().split("\\s+");
-                    int ilosc_wartosci = wiersze[numer_wiersza].length;
+                }
 
+                for(int numer_wiersza = ilosc_wierszy - 1; numer_wiersza >= 0; numer_wiersza--) {
+                    int ilosc_wartosci = wiersze[numer_wiersza].length;
                     for(int numer_wartosci = 0; numer_wartosci < ilosc_wartosci; numer_wartosci++) {
                         // jesli wartosc jest poprawna, to tworzymy wezel w przestrzeni sluzacej do wyswietlania drzewa
                         if(wiersze[numer_wiersza][numer_wartosci] != null 

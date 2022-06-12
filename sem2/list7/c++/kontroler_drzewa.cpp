@@ -5,7 +5,9 @@
  * 
  */
 KontrolerDrzewa::KontrolerDrzewa() {
-    this->drzewo_binarne = new DrzewoBinarne;
+    this->drzewo_binarne_int = new DrzewoBinarne<int>;
+    this->drzewo_binarne_double = new DrzewoBinarne<double>;
+    this->drzewo_binarne_string = new DrzewoBinarne<std::string>;
 }
 
 /**
@@ -13,7 +15,9 @@ KontrolerDrzewa::KontrolerDrzewa() {
  * 
  */
 KontrolerDrzewa::~KontrolerDrzewa() {
-    delete this->drzewo_binarne;
+    delete this->drzewo_binarne_int;
+    delete this->drzewo_binarne_double;
+    delete this->drzewo_binarne_string;
 }
 
 /**
@@ -88,7 +92,7 @@ void KontrolerDrzewa::dodajNowyWezel() {
                 std::cin >> wprowadzana_wartosc;
                 try {
                     int wartosc = std::stoi(wprowadzana_wartosc);
-                    drzewo_binarne->utworzWezelDrzewaDoPrzekazania(wartosc, DODAWANIE_WEZLA);
+                    drzewo_binarne_int->utworzWezelDrzewaDoPrzekazania(wartosc, DODAWANIE_WEZLA);
                     std::cout << std::endl;
                     return;
                 } catch(const std::invalid_argument &e) {
@@ -102,7 +106,7 @@ void KontrolerDrzewa::dodajNowyWezel() {
                 std::cin >> wprowadzana_wartosc;
                 try {
                     double wartosc = std::stod(wprowadzana_wartosc);
-                    drzewo_binarne->utworzWezelDrzewaDoPrzekazania(wartosc, DODAWANIE_WEZLA);
+                    drzewo_binarne_double->utworzWezelDrzewaDoPrzekazania(wartosc, DODAWANIE_WEZLA);
                     std::cout << std::endl;
                     return;
                 } catch(const std::invalid_argument &e) {
@@ -115,7 +119,7 @@ void KontrolerDrzewa::dodajNowyWezel() {
                 std::cout << "Wprowadz wartosc: ";
                 std::cin >> wprowadzana_wartosc;
                 try {
-                    drzewo_binarne->utworzWezelDrzewaDoPrzekazania(wprowadzana_wartosc, DODAWANIE_WEZLA);
+                    drzewo_binarne_string->utworzWezelDrzewaDoPrzekazania(wprowadzana_wartosc, DODAWANIE_WEZLA);
                     std::cout << std::endl;
                     return;
                 } catch(const std::invalid_argument &e) {
@@ -128,7 +132,7 @@ void KontrolerDrzewa::dodajNowyWezel() {
                 return;
             } default: {
                 std::cout << "Dokonano nieprawidlowego wyboru.\n\n";
-                break;
+                return;
             }
         }
     }
@@ -158,7 +162,7 @@ void KontrolerDrzewa::usunWezel() {
                 std::cin >> wprowadzana_wartosc;
                 try {
                     int wartosc = std::stoi(wprowadzana_wartosc);
-                    drzewo_binarne->utworzWezelDrzewaDoPrzekazania(wartosc, USUWANIE_WEZLA);
+                    this->drzewo_binarne_int->utworzWezelDrzewaDoPrzekazania(wartosc, USUWANIE_WEZLA);
                     std::cout << std::endl;
                     return;
                 } catch(const std::invalid_argument &e) {
@@ -174,7 +178,7 @@ void KontrolerDrzewa::usunWezel() {
                 std::cin >> wprowadzana_wartosc;
                 try {
                     double wartosc = std::stod(wprowadzana_wartosc);
-                    drzewo_binarne->utworzWezelDrzewaDoPrzekazania(wartosc, USUWANIE_WEZLA);
+                    this->drzewo_binarne_double->utworzWezelDrzewaDoPrzekazania(wartosc, USUWANIE_WEZLA);
                     std::cout << std::endl;
                     return;
                 } catch(const std::invalid_argument &e) {
@@ -189,7 +193,7 @@ void KontrolerDrzewa::usunWezel() {
                 std::cout << "Wprowadz wartosc: ";
                 std::cin >> wprowadzana_wartosc;
                 try {
-                    drzewo_binarne->utworzWezelDrzewaDoPrzekazania(wprowadzana_wartosc, USUWANIE_WEZLA);
+                    this->drzewo_binarne_string->utworzWezelDrzewaDoPrzekazania(wprowadzana_wartosc, USUWANIE_WEZLA);
                     std::cout << std::endl;
                     return;
                 } catch(const std::invalid_argument &e) {
@@ -204,7 +208,7 @@ void KontrolerDrzewa::usunWezel() {
                 return;
             } default: {
                 std::cout << "Dokonano nieprawidlowego wyboru.\n\n";
-                break;
+                return;
             }
         }
     }
@@ -234,7 +238,7 @@ void KontrolerDrzewa::szukajWezel() {
                 std::cin >> wprowadzana_wartosc;
                 try {
                     int wartosc = std::stoi(wprowadzana_wartosc);
-                    drzewo_binarne->utworzWezelDrzewaDoPrzekazania(wartosc, SZUKANIE_WEZLA);
+                    this->drzewo_binarne_int->utworzWezelDrzewaDoPrzekazania(wartosc, SZUKANIE_WEZLA);
                     std::cout << std::endl;
                     return;
                 } catch(const std::invalid_argument &e) {
@@ -248,7 +252,7 @@ void KontrolerDrzewa::szukajWezel() {
                 std::cin >> wprowadzana_wartosc;
                 try {
                     double wartosc = std::stod(wprowadzana_wartosc);
-                    drzewo_binarne->utworzWezelDrzewaDoPrzekazania(wartosc, SZUKANIE_WEZLA);
+                    this->drzewo_binarne_double->utworzWezelDrzewaDoPrzekazania(wartosc, SZUKANIE_WEZLA);
                     std::cout << std::endl;
                     return;
                 } catch(const std::invalid_argument &e) {
@@ -261,7 +265,7 @@ void KontrolerDrzewa::szukajWezel() {
                 std::cout << "Wprowadz wartosc: ";
                 std::cin >> wprowadzana_wartosc;
                 try {
-                    drzewo_binarne->utworzWezelDrzewaDoPrzekazania(wprowadzana_wartosc, SZUKANIE_WEZLA);
+                    this->drzewo_binarne_string->utworzWezelDrzewaDoPrzekazania(wprowadzana_wartosc, SZUKANIE_WEZLA);
                     std::cout << std::endl;
                     return;
                 } catch(const std::invalid_argument &e) {
@@ -274,7 +278,7 @@ void KontrolerDrzewa::szukajWezel() {
                 return;
             } default: {
                 std::cout << "Dokonano nieprawidlowego wyboru.\n\n";
-                break;
+                return;
             }
         }
     }
@@ -300,7 +304,7 @@ void KontrolerDrzewa::wyswietlDrzewo() {
         switch(wybor) {
             case 0: {
                 try {
-                    drzewo_binarne->wyswietl(DRZEWO_INT);
+                    this->drzewo_binarne_int->wyswietl();
                     std::cout << std::endl;
                     return;
                 } catch(const std::invalid_argument &e) {
@@ -314,7 +318,7 @@ void KontrolerDrzewa::wyswietlDrzewo() {
                 break;
             } case 1: {
                 try {
-                    drzewo_binarne->wyswietl(DRZEWO_DOUBLE);
+                    this->drzewo_binarne_double->wyswietl();
                     std::cout << std::endl;
                     return;
                 } catch(const std::invalid_argument &e) {
@@ -328,7 +332,7 @@ void KontrolerDrzewa::wyswietlDrzewo() {
                 break;
             } case 2: {
                 try {
-                    drzewo_binarne->wyswietl(DRZEWO_STRING);
+                    this->drzewo_binarne_string->wyswietl();
                     std::cout << std::endl;
                     return;
                 } catch(const std::invalid_argument &e) {
@@ -344,7 +348,7 @@ void KontrolerDrzewa::wyswietlDrzewo() {
                 return;
             } default: {
                 std::cout << "Dokonano nieprawidlowego wyboru.\n\n";
-                break;
+                return;
             }
         }
     }

@@ -7,6 +7,9 @@ class WezelDrzewa<T> {
     public WezelDrzewa prawy;
     public T wartosc;
 
+    /**
+     * Domyslny konstruktor, tworzy pusty wezel.
+     */
     public WezelDrzewa() {
         this.ojciec = null;
         this.lewy = null;
@@ -14,7 +17,13 @@ class WezelDrzewa<T> {
         this.wartosc = null;
     }
 
-    public WezelDrzewa(WezelDrzewa<?> wezel) throws ClassCastException {
+    /**
+     * Konstruktor, tworzy nowy wezel z wprowadzonej przez klienta wartosci.
+     * 
+     * @param wezel Wezel zawierajacy wprowadzana wartosci.
+     */
+    @SuppressWarnings("unchecked")
+    public WezelDrzewa(WezelDrzewa<?> wezel) {
         this.ojciec = wezel.ojciec;
         this.lewy = wezel.lewy;
         this.prawy = wezel.prawy;

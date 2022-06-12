@@ -77,6 +77,7 @@ class DrzewoBinarne {
      * @see DrzewoBinarne#szukajWezel
      * @param nowy_wezel Poprzednio utworzony wezel zawierajacy pojedyncza wartosc.
      * @param wybor_funkcji Funkcja wybrana przez uzytkownika.
+     * @param typ_danych Typ danych wprowadzonych przez klienta.
      * @return Czy dzialanie funkcji sie powiodlo?
      * @throws NieprawidlowyWyborFunkcji Wybrano nieprawidlowa funkcje.
      * @throws NieprawidlowaWartosc Przekazano do funkcji nieprawidlowa wartosc.
@@ -101,10 +102,9 @@ class DrzewoBinarne {
      * Metoda ta odpowiedzialna jest za wstawienie nowego wezla w odpowiednie miejsce w drzewie binarnym.
      * W przypadku, gdy w odpowiednim miejscu znajduje sie juz wezel, nowy wezel jest z nim scalany.
      * 
-     * @see DrzewoBinarne#czyScalic
-     * @see DrzewoBinarne#scalWezly
      * @see DrzewoBinarne#czyWezelMniejszy
      * @param nowy_wezel Poprzednio utworzony wezel zawierajacy pojedyncza wartosc.
+     * @param typ_danych Typ danych wprowadzonych przez klienta.
      * @return Czy dodanie nowego wezla sie powidodlo?
      */
     private boolean wstawWezel(WezelDrzewa<? extends Object> nowy_wezel, int typ_danych) {
@@ -156,12 +156,13 @@ class DrzewoBinarne {
      * 
      * @param nowy_wezel Poprzednio utworzony wezel zawierajacy pojedyncza wartosc.
      * @param wezel_w_drzewie Wezel znajdujacy sie w drzewie binarnym.
+     * @param typ_danych Typ danych wprowadzonych przez klienta.
      * @return Czy wartosc w nowym wezle jest mniejsza od wartosci w wezle znajdujacym sie w drzewie binarnym?
      */
     private boolean czyWezelMniejszy(WezelDrzewa<?> nowy_wezel, WezelDrzewa<?> wezel_w_drzewie, int typ_danych) {
         if(nowy_wezel.wartosc != null) {
             if(typ_danych == 0)
-                return (Integer)nowy_wezel.wartosc < (Integer)wezel_w_drzewie.wartosc;
+            return Integer.compare((Integer)nowy_wezel.wartosc, (Integer)wezel_w_drzewie.wartosc) < 0 ? true : false;
             else if(typ_danych == 1)
                 return Double.compare((Double)nowy_wezel.wartosc, (Double)wezel_w_drzewie.wartosc) < 0 ? true : false;
             else
@@ -176,12 +177,13 @@ class DrzewoBinarne {
      * 
      * @param nowy_wezel Poprzednio utworzony wezel zawierajacy pojedyncza wartosc.
      * @param wezel_w_drzewie Wezel znajdujacy sie w drzewie binarnym.
+     * @param typ_danych Typ dancyh wprowadzonych przez klienta.
      * @return Czy wartosc nowego wezla jest rowna wartosci znajdujacej sie w wezle drzewa binarnego?
      */
     private boolean czyWezelRowny(WezelDrzewa<?> nowy_wezel, WezelDrzewa<?> wezel_w_drzewie, int typ_danych) {
         if(nowy_wezel.wartosc != null && wezel_w_drzewie.wartosc != null) {
             if(typ_danych == 0)
-                return (Integer)nowy_wezel.wartosc == (Integer)wezel_w_drzewie.wartosc;
+                return Integer.compare((Integer)nowy_wezel.wartosc, (Integer)wezel_w_drzewie.wartosc) == 0 ? true : false;
             else if(typ_danych == 1)
                 return Double.compare((Double)nowy_wezel.wartosc, (Double)wezel_w_drzewie.wartosc) == 0 ? true : false;
             else 
@@ -196,12 +198,8 @@ class DrzewoBinarne {
      * ktory nastepnie zostanie wyslany do klienta.
      * 
      * @see DrzewoBinarne#obliczIloscWierszy
-     * @see DrzewoBinarne#przejdzDrzewoIntInOrder
-     * @see DrzewoBinarne#przejdzDrzewoDoubleInOrder
-     * @see DrzewoBinarne#przejdzDrzewoStringInOrder
-     * @see DrzewoBinarne#wierszeIntNaNapis
-     * @see DrzewoBinarne#wierszeDoubleNaNapis
-     * @see DrzewoBinarne#wierszeStringNaNapis
+     * @see DrzewoBinarne#przejdzDrzewoInOrder
+     * @see DrzewoBinarne#wierszeNaNapis
      * @param typ_drzewa Typ danych w drzewie.
      * @return Sformatowany napis zawierajacy wartosci drzewa binarnego.
      * @throws NieprawidlowaWartosc Podano zly typ drzewa.
@@ -214,8 +212,6 @@ class DrzewoBinarne {
             throw new NieprawidlowyWyborFunkcji("EMPTY_TREE");
         int numer_wiersza = 0;
         int ilosc_wierszy;
-
-        
 
         // wprowadzenie wierszy do listy oraz wyswietlenie jej jest zalezne od wybranego typu drzewa
         switch(typ_drzewa) {
@@ -322,7 +318,9 @@ class DrzewoBinarne {
      * 
      * @see DrzewoBinarne#szukajRightOrder
      * @param szukany_wezel Wezel zawierajacy pojedyncza wartosc, poszukiwana przez uzytkownika.
+     * @param typ_drzewa Typ danych wprowadzonych przez klienta.
      * @return Wezel drzewa binarnego z poszukiwana wartoscia.
+     * @throws NieprawidlowaWartosc Blad przy wybraniu zlego typu drzewa.
      */
     private WezelDrzewa<?> szukajWezel(WezelDrzewa<?> szukany_wezel, int typ_drzewa) throws NieprawidlowaWartosc {
         if(typ_drzewa == 0 && this.korzen_int == null)
@@ -354,6 +352,7 @@ class DrzewoBinarne {
      * @param aktualny_wezel Aktualnie przeszukiwany wezel drzewa.
      * @param szukany_wezel Wezel zawierajacy poszukiwana wartosc.
      * @param znaleziony_wezel Wezel drzewa binarnego zawierajacy poszukiwana wartosc lub null.
+     * @param typ_drzewa Typ danych wprowadzonych przez klienta.
      * @return Wezel drzewa binarnego z poszukiwana wartoscia lub null.
      */
     private WezelDrzewa<?> szukajRightOrder(WezelDrzewa<?> aktualny_wezel, WezelDrzewa<?> szukany_wezel, WezelDrzewa<?> znaleziony_wezel, int typ_drzewa) {
@@ -370,14 +369,18 @@ class DrzewoBinarne {
     }
 
     /**
-     * Metoda odpowiedzialna za usuniecie wartosci wybranej przez uzytkownika z drzewa binarnego.
-     * Jesli po usunieciu wartosci wezel jest pusty, to jest on tez usuwany z drzewa binarnego.
+     * Metoda odpowiedzialna za usuniecie wezla z wartoscia wybrana przez uzytkownika z drzewa binarnego.
      * 
      * @see DrzewoBinarne#szukajWezel
-     * @see DrzewoBinarne#czyWezelPusty
+     * @see DrzewoBinarne#znajdzMinGalezi
+     * @see DrzewoBinarne#znajdzMaxGalezi
+     * @see DrzewoBinarne#zamienKorzen
+     * @see DrzewoBinarne#oderwijNastepce
      * @param wezel Wezel zawierajacy wartosc do usuniecia.
+     * @param typ_drzewa Typ danych wprowadzonych przez klienta.
      * @return Czy usuniecie wartosci sie udalo? 
      * @throws NieprawidlowyWyborFunkcji Wezel z podana wartoscia nie znajduje sie w drzewie.
+     * @throws NieprawidlowaWartosc Blad przy wybraniu zlego typu drzewa.
      */
     private boolean usunWezel(WezelDrzewa<?> wezel, int typ_drzewa) throws NieprawidlowyWyborFunkcji, NieprawidlowaWartosc {
         WezelDrzewa<?> szukany_wezel;
@@ -444,6 +447,13 @@ class DrzewoBinarne {
         return false;
     }
 
+    /**
+     * Metoda odpowiedzialna za znalezienie najmniejszej wartosci w drzewie wybranego typu.
+     * 
+     * @param aktualny_wezel Wezel drzewa binarnego.
+     * @param typ_drzewa Typ danych wprowadzonych przez klienta.
+     * @return Wezel z najmniejsza wartoscia w drzewie.
+     */
     private WezelDrzewa<?> znajdzMinGalezi(WezelDrzewa<?> aktualny_wezel, int typ_drzewa) {
         if(aktualny_wezel != null) {
             if(aktualny_wezel.lewy == null && aktualny_wezel.prawy == null)
@@ -466,6 +476,13 @@ class DrzewoBinarne {
         return aktualny_wezel;
     }
 
+    /**
+     * Metoda odpowiedzialna za znalezienie najwiekszej wartosci w drzewie wybranego typu.
+     * 
+     * @param aktualny_wezel Wezel drzewa binarnego.
+     * @param typ_drzewa Typ danych wprowadzonych przez klienta.
+     * @return Wezel z najwieksza wartoscia w drzewie.
+     */
     private WezelDrzewa<?> znajdzMaxGalezi(WezelDrzewa<?> aktualny_wezel, int typ_drzewa) {
         if(aktualny_wezel != null) {
             if(aktualny_wezel.lewy == null && aktualny_wezel.prawy == null)
@@ -488,6 +505,12 @@ class DrzewoBinarne {
         return aktualny_wezel;
     }
 
+    /**
+     * Metoda odpowiedzialna za rozlaczenie wezla ze znaleziona wartoscia najmniejsza lub najwieksza od drzewa 
+     * oraz polaczenie galezi wychodzacych od tego wezla.
+     * 
+     * @param wezel Wezel drzewa binarnego o wartosci najmniejszej lub najwiekszej.
+     */
     private void oderwijNastepce(WezelDrzewa<?> wezel) {
         if(wezel.lewy == null && wezel.prawy == null) {
             if(wezel.ojciec.lewy == wezel) {
@@ -510,6 +533,12 @@ class DrzewoBinarne {
         }
     }
 
+    /**
+     * Metoda odpowiedzialna za podmienienie korzenia drzewa wybranego typu.
+     * 
+     * @param nowy_korzen Wezel drzewa binarnego majacy zastapic korzen.
+     * @param typ_drzewa Typ danych wprowadzonych przez klienta.
+     */
     private void zamienKorzen(WezelDrzewa<?> nowy_korzen, int typ_drzewa) {
         switch(typ_drzewa) {
             case DRZEWO_INT: {
@@ -523,27 +552,6 @@ class DrzewoBinarne {
                 return;
             }
         }
-    }
-
-    private void naprawGaleziePodrzednegoWezla(WezelDrzewa<?> wezel) {
-        if(wezel != null && wezel.lewy != null && wezel.prawy != null) {
-            naprawGaleziePodrzednegoWezla(wezel.prawy);
-            wezel.prawy.lewy = wezel.lewy;
-            wezel.lewy.ojciec = wezel.prawy;
-        }
-    }
-
-    /**
-     * Metoda odpowiedzialna za sprawdzenie, czy podany wezel drzewa binarnego ma jakakolwiek wartosc.
-     * 
-     * @param wezel Wezel drzewa binarnego.
-     * @return Czy wezel nie ma zadnej wartosci?
-     */
-    private boolean czyWezelPusty(WezelDrzewa<?> wezel) {
-        if(wezel.wartosc == null) {
-            return true;
-        }
-        return false;
     }
     
 }

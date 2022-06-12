@@ -17,8 +17,10 @@ class KontrolerDrzewa {
       void rozpocznijPraceNadDrzewem();
 
     private:
-      // wskaznik na drzewo binarne
-      DrzewoBinarne *drzewo_binarne;
+      // wskazniki na drzewa binarne
+      DrzewoBinarne<int> *drzewo_binarne_int;
+      DrzewoBinarne<double> *drzewo_binarne_double;
+      DrzewoBinarne<std::string> *drzewo_binarne_string;
 
       // stale definujace wybor operacji na drzewie
       static constexpr int DODAWANIE_WEZLA = 0;

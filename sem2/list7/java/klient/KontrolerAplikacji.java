@@ -163,8 +163,10 @@ class KontrolerAplikacji {
         double nowaPozycjaY = event.getScreenY();
         
         // aktualizacja polozenia wszystkich wezlow
-        for(Node wezel : this.przestrzen_drzewa.getChildren()) {
-            wezel.relocate(wezel.getLayoutX() + nowaPozycjaX - this.pozycja_myszki_x, wezel.getLayoutY() + nowaPozycjaY - this.pozycja_myszki_y);
+        for(Node element : this.przestrzen_drzewa.getChildren()) {
+            Translate przesuniecie = (Translate)element.getTransforms().get(0);
+            przesuniecie.setX(przesuniecie.getX() + nowaPozycjaX - this.pozycja_myszki_x);
+            przesuniecie.setY(przesuniecie.getY() + nowaPozycjaY - this.pozycja_myszki_y);
         }
 
         // aktualizacja aktualnego przesuniecia kazdego z wezlow

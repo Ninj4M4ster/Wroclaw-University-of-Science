@@ -29,6 +29,8 @@ class GraficznyWezel {
 
     // tworzone widgety
     private StackPane kontener;
+    private Line linia_lewy;
+    private Line linia_prawy;
     
     /**
      * Konstruktor, przyjmuje wartosci od kontrolera oraz tworzy strukture reprezentujaca wezel drzewa binarnego.
@@ -59,6 +61,7 @@ class GraficznyWezel {
         kontener = new StackPane();
         kontener.setPrefWidth(60);
         kontener.setPrefHeight(60);
+        kontener.getTransforms().add(new Translate(0, 0));
 
         // utworzenie kola jako tla wezla
         Circle kolo = new Circle(); 
@@ -72,13 +75,45 @@ class GraficznyWezel {
         tekst.setWrapText(true);
         tekst.setBackground(new Background(new BackgroundFill(Paint.valueOf("#ffffffaf"), null, null)));
 
-        double pozycjaX = this.obliczX(this.numer_wartosci, this.numer_wiersza, this.ilosc_wierszy);
-        double pozycjaY = this.obliczY(this.numer_wiersza, this.ilosc_wierszy);
+        double wspolrzedna_x = this.obliczX(this.numer_wartosci, this.numer_wiersza, this.ilosc_wierszy);
+        double wspolrzedna_y = this.obliczY(this.numer_wiersza, this.ilosc_wierszy);
 
         // dodanie elementow i ustawienie kontenera
-        kontener.getChildren().addAll(kolo, tekst);
-        kontener.setAlignment(Pos.CENTER);
-        kontener.relocate(pozycjaX - 30.0, pozycjaY - 30.0);
+        this.kontener.getChildren().addAll(kolo, tekst);
+        this.kontener.setAlignment(Pos.CENTER);
+        this.kontener.relocate(wspolrzedna_x - 30.0, wspolrzedna_y - 30.0);
+
+        // rysowanie linii pomiedzy wezlami
+        if(this.numer_wiersza > 0) {
+            double wspolrzedna_lewy_x = this.obliczX(2 * numer_wartosci, numer_wiersza - 1, ilosc_wierszy);
+            double wspolrzedna_prawy_x = this.obliczX(2 * numer_wartosci + 1, numer_wiersza - 1, ilosc_wierszy);
+
+            double wspolrzedna_lewy_prawy_y = this.obliczY(numer_wiersza - 1, ilosc_wierszy);
+
+            if(this.wiersze[numer_wiersza - 1][2 * numer_wartosci] != null && !this.wiersze[numer_wiersza - 1][2 * numer_wartosci].equals("_")) {
+                this.linia_lewy = new Line();
+                this.linia_lewy.setStartX(wspolrzedna_lewy_x);
+                this.linia_lewy.setStartY(wspolrzedna_lewy_prawy_y);
+                this.linia_lewy.setEndX(wspolrzedna_x);
+                this.linia_lewy.setEndY(wspolrzedna_y);
+
+                this.linia_lewy.getTransforms().add(new Translate(0, 0));
+
+                this.przestrzen_drzewa.getChildren().add(linia_lewy);
+            }
+            if(this.wiersze[numer_wiersza - 1][2 * numer_wartosci + 1] != null && !this.wiersze[numer_wiersza - 1][2 * numer_wartosci + 1].equals("_")) {
+                this.linia_prawy = new Line();
+                this.linia_prawy.setStartX(wspolrzedna_prawy_x);
+                this.linia_prawy.setStartY(wspolrzedna_lewy_prawy_y);
+                this.linia_prawy.setEndX(wspolrzedna_x);
+                this.linia_prawy.setEndY(wspolrzedna_y);
+
+                this.linia_prawy.getTransforms().add(new Translate(0, 0));
+
+                this.przestrzen_drzewa.getChildren().add(linia_prawy);
+            }
+            
+        }   
 
         this.przestrzen_drzewa.getChildren().add(kontener);
     }
@@ -116,6 +151,19 @@ class GraficznyWezel {
      * @param delta_y Roznica odleglosci na osi Y.
      */
     public void przesun(double delta_x, double delta_y) {
-        kontener.relocate(kontener.getLayoutX() + delta_x, kontener.getLayoutY() + delta_y);
+        Translate przesuniecie_kontenera = (Translate)kontener.getTransforms().get(0);
+        przesuniecie_kontenera.setX(przesuniecie_kontenera.getX() + delta_x);
+        przesuniecie_kontenera.setY(przesuniecie_kontenera.getY() + delta_y);
+
+        if(linia_lewy != null) {
+            Translate przesuniecie_lewy = (Translate)linia_lewy.getTransforms().get(0);
+            przesuniecie_lewy.setX(przesuniecie_lewy.getX() + delta_x);
+            przesuniecie_lewy.setY(przesuniecie_lewy.getY() + delta_y);
+        }
+        if(linia_prawy != null) {
+            Translate przesuniecie_prawy = (Translate)linia_prawy.getTransforms().get(0);
+            przesuniecie_prawy.setX(przesuniecie_prawy.getX() + delta_x);
+            przesuniecie_prawy.setY(przesuniecie_prawy.getY() + delta_y);
+        }
     }
 }

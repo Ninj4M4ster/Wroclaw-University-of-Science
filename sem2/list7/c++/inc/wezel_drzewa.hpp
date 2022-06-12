@@ -7,14 +7,26 @@
  * @brief Struktura wezla drzewa.
  * 
  */
-struct wezel_drzewa {
+template <typename T>
+class wezel_drzewa {
+    public:
     wezel_drzewa* lewy = nullptr;
     wezel_drzewa* prawy = nullptr;
     wezel_drzewa* ojciec = nullptr;
-    int wartosc_int = (int)NULL;
-    double wartosc_double = (double)NULL;
-    std::string wartosc_string;
-
+    T wartosc = (T)NULL;
 };
+
+template <>
+class wezel_drzewa <std::string> {
+    public:
+    wezel_drzewa* lewy = nullptr;
+    wezel_drzewa* prawy = nullptr;
+    wezel_drzewa* ojciec = nullptr;
+    std::string wartosc = "";
+};
+
+template class wezel_drzewa<int>;
+template class wezel_drzewa<double>;
+template class wezel_drzewa<std::string>;
 
 #endif  // WEZEL_DRZEWA__HPP

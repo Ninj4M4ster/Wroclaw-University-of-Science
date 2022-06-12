@@ -8,49 +8,27 @@
  * @param wybor_funkcji Wybrana funkcja do wykonania przez drzewo.
  * @see DrzewoBinarne::wybierzFunkcje
  */
-void DrzewoBinarne::utworzWezelDrzewaDoPrzekazania(int wartosc, int wybor_funkcji) {
-    struct wezel_drzewa *nowy_wezel = new wezel_drzewa;
-    nowy_wezel->wartosc_int = wartosc;
-    wybierzFunkcje(*nowy_wezel, wybor_funkcji);
-}
-
-/**
- * @brief Utworzenie wezla o podanej wartosci i przekazanie go do dalszego przetwarzania.
- * 
- * @param wartosc Liczba zmiennoprzecinkowa typu double.
- * @param wybor_funkcji Wybrana funkcja do wykonania przez drzewo.
- * @see DrzewoBinarne::wybierzFunkcje
- */
-void DrzewoBinarne::utworzWezelDrzewaDoPrzekazania(double wartosc, int wybor_funkcji) {
-    struct wezel_drzewa *nowy_wezel = new wezel_drzewa;
-    nowy_wezel->wartosc_double = wartosc;
-    wybierzFunkcje(*nowy_wezel, wybor_funkcji);
-}
-
-/**
- * @brief Utworzenie wezla o podanej wartosci i przekazanie go do dalszego przetwarzania.
- * 
- * @param wartosc Lancuch znakowy.
- * @param wybor_funkcji Wybrana funkcja do wykonania przez drzewo.
- * @see DrzewoBinarne::wybierzFunkcje
- */
-void DrzewoBinarne::utworzWezelDrzewaDoPrzekazania(std::string wartosc, int wybor_funkcji) {
-    struct wezel_drzewa *nowy_wezel = new wezel_drzewa;
-    nowy_wezel->wartosc_string = wartosc;
+template <typename T>
+void DrzewoBinarne<T>::utworzWezelDrzewaDoPrzekazania(T wartosc, int wybor_funkcji) {
+    struct wezel_drzewa<T> *nowy_wezel = new wezel_drzewa<T>;
+    nowy_wezel->wartosc = wartosc;
     wybierzFunkcje(*nowy_wezel, wybor_funkcji);
 }
 
 /**
  * @brief Przekazanie utworzonego wezla do przetworzenia przez wybrana funkcje.
  * 
+ * @tparam T Typ danych wezla.
  * @param nowy_wezel Poprzednio utworzony wezel zawierajacy wartosc wprowadzona przez uzytkownika.
  * @param wybor_funkcji Wybrana funkcja do wykonania przez drzewo.
+ * @param typ_drzewa Typ danych wprowadzonych przez klienta.
  * @throws NieprawidlowyWyborFunkcji Blad w przypadku gdy wybrano nieprawidlowa funkcje.
  * @see DrzewoBinarne#wstawWezel
  * @see DrzewoBinarne#usunWezel
  * @see DrzewoBinarne#szukajWezel
  */
-void DrzewoBinarne::wybierzFunkcje(struct wezel_drzewa &nowy_wezel, int wybor_funkcji) {
+template <typename T>
+void DrzewoBinarne<T>::wybierzFunkcje(struct wezel_drzewa<T> &nowy_wezel, int wybor_funkcji) {
     switch(wybor_funkcji) {
         case 0: {
             wstawWezel(nowy_wezel);
@@ -59,7 +37,7 @@ void DrzewoBinarne::wybierzFunkcje(struct wezel_drzewa &nowy_wezel, int wybor_fu
             usunWezel(nowy_wezel);
             break;
         } case 2: {
-            struct wezel_drzewa *wezel = szukajWezel(nowy_wezel);
+            struct wezel_drzewa<T> *wezel = szukajWezel(nowy_wezel);
             if(wezel != nullptr)
                 std::cout << "Znaleziono szukana wartosc.\n\n";
             else
@@ -77,23 +55,19 @@ void DrzewoBinarne::wybierzFunkcje(struct wezel_drzewa &nowy_wezel, int wybor_fu
  * Metoda ta odpowiedzialna jest za wstawienie nowego wezla z podana wartoscia do drzewa.
  * Gdy to mozliwe, nowy wezel scalany jest juz z innym istniejacym w drzewie.
  * 
+ * @tparam T Typ danych wezla.
  * @param nowy_wezel Poprzednio utworzony wezel zawierajacy wartosc wprowadzona przez uzytkownika.
- * @see DrzewoBinarne::czyScalic
- * @see DrzewoBinarne::scalWezly
  * @see DrzewoBinarne::czyWezelMniejszy
  */
-void DrzewoBinarne::wstawWezel(struct wezel_drzewa &nowy_wezel) {
+template <typename T>
+void DrzewoBinarne<T>::wstawWezel(struct wezel_drzewa<T> &nowy_wezel) {
     if(this->korzen == nullptr) {
         this->korzen = &nowy_wezel;
         return;
-    }    
-    struct wezel_drzewa *wezel_tymczasowy = this->korzen;
+    }
+    struct wezel_drzewa<T> *wezel_tymczasowy = this->korzen;
+    // wstawianie wezla
     while(true) {
-        // jesli pod polem wezla drzewa binarnego z wybranym typem nie znajduje sie wartosc, wezly nalezy scalic
-        if(czyScalic(wezel_tymczasowy, nowy_wezel)) {
-            scalWezly(wezel_tymczasowy, nowy_wezel);
-            return;
-        }
         if(czyWezelMniejszy(nowy_wezel, wezel_tymczasowy)) {
             if(wezel_tymczasowy->lewy == nullptr) {
                 wezel_tymczasowy->lewy = &nowy_wezel;
@@ -115,42 +89,19 @@ void DrzewoBinarne::wstawWezel(struct wezel_drzewa &nowy_wezel) {
 }
 
 /**
- * @brief Okreslenie czy nowy wezel nalezy scalic z innym w drzewie.
+ * @brief Sprawdzenie czy wartosc w nowym wezle jest mniejsza od wartosci wezla znajdujacego sie w drzewie.
  * 
- * @param wezel_w_drzewie Wezel znajdujacy sie w drzewie binarnym.
  * @param nowy_wezel Poprzednio utworzony wezel zawierajacy wartosc wprowadzona przez uzytkownika.
- * @return true Wezel nalezy scalic z innym w drzewie.
- * @return false Wezla nie nalezy scalac z innym w drzewie.
+ * @param wezel_w_drzewie Wezel znajdujacy sie w drzewie binarnym.
+ * @return true Wartosc nowego wezla jest mniejsza od wartosci wezla w drzewie.
+ * @return false Wartosc nowego wezla jest wieksza lub rowna wartosci wezla w drzewie albo wezel nie ma wartosci.
  */
-bool DrzewoBinarne::czyScalic(struct wezel_drzewa *wezel_w_drzewie, struct wezel_drzewa nowy_wezel) {
-    if(nowy_wezel.wartosc_int && !wezel_w_drzewie->wartosc_int)
-        return true;
-    if(nowy_wezel.wartosc_double && !wezel_w_drzewie->wartosc_double)
-        return true;
-    if(nowy_wezel.wartosc_string.empty() == false && wezel_w_drzewie->wartosc_string.empty())
-        return true;
+template <>
+bool DrzewoBinarne<int>::czyWezelMniejszy(struct wezel_drzewa<int> nowy_wezel, struct wezel_drzewa<int> *wezel_w_drzewie) {
+    if(nowy_wezel.wartosc != (int)NULL) {
+        return nowy_wezel.wartosc < wezel_w_drzewie->wartosc;
+    }
     return false;
-}
-
-/**
- * @brief Scalenie nowego wezla z innym w drzewie.
- * 
- * @param wezel_w_drzewie Wezel znajdujacy sie w drzewie binarnym.
- * @param nowy_wezel Poprzednio utworzony wezel zawierajacy wartosc wprowadzona przez uzytkownika.
- */
-void DrzewoBinarne::scalWezly(struct wezel_drzewa *wezel_w_drzewie, struct wezel_drzewa &nowy_wezel) {
-    if(nowy_wezel.wartosc_int && !wezel_w_drzewie->wartosc_int) {
-        wezel_w_drzewie->wartosc_int = nowy_wezel.wartosc_int;
-        return;
-    }
-    if(nowy_wezel.wartosc_double && !wezel_w_drzewie->wartosc_double) {
-        wezel_w_drzewie->wartosc_double = nowy_wezel.wartosc_double;
-        return;
-    }
-    if(nowy_wezel.wartosc_string.empty() == false && wezel_w_drzewie->wartosc_string.empty()) {
-        std::swap(wezel_w_drzewie->wartosc_string, nowy_wezel.wartosc_string);
-        return;
-    }
 }
 
 /**
@@ -159,15 +110,29 @@ void DrzewoBinarne::scalWezly(struct wezel_drzewa *wezel_w_drzewie, struct wezel
  * @param nowy_wezel Poprzednio utworzony wezel zawierajacy wartosc wprowadzona przez uzytkownika.
  * @param wezel_w_drzewie Wezel znajdujacy sie w drzewie binarnym.
  * @return true Wartosc nowego wezla jest mniejsza od wartosci wezla w drzewie.
- * @return false Watosc nowego wezla jest wieksza lub rowna wartosci wezla w drzewie.
+ * @return false Wartosc nowego wezla jest wieksza lub rowna wartosci wezla w drzewie albo wezel nie ma wartosci.
  */
-bool DrzewoBinarne::czyWezelMniejszy(struct wezel_drzewa nowy_wezel, struct wezel_drzewa *wezel_w_drzewie) {
-    if(nowy_wezel.wartosc_int)
-        return nowy_wezel.wartosc_int < wezel_w_drzewie->wartosc_int;
-    if(nowy_wezel.wartosc_double)
-        return nowy_wezel.wartosc_double < wezel_w_drzewie->wartosc_double;
-    if(nowy_wezel.wartosc_string.empty() == false)
-        return nowy_wezel.wartosc_string.compare(wezel_w_drzewie->wartosc_string) == -1 ? true : false;
+template <>
+bool DrzewoBinarne<double>::czyWezelMniejszy(struct wezel_drzewa<double> nowy_wezel, struct wezel_drzewa<double> *wezel_w_drzewie) {
+    if(nowy_wezel.wartosc != (double)NULL) {
+        return (double)nowy_wezel.wartosc < (double)wezel_w_drzewie->wartosc;
+    }
+    return false;
+}
+
+/**
+ * @brief Sprawdzenie czy wartosc w nowym wezle jest mniejsza od wartosci wezla znajdujacego sie w drzewie.
+ * 
+ * @param nowy_wezel Poprzednio utworzony wezel zawierajacy wartosc wprowadzona przez uzytkownika.
+ * @param wezel_w_drzewie Wezel znajdujacy sie w drzewie binarnym.
+ * @return true Wartosc nowego wezla jest mniejsza od wartosci wezla w drzewie.
+ * @return false Wartosc nowego wezla jest wieksza lub rowna wartosci wezla w drzewie albo wezel nie ma wartosci.
+ */
+template <>
+bool DrzewoBinarne<std::string>::czyWezelMniejszy(struct wezel_drzewa<std::string> nowy_wezel, struct wezel_drzewa<std::string> *wezel_w_drzewie) {
+    if(!nowy_wezel.wartosc.empty()) {
+        return nowy_wezel.wartosc.compare(wezel_w_drzewie->wartosc) == -1 ? true : false;
+    }
     return false;
 }
 
@@ -179,52 +144,68 @@ bool DrzewoBinarne::czyWezelMniejszy(struct wezel_drzewa nowy_wezel, struct weze
  * @return true Wartosc nowego wezla jest rowna wartosci wezla w drzewie.
  * @return false Wartosc nowego wezla jest rozna od wartosci wezla w drzewie.
  */
-bool DrzewoBinarne::czyWezelRowny(struct wezel_drzewa nowy_wezel, struct wezel_drzewa wezel_w_drzewie) {
-    if(nowy_wezel.wartosc_int)
-        return nowy_wezel.wartosc_int == wezel_w_drzewie.wartosc_int;
-    if(nowy_wezel.wartosc_double)
-        return nowy_wezel.wartosc_double == wezel_w_drzewie.wartosc_double;
-    if(nowy_wezel.wartosc_string.empty() == false)
-        return nowy_wezel.wartosc_string.compare(wezel_w_drzewie.wartosc_string) == 0 ? true : false;
+template <>
+bool DrzewoBinarne<int>::czyWezelRowny(struct wezel_drzewa<int> nowy_wezel, struct wezel_drzewa<int> wezel_w_drzewie) {
+    if(nowy_wezel.wartosc !=(int) NULL && wezel_w_drzewie.wartosc != (int)NULL) {
+            return (int)nowy_wezel.wartosc == (int)wezel_w_drzewie.wartosc;
+    }
     return false;
 }
 
 /**
+ * @brief Sprawdzenie czy wartosci w nowym wezle jest rowna wartosci wezla znajdujacego sie w drzewie.
+ * 
+ * @param nowy_wezel Poprzednio utworzony wezel zawierajacy wartosc wprowadzona przez uzytkownika.
+ * @param wezel_w_drzewie Wezel znajdujacy sie w drzewie binarnym.
+ * @return true Wartosc nowego wezla jest rowna wartosci wezla w drzewie.
+ * @return false Wartosc nowego wezla jest rozna od wartosci wezla w drzewie.
+ */
+template <>
+bool DrzewoBinarne<double>::czyWezelRowny(struct wezel_drzewa<double> nowy_wezel, struct wezel_drzewa<double> wezel_w_drzewie) {
+    static constexpr double dokladnosc = 0.0000001;
+    if(nowy_wezel.wartosc != (double)NULL && wezel_w_drzewie.wartosc != (double)NULL) {
+        return (double)nowy_wezel.wartosc < (double)wezel_w_drzewie.wartosc;
+    }
+    return false;
+}
+
+/**
+ * @brief Sprawdzenie czy wartosci w nowym wezle jest rowna wartosci wezla znajdujacego sie w drzewie.
+ * 
+ * @param nowy_wezel Poprzednio utworzony wezel zawierajacy wartosc wprowadzona przez uzytkownika.
+ * @param wezel_w_drzewie Wezel znajdujacy sie w drzewie binarnym.
+ * @return true Wartosc nowego wezla jest rowna wartosci wezla w drzewie.
+ * @return false Wartosc nowego wezla jest rozna od wartosci wezla w drzewie.
+ */
+template <>
+bool DrzewoBinarne<std::string>::czyWezelRowny(struct wezel_drzewa<std::string> nowy_wezel, struct wezel_drzewa<std::string> wezel_w_drzewie) {
+    if(!nowy_wezel.wartosc.empty() && !wezel_w_drzewie.wartosc.empty()) {
+        return nowy_wezel.wartosc.compare(wezel_w_drzewie.wartosc) == 0 ? true : false;
+    }
+    return false;
+}
+            
+/**
  * @brief Wyswietlenie wartosci drzewa binarnego o podanym typie.
  * 
- * @param typ_drzewa Typ wartosci do wyswietlenia.
+ * @tparam T Typ danych wezla.
  * @see DrzewoBinarne::obliczIloscWierszy
  * @see DrzewoBinarne::przejdzDrzewoInOrder
  * @see DrzewoBinarne::wyswietlajWiersze
  * @throws NieprawidlowyWyborFunkcji Blad w przypadku gdy drzewo jest puste lub wybrano nieprawidlowy typ danych drzewa.
  */
-void DrzewoBinarne::wyswietl(int typ_drzewa) {
+template <typename T>
+void DrzewoBinarne<T>::wyswietl() {
     if(this->korzen == nullptr)
         throw NieprawidlowyWyborFunkcji("Nie mozna wyswietlic drzewa, gdyz jest ono puste.\n\n");
     int numer_wiersza = 0;
-    int ilosc_wierszy = obliczIloscWierszy(this->korzen, numer_wiersza);
+    int ilosc_wierszy;
     
-    std::vector<std::vector<int>> liczby_w_wierszach_int(ilosc_wierszy);
-    std::vector<std::vector<double>> liczby_w_wierszach_double(ilosc_wierszy);
-    std::vector<std::vector<std::string>> liczby_w_wierszach_string(ilosc_wierszy);
-    // wprowadzenie wierszy do listy oraz wyswietlenie jej jest zalezne od wybranego typu drzewa
-    switch(typ_drzewa) {
-        case 0:
-            przejdzDrzewoInOrder(this->korzen, numer_wiersza, liczby_w_wierszach_int, ilosc_wierszy);
-            wyswietlajWiersze(ilosc_wierszy, liczby_w_wierszach_int);
-            break;
-        case 1:
-            przejdzDrzewoInOrder(this->korzen, numer_wiersza, liczby_w_wierszach_double, ilosc_wierszy);
-            wyswietlajWiersze(ilosc_wierszy, liczby_w_wierszach_double);
-            break;
-        case 2:
-            przejdzDrzewoInOrder(this->korzen, numer_wiersza, liczby_w_wierszach_string, ilosc_wierszy);
-            wyswietlajWiersze(ilosc_wierszy, liczby_w_wierszach_string);
-            break;
-        default:
-            throw NieprawidlowyWyborFunkcji("Wybrano nieprawidlowy typ drzewa.\n");
-            break;
-    }
+    // wprowadzenie wierszy do listy oraz wyswietlenie jej
+    ilosc_wierszy = obliczIloscWierszy(this->korzen, numer_wiersza);
+    std::vector<std::vector<T>> liczby_w_wierszach(ilosc_wierszy);
+    przejdzDrzewoInOrder(this->korzen, numer_wiersza, liczby_w_wierszach, ilosc_wierszy);
+    wyswietlajWiersze(ilosc_wierszy, liczby_w_wierszach);
 }
 
 /**
@@ -232,11 +213,13 @@ void DrzewoBinarne::wyswietl(int typ_drzewa) {
  * 
  * Metoda ta oblicza ilosc wierszy w drzewie, uwzgledniajac wszystkie galezie.
  * 
+ * @tparam T Typ danych wezla.
  * @param aktualny_wezel Wezel drzewa binarnego.
  * @param numer_wiersza Numer wiersza aktualnego wezla drzewa binarnego.
  * @return int Ilosc wierszy w drzewie.
  */
-int DrzewoBinarne::obliczIloscWierszy(struct wezel_drzewa *aktualny_wezel, int numer_wiersza) {
+template <typename T>
+int DrzewoBinarne<T>::obliczIloscWierszy(struct wezel_drzewa<T> *aktualny_wezel, int numer_wiersza) {
     if(aktualny_wezel != nullptr) {
         numer_wiersza++;
         // przeszukuj drzewo w lewo i w prawo aby sie upewnic czy w glebi drzewa nie znajduja sie jeszcze wezly
@@ -256,26 +239,28 @@ int DrzewoBinarne::obliczIloscWierszy(struct wezel_drzewa *aktualny_wezel, int n
  * Metoda ta przeszukuje drzewo, dodajac do tablic na odpowiednim indeksie wartosc wezla na ktorym aktualnie odbywa sie przeszukiwanie.
  * Uwzglednione sa pola puste, aby pozniej z pozniej wyswietlonego drzewa mozna bylo okreslic relacje kolejnych wezlow.
  * 
+ * @tparam T Typ danych wezla.
  * @param aktualny_wezel Wezel drzewa binarnego.
  * @param numer_wiersza Numer wiersza aktualnego wezla drzewa binarnego.
- * @param liczby_w_wierszach Tablica przechowujaca wartosci typu int - wartosci wezlow drzewa binarnego.
+ * @param liczby_w_wierszach Tablica przechowujaca wartosci wezlow drzewa.
  * @param ilosc_wierszy Ilosc wierszy w drzewie binarnym.
  */
-void DrzewoBinarne::przejdzDrzewoInOrder(struct wezel_drzewa *aktualny_wezel, 
+template <typename T>
+void DrzewoBinarne<T>::przejdzDrzewoInOrder(struct wezel_drzewa<T> *aktualny_wezel, 
                                         int numer_wiersza, 
-                                        std::vector<std::vector<int>> &liczby_w_wierszach, 
+                                        std::vector<std::vector<T>> &liczby_w_wierszach, 
                                         int ilosc_wierszy) {
     if(aktualny_wezel == nullptr) {
         // jesli wezel nie istnieje, do list wprowadzane sa wartosci NULL tak dlugo az funkcja nie znajduje sie w ostatnim wierszu drzewa
         if(numer_wiersza < ilosc_wierszy) {
-            liczby_w_wierszach[numer_wiersza].push_back((int)NULL);
+            liczby_w_wierszach[numer_wiersza].push_back((T)NULL);
             numer_wiersza++;
             przejdzDrzewoInOrder(nullptr, numer_wiersza, liczby_w_wierszach, ilosc_wierszy);
             przejdzDrzewoInOrder(nullptr, numer_wiersza, liczby_w_wierszach, ilosc_wierszy);
         } else
             return;
     } else {
-        liczby_w_wierszach[numer_wiersza].push_back(aktualny_wezel->wartosc_int);
+        liczby_w_wierszach[numer_wiersza].push_back(aktualny_wezel->wartosc);
         numer_wiersza++;
         przejdzDrzewoInOrder(aktualny_wezel->lewy, numer_wiersza, liczby_w_wierszach, ilosc_wierszy);
         przejdzDrzewoInOrder(aktualny_wezel->prawy, numer_wiersza, liczby_w_wierszach, ilosc_wierszy);
@@ -290,57 +275,25 @@ void DrzewoBinarne::przejdzDrzewoInOrder(struct wezel_drzewa *aktualny_wezel,
  * 
  * @param aktualny_wezel Wezel drzewa binarnego.
  * @param numer_wiersza Numer wiersza aktualnego wezla drzewa binarnego.
- * @param liczby_w_wierszach Tablica przechowujaca wartosci typu double - wartosci wezlow drzewa binarnego.
+ * @param liczby_w_wierszach Tablica przechowujaca wartosci wezlow drzewa.
  * @param ilosc_wierszy Ilosc wierszy w drzewie binarnym.
  */
-void DrzewoBinarne::przejdzDrzewoInOrder(struct wezel_drzewa *aktualny_wezel, 
-                                        int numer_wiersza, 
-                                        std::vector<std::vector<double>> &liczby_w_wierszach, 
-                                        int ilosc_wierszy) {
-    if(aktualny_wezel == nullptr){
-        // jesli wezel nie istnieje, do list wprowadzane sa wartosci NULL tak dlugo az funkcja nie znajduje sie w ostatnim wierszu drzewa
-        if(numer_wiersza < ilosc_wierszy) {
-            liczby_w_wierszach[numer_wiersza].push_back((double)NULL);
-            numer_wiersza++;
-            przejdzDrzewoInOrder(nullptr, numer_wiersza, liczby_w_wierszach, ilosc_wierszy);
-            przejdzDrzewoInOrder(nullptr, numer_wiersza, liczby_w_wierszach, ilosc_wierszy);
-        } else
-            return;
-    } else {
-        liczby_w_wierszach[numer_wiersza].push_back(aktualny_wezel->wartosc_double);
-        numer_wiersza++;
-        przejdzDrzewoInOrder(aktualny_wezel->lewy, numer_wiersza, liczby_w_wierszach, ilosc_wierszy);
-        przejdzDrzewoInOrder(aktualny_wezel->prawy, numer_wiersza, liczby_w_wierszach, ilosc_wierszy);
-    }
-}
-
-/**
- * @brief Przejscie przez drzewo i wprowadzenie do list o odpowiednich indeksach wartosci drzewa.
- * 
- * Metoda ta przeszukuje drzewo, dodajac do tablic na odpowiednim indeksie wartosc wezla na ktorym aktualnie odbywa sie przeszukiwanie.
- * Uwzglednione sa pola puste, aby pozniej z pozniej wyswietlonego drzewa mozna bylo okreslic relacje kolejnych wezlow.
- * 
- * @param aktualny_wezel Wezel drzewa binarnego.
- * @param numer_wiersza Numer wiersza aktualnego wezla drzewa binarnego.
- * @param liczby_w_wierszach Tablica przechowujaca wartosci typu string - wartosci wezlow drzewa binarnego.
- * @param ilosc_wierszy Ilosc wierszy w drzewie binarnym.
- */
-void DrzewoBinarne::przejdzDrzewoInOrder(struct wezel_drzewa *aktualny_wezel, 
+template <>
+void DrzewoBinarne<std::string>::przejdzDrzewoInOrder(struct wezel_drzewa<std::string> *aktualny_wezel, 
                                         int numer_wiersza, 
                                         std::vector<std::vector<std::string>> &liczby_w_wierszach, 
                                         int ilosc_wierszy) {
-    if(aktualny_wezel == nullptr){
+    if(aktualny_wezel == nullptr) {
         // jesli wezel nie istnieje, do list wprowadzane sa wartosci NULL tak dlugo az funkcja nie znajduje sie w ostatnim wierszu drzewa
         if(numer_wiersza < ilosc_wierszy) {
-            std::string pusty_napis;
-            liczby_w_wierszach[numer_wiersza].push_back(pusty_napis);
+            liczby_w_wierszach[numer_wiersza].push_back("");
             numer_wiersza++;
             przejdzDrzewoInOrder(nullptr, numer_wiersza, liczby_w_wierszach, ilosc_wierszy);
             przejdzDrzewoInOrder(nullptr, numer_wiersza, liczby_w_wierszach, ilosc_wierszy);
         } else
             return;
     } else {
-        liczby_w_wierszach[numer_wiersza].push_back(aktualny_wezel->wartosc_string);
+        liczby_w_wierszach[numer_wiersza].push_back(aktualny_wezel->wartosc);
         numer_wiersza++;
         przejdzDrzewoInOrder(aktualny_wezel->lewy, numer_wiersza, liczby_w_wierszach, ilosc_wierszy);
         przejdzDrzewoInOrder(aktualny_wezel->prawy, numer_wiersza, liczby_w_wierszach, ilosc_wierszy);
@@ -350,15 +303,17 @@ void DrzewoBinarne::przejdzDrzewoInOrder(struct wezel_drzewa *aktualny_wezel,
 /**
  * @brief Wyswietlenie wartosci wierszy drzewa binarnego w terminalu.
  * 
+ * @tparam T typ danych wezla.
  * @param liczba_wierszy Ilosc wierszy w drzewie binarnym.
- * @param liczby_w_wierszach Tablica przechowujaca wartosci typu int - wartosci wezlow drzewa binarnego.
+ * @param liczby_w_wierszach Tablica przechowujaca wartosci wezlow drzewa.
  */
-void DrzewoBinarne::wyswietlajWiersze(int liczba_wierszy, std::vector<std::vector<int>> liczby_w_wierszach) {
+template <typename T>
+void DrzewoBinarne<T>::wyswietlajWiersze(int liczba_wierszy, std::vector<std::vector<T>> liczby_w_wierszach) {
     for(int i = 0; i < liczba_wierszy; i++) {
         std::stringstream ss;
         // wprowadzenie wartosci do strumienia z i-tego wiersza lub '_' gdy wartosc przekazana z wezla to NULL
         for(int j = 0; j < liczby_w_wierszach[i].size(); j++) {
-            if(liczby_w_wierszach[i].at(j) == (int)NULL)
+            if(liczby_w_wierszach[i].at(j) == (T)NULL)
                 ss << "_ ";
             else
                 ss << liczby_w_wierszach[i].at(j) << " ";
@@ -371,36 +326,19 @@ void DrzewoBinarne::wyswietlajWiersze(int liczba_wierszy, std::vector<std::vecto
  * @brief Wyswietlenie wartosci wierszy drzewa binarnego w terminalu.
  * 
  * @param liczba_wierszy Ilosc wierszy w drzewie binarnym.
- * @param liczby_w_wierszach Tablica przechowujaca wartosci typu double - wartosci wezlow drzewa binarnego.
- */
-void DrzewoBinarne::wyswietlajWiersze(int liczba_wierszy, std::vector<std::vector<double>> liczby_w_wierszach) {
+ * @param liczby_w_wierszach Tablica przechowujaca wartosci wezlow drzewa.
+ */ 
+template <>
+void DrzewoBinarne<std::string>::wyswietlajWiersze(int liczba_wierszy, std::vector<std::vector<std::string>> liczby_w_wierszach) {
     for(int i = 0; i < liczba_wierszy; i++) {
         std::stringstream ss;
         // wprowadzenie wartosci do strumienia z i-tego wiersza lub '_' gdy wartosc przekazana z wezla to NULL
-        for(int j = 0; j < liczby_w_wierszach[i].size(); j++)
-            if(liczby_w_wierszach[i].at(j) == (double)NULL)
-                ss << "_ ";
-            else
-                ss << liczby_w_wierszach[i].at(j) << " ";
-        std::cout << ss.str() << std::endl;
-    }
-}
-
-/**
- * @brief Wyswietlenie wartosci wierszy drzewa binarnego w terminalu.
- * 
- * @param liczba_wierszy Ilosc wierszy w drzewie binarnym.
- * @param liczby_w_wierszach Tablica przechowujaca wartosci typu string - wartosci wezlow drzewa binarnego.
- */
-void DrzewoBinarne::wyswietlajWiersze(int liczba_wierszy, std::vector<std::vector<std::string>> liczby_w_wierszach) {
-    for(int i = 0; i < liczba_wierszy; i++) {
-        std::stringstream ss;
-        // wprowadzenie wartosci do strumienia z i-tego wiersza lub '_' gdy wartosc przekazana z wezla to NULL
-        for(int j = 0; j < liczby_w_wierszach[i].size(); j++)
+        for(int j = 0; j < liczby_w_wierszach[i].size(); j++) {
             if(liczby_w_wierszach[i].at(j).empty())
                 ss << "_ ";
             else
                 ss << liczby_w_wierszach[i].at(j) << " ";
+        }
         std::cout << ss.str() << std::endl;
     }
 }
@@ -408,15 +346,19 @@ void DrzewoBinarne::wyswietlajWiersze(int liczba_wierszy, std::vector<std::vecto
 /**
  * @brief Szukanie wezla w drzewie binarnym posiadajacego wskazana wartosc.
  * 
+ * @tparam T Typ danych wezla.
  * @param szukany_wezel Wezel z wartoscia poszukiwana w drzewie.
  * @return struct wezel_drzewa* Wezel z poszukiwana wartoscia lub nullptr.
  * @see DrzewoBinarne::szukajRightOrder
  */
-struct wezel_drzewa* DrzewoBinarne::szukajWezel(struct wezel_drzewa szukany_wezel) {
-    if(this->korzen == nullptr) 
+template <typename T>
+struct wezel_drzewa<T>* DrzewoBinarne<T>::szukajWezel(struct wezel_drzewa<T> szukany_wezel) {
+    if(this->korzen == nullptr)
         return nullptr;
-    struct wezel_drzewa *szukany_wezel_w_drzewie = szukajRightOrder(this->korzen, szukany_wezel, nullptr);
+
+    struct wezel_drzewa<T> *szukany_wezel_w_drzewie = szukajRightOrder(this->korzen, szukany_wezel, nullptr);
     return szukany_wezel_w_drzewie;
+
 }
 
 /**
@@ -425,20 +367,22 @@ struct wezel_drzewa* DrzewoBinarne::szukajWezel(struct wezel_drzewa szukany_weze
  * Metoda ta przeszukuje drzewo w kolejnosci Post-Order, lecz zaczynajac od prawej galezi. 
  * Przeszukiwanie odbywa sie tak dlugo az nie zostanie znaleziony pierwszy wezel z wskazana wartoscia.
  * 
+ * @tparam T Typ danych drzewa.
  * @param aktualny_wezel Wezel drzewa binarnego, od ktorego odbywac sie bedzie kolejne przeszukiwanie.
  * @param szukany_wezel Wezel zawierajacy poszukiwana wartosc.
  * @param znaleziony_wezel Wskaznik na wezel poszukiwany w drzewie binarnym.
  * @return struct wezel_drzewa* Wezel drzewa binarnego z poszukiwana wartoscia lub nullptr.
  * @see DrzewoBinarne::czyWezelRowny
  */
-struct wezel_drzewa* DrzewoBinarne::szukajRightOrder(struct wezel_drzewa *aktualny_wezel, struct wezel_drzewa szukany_wezel, struct wezel_drzewa *znaleziony_wezel) {
+template <typename T>
+struct wezel_drzewa<T>* DrzewoBinarne<T>::szukajRightOrder(struct wezel_drzewa<T> *aktualny_wezel, struct wezel_drzewa<T> szukany_wezel, struct wezel_drzewa<T> *znaleziony_wezel) {
     if(znaleziony_wezel != nullptr)
         return znaleziony_wezel;
     if(aktualny_wezel != nullptr) {
         znaleziony_wezel = szukajRightOrder(aktualny_wezel->prawy, szukany_wezel, znaleziony_wezel);
-        if(znaleziony_wezel != nullptr)
+        if(znaleziony_wezel == nullptr)
             znaleziony_wezel = szukajRightOrder(aktualny_wezel->lewy, szukany_wezel, znaleziony_wezel);
-        if(czyWezelRowny(szukany_wezel, *aktualny_wezel))
+        if(znaleziony_wezel == nullptr && czyWezelRowny(szukany_wezel, *aktualny_wezel))
             znaleziony_wezel = aktualny_wezel;
     } 
     return znaleziony_wezel;
@@ -449,66 +393,190 @@ struct wezel_drzewa* DrzewoBinarne::szukajRightOrder(struct wezel_drzewa *aktual
  * 
  * Metoda odpowiedzialna za usuniecie wartosci z drzewa, lub gdy jest to ostatnia wartosc - usuniecie wezla.
  * 
+ * @tparam T Typ danych wezla.
  * @param wezel Wezel z poszukiwana wartoscia.
+ * @param typ_drzewa Typ danych wprowadzonych przez klienta.
  * @see DrzewoBinarne::szukajWezel
+ * @see DrzewoBinarne::zamienKorzen
+ * @see DrzewoBinarne::znajdzMaxGalezi
+ * @see DrzewoBinarne::znajdzMinGalezi
+ * @see DrzewoBinarne::oderwijNastepce
  * @throws NieprawidlowaWartosc Blad wywolywany gdy wezel ze wskazana wartoscia nie znajduje sie w drzewie.
- * @todo zmienic na usuwanie wartosci zamiast z gory wezla.
  */
-void DrzewoBinarne::usunWezel(struct wezel_drzewa &wezel) {
-    struct wezel_drzewa *szukany_wezel = szukajWezel(wezel);
+template <typename T>
+void DrzewoBinarne<T>::usunWezel(struct wezel_drzewa<T> &wezel) {
+    struct wezel_drzewa<T> *szukany_wezel = szukajWezel(wezel);
+    struct wezel_drzewa<T> *nastepca = nullptr;
+    // nie znaleziono wezla z podana wartoscia
     if(szukany_wezel == nullptr) {
         throw NieprawidlowaWartosc("Nie znaleziono wezla podanego do usuniecia.\n\n");
-        return;
     }
-    usunWartoscWezla(szukany_wezel, wezel);
-    // sprawdzenie czy wezel jest pusty i nie ma pod soba innych wezlow
-    if(szukany_wezel->lewy == nullptr && szukany_wezel->prawy == nullptr && czyWezelPusty(szukany_wezel)) {
-        // sprawdzenie czy wezel nie jest korzeniem
+    // szukamy w prawej galezi min, a jesli jej nie ma to w lewej max
+    if(szukany_wezel->prawy != nullptr)
+        nastepca = znajdzMinGalezi(szukany_wezel->prawy);
+    else if(szukany_wezel->lewy != nullptr) 
+        nastepca = znajdzMaxGalezi(szukany_wezel->lewy);
+    // nie ma prawej ani lewej galezi, sprawdzamy czy to nie korzen i usuwamy
+    else {
         if(szukany_wezel->ojciec == nullptr) {
-            this->korzen = nullptr;
-            delete szukany_wezel;
+            // jest to korzen, wiec go zamieniamy na null
+            zamienKorzen(nastepca);
         } else {
-            // usuniecie wezla
-            if(szukany_wezel->ojciec->prawy == szukany_wezel) {
-                szukany_wezel->ojciec->prawy = nullptr;
-            } else if(szukany_wezel->ojciec->lewy == szukany_wezel) {
+            if(szukany_wezel->ojciec->lewy == szukany_wezel) {
                 szukany_wezel->ojciec->lewy = nullptr;
+                szukany_wezel->ojciec = nullptr;
+            } else {
+                szukany_wezel->ojciec->prawy = nullptr;
+                szukany_wezel->ojciec = nullptr;
             }
-            szukany_wezel->ojciec = nullptr;
             delete szukany_wezel;
+            return;
         }
     }
-    else {
-        throw NieprawidlowaWartosc("Nie mozna usunac wezla, ktory ma pod soba inne wezly.\n\n");
+    if(nastepca != nullptr) {
+        std::cout <<"dupa" << std::endl;
+        std::cout << nastepca->wartosc << std::endl;
+        // laczymy ojca i lisc nastepcy
+        oderwijNastepce(nastepca);
+
+        // zamieniamy wybrany do usuniecia wezel na nastepce
+        nastepca->lewy = szukany_wezel->lewy;
+        nastepca->prawy = szukany_wezel->prawy;
+        nastepca->ojciec = szukany_wezel->ojciec;
+            
+            if(szukany_wezel->lewy != nullptr) {
+                szukany_wezel->lewy->ojciec = nastepca;
+            }
+            if(szukany_wezel->prawy != nullptr) {
+                szukany_wezel->prawy->ojciec = nastepca;
+            }
+            if(szukany_wezel->ojciec != nullptr) {
+                if(szukany_wezel->ojciec->prawy == szukany_wezel)
+                    szukany_wezel->ojciec->prawy = nastepca;
+                else
+                    szukany_wezel->ojciec->lewy = nastepca;
+            } else {
+                // jesli ojciec jest null to trzeba zamienic korzen
+                zamienKorzen(nastepca);
+            }
+
+            // usuwamy wybrany wezel
+            szukany_wezel->ojciec = nullptr;
+            szukany_wezel->prawy = nullptr;
+            szukany_wezel->lewy = nullptr;
+
+            delete szukany_wezel;
+
+            return;
     }
 }
 
 /**
- * @brief Usun wskazana wartosc z wezla drzewa binarnego.
+ * @brief Metoda odpowiedzialna za znalezienie najmniejszej wartosci w galezi drzewa.
  * 
- * @param wezel_w_drzewie Wezel drzewa binarnego, z ktorego nalezy usunac wartosc.
- * @param wezel_z_wartoscia Wezel ktory wskazuje jaka wartosc nalezy usunac.
+ * @tparam T Typ danych wezla.
+ * @param aktualny_wezel Wezel drzewa binarnego
+ * @return struct wezel_drzewa<T>* Wezel drzewa binarnego o najmniejszej wartosci.
+ * @see DrzewoBinarne::czyWezelMniejszy
  */
-void DrzewoBinarne::usunWartoscWezla(struct wezel_drzewa *wezel_w_drzewie, struct wezel_drzewa wezel_z_wartoscia) {
-    if(wezel_z_wartoscia.wartosc_int) 
-        wezel_w_drzewie->wartosc_int = (int)NULL;
-    else if(wezel_z_wartoscia.wartosc_double)
-        wezel_w_drzewie->wartosc_double = (double)NULL;
-    else if(wezel_z_wartoscia.wartosc_string.empty() == false) {
-        std::string pusty_napis;
-        wezel_w_drzewie->wartosc_string = pusty_napis;
-    }
+template <typename T>
+struct wezel_drzewa<T>* DrzewoBinarne<T>::znajdzMinGalezi(struct wezel_drzewa<T> *aktualny_wezel) {
+    if(aktualny_wezel != nullptr) {
+            if(aktualny_wezel->lewy == nullptr && aktualny_wezel->prawy == nullptr)
+                return aktualny_wezel;
+            struct wezel_drzewa<T> *min_lewo = znajdzMinGalezi(aktualny_wezel->lewy);
+            struct wezel_drzewa<T> *min_prawo = znajdzMinGalezi(aktualny_wezel->prawy);
+            if(min_lewo == nullptr) {
+                if(czyWezelMniejszy(*aktualny_wezel, min_prawo))
+                    return aktualny_wezel;
+                else
+                    return min_prawo;
+            } else if(min_prawo == nullptr) {
+                return min_lewo;
+            } else {
+                if(!czyWezelMniejszy(*min_lewo, min_prawo))
+                    min_lewo = min_prawo;
+                return min_lewo;
+            }
+        }
+        return aktualny_wezel;
 }
 
 /**
- * @brief Sprawdz czy wezel ma jakiekolwiek wartosci.
+ * @brief Metoda odpowiedzialna za znalezienie najwiekszej wartosci w galezi drzewa.
  * 
- * @param wezel 
- * @return true 
- * @return false 
+ * @tparam T Typ danych wezla.
+ * @param aktualny_wezel Wezel drzewa binarnego.
+ * @return struct wezel_drzewa<T>* Wezel drzewa binarnego o najwiekszej wartosci.
+ * @see DrzewoBinarne::czyWezelMniejszy
+ * @see DrzewoBinarne::czyWezelRowny
  */
-bool DrzewoBinarne::czyWezelPusty(struct wezel_drzewa *wezel) {
-    if(wezel->wartosc_int == (int)NULL && wezel->wartosc_double == (double)NULL && wezel->wartosc_string.empty())
-        return true;
-    return false;
+template <typename T>
+struct wezel_drzewa<T>* DrzewoBinarne<T>::znajdzMaxGalezi(struct wezel_drzewa<T> *aktualny_wezel) {
+    if(aktualny_wezel != nullptr) {
+            if(aktualny_wezel->lewy == nullptr && aktualny_wezel->prawy == nullptr)
+                return aktualny_wezel;
+            struct wezel_drzewa<T> *max_lewo = znajdzMaxGalezi(aktualny_wezel->lewy);
+            struct wezel_drzewa<T> *max_prawo = znajdzMaxGalezi(aktualny_wezel->prawy);
+            if(max_prawo == nullptr) {
+                if(!czyWezelMniejszy(*aktualny_wezel, max_lewo)) 
+                    return aktualny_wezel;
+                else
+                    return max_lewo;
+            } else if(max_lewo == nullptr)
+                return max_prawo;
+            else {
+                if(czyWezelMniejszy(*max_prawo, max_lewo) || czyWezelRowny(*max_lewo, *max_prawo))
+                    max_prawo = max_lewo;
+                return max_prawo;
+            }
+        }
+        return aktualny_wezel;
 }
+
+/**
+ * @brief Metoda odpowiedzialna za usuniecie powiazan wezla oraz zlaczenie wezlow znajdujacych sie pod nim.
+ * 
+ * @tparam T Typ danych wezla.
+ * @param wezel Wezel, ktory ma zostac oddzielony od drzewa.
+ */
+template <typename T>
+void DrzewoBinarne<T>::oderwijNastepce(struct wezel_drzewa<T> *wezel) {
+    if(wezel->lewy == nullptr && wezel->prawy == nullptr) {
+            if(wezel->ojciec->lewy == wezel) {
+                wezel->ojciec->lewy = nullptr;
+            } else {
+                wezel->ojciec->prawy = nullptr;
+            }
+        } else if(wezel->lewy != nullptr) {
+            wezel->lewy->ojciec = wezel->ojciec;
+            if(wezel->ojciec->lewy == wezel)
+                wezel->ojciec->lewy = wezel->lewy;
+            else 
+                wezel->ojciec->prawy = wezel->lewy;
+        } else {
+            wezel->prawy->ojciec = wezel->ojciec;
+            if(wezel->ojciec->lewy == wezel)
+                wezel->ojciec->lewy = wezel->prawy;
+            else
+                wezel->ojciec->prawy = wezel->prawy;
+        }
+}
+
+/**
+ * @brief Metoda odpowiedzialna za zmiane korzenia na wybrany wezel.
+ * 
+ * @tparam T Typ danych wezla.
+ * @param nowy_korzen Wezel, ktory ma zostac korzeniem.
+ */
+template <typename T>
+void DrzewoBinarne<T>::zamienKorzen(struct wezel_drzewa<T> *nowy_korzen) {
+    if(nowy_korzen == nullptr)
+        delete this->korzen;
+    this->korzen = nowy_korzen;
+}
+
+
+template class DrzewoBinarne<int>;
+template class DrzewoBinarne<double>;
+template class DrzewoBinarne<std::string>;
