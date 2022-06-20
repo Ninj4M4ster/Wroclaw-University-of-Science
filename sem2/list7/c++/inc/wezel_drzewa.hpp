@@ -6,9 +6,10 @@
 /**
  * @brief Struktura wezla drzewa.
  * 
+ * @tparam T Typ wprowadzanych danych.
  */
 template <typename T>
-class wezel_drzewa {
+struct wezel_drzewa {
     public:
     wezel_drzewa* lewy = nullptr;
     wezel_drzewa* prawy = nullptr;
@@ -16,8 +17,12 @@ class wezel_drzewa {
     T wartosc = (T)NULL;
 };
 
+/**
+ * @brief Struktura wezla drzewa dla parametru T = string
+ * 
+ */
 template <>
-class wezel_drzewa <std::string> {
+struct wezel_drzewa <std::string> {
     public:
     wezel_drzewa* lewy = nullptr;
     wezel_drzewa* prawy = nullptr;
@@ -25,8 +30,8 @@ class wezel_drzewa <std::string> {
     std::string wartosc = "";
 };
 
-template class wezel_drzewa<int>;
-template class wezel_drzewa<double>;
-template class wezel_drzewa<std::string>;
+template struct wezel_drzewa<int>;
+template struct wezel_drzewa<double>;
+template struct wezel_drzewa<std::string>;
 
 #endif  // WEZEL_DRZEWA__HPP

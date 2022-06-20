@@ -434,8 +434,6 @@ void DrzewoBinarne<T>::usunWezel(struct wezel_drzewa<T> &wezel) {
         }
     }
     if(nastepca != nullptr) {
-        std::cout <<"dupa" << std::endl;
-        std::cout << nastepca->wartosc << std::endl;
         // laczymy ojca i lisc nastepcy
         oderwijNastepce(nastepca);
 
