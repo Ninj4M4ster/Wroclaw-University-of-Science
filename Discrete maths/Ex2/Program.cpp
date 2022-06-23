@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <cstdlib>
 #include <ctime>
 #include <vector>
@@ -99,10 +100,11 @@ std::vector<std::vector<int>> getCycles(const int* permutation, int size) {
  * 
  */
 void meanNumberOfCyclesTest() {
+    std::ofstream file("test.txt");
     int n = 100;
     int k = 1000;
+    file << "n;E(X)\n";
     for(int i = 1; i <= 100; i++) {
-        std::cout << "n = " << i << std::endl;
         double count_cycles = 0;
         for(int j=0; j < k; j++) {
             int* permutation = randomPermutation(i);
@@ -110,8 +112,9 @@ void meanNumberOfCyclesTest() {
             count_cycles += (double)cycles.size();
         }
         double mean_number_of_cycles = count_cycles / (double)k;
-        std::cout << "mean number = " << mean_number_of_cycles << std::endl << std::endl;
+        file << i << ";" << mean_number_of_cycles << "\n";
     }
+    file.close();
 }
 
 /**
@@ -136,10 +139,11 @@ int longestCycle(int* permutation, int size) {
  * 
  */
 void mainTask() {
+    std::ofstream file("main_task.txt");
     int n = 100;
     int k = 1000;
+    file << "n;M(X)\n";
     for(int i=1; i <= n; i++) {
-        std::cout << "n = " << i << std::endl;
         double probability;
         int longest_cycle = 0;
         double sum = 0;
@@ -148,8 +152,8 @@ void mainTask() {
         for(int j=0; j < k; j++) {
             int* permutation = randomPermutation(i);
             if(longestCycle(permutation, i) > longest_cycle) {
-                cycle_length_and_count[longest_cycle] = 1;
                 longest_cycle = longestCycle(permutation, i);
+                cycle_length_and_count[longest_cycle] = 1;
             } else {
                 cycle_length_and_count[longestCycle(permutation, i)] += 1;
             }
@@ -158,15 +162,16 @@ void mainTask() {
             probability = (double)count / 1000.0;
             sum += probability * cycle_length;
         }
-        std::cout << "expected value = " << sum << std::endl << std::endl;
+        file << i << ";" << sum << "\n";
     }
+    file.close();
 }
 
 int main(int argc, char const *argv[])
 {
     std::srand(std::time(NULL));
 
-    // meanNumberOfCyclesTest();
+    meanNumberOfCyclesTest();
     mainTask();
 
     return 0;
