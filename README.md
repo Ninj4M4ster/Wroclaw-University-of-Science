@@ -11,6 +11,7 @@ This repository contains my work done during studies at Wroclaw University of Sc
     b. Java:  
       - JavaFX,  
   3. Discrete Maths:  
-    a. Python  
+    a. Python,  
+    b. C++
   4. Algebra:  
     a. Python.
