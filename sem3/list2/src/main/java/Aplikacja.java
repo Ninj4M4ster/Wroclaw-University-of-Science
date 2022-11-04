@@ -21,23 +21,34 @@ public class Aplikacja {
         System.out.print("""
             Wybierz porzadana czynnosc:
              1 -> utworzenie nowej faktury
-             2 -> edycja faktury
+             2 -> wyswietl poprzednie faktury
              3 -> koniec dzialania programu
-             ->:\s""");
+             ->:""");
       } else {
         System.out.print("""
             Wybierz porzadana czynnosc:
              1 -> utworzenie nowej faktury
              2 -> koniec dzialania programu
-             ->:\s""");
+             ->:""");
       }
-      wybor = Integer.parseInt(scanner.nextLine());
+      String wprowadzonaWartosc = scanner.nextLine();
+
+      // sprawdz czy wprowadzono liczbe
+      if (czyLiczba(wprowadzonaWartosc)) {
+        wybor = Integer.parseInt(wprowadzonaWartosc);
+      } else {
+        System.out.println("Wprowadzono nieprawidlowe dane\n");
+        continue;
+      }
+
+      // wykonaj akcje zaleznie od wyboru
       if (wybor == 1) {
+        System.out.println();
         kontrolerFaktur.utworzNowaFakture();
       }
       if (kontrolerFaktur.czyIstniejaUtworzoneFaktury()) {
         if (wybor == 2) {
-          // TODO: dodac funkcjonalnosc edycji faktur
+          // TODO: dodac funkcjonalnosc wyswietlania poprzednich faktur
         } else if (wybor == 3) {
           break;
         }
@@ -46,6 +57,15 @@ public class Aplikacja {
       } else {
         System.out.println("Dokonano nieprawidlowego wyboru.\n");
       }
+    }  // koniec petli
+  }
+
+  private static boolean czyLiczba(String napis) {
+    try {
+      Integer.parseInt(napis);
+    } catch (NumberFormatException e) {
+      return false;
     }
+    return true;
   }
 }

@@ -2,7 +2,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
- * Kontroler uzytkownika.
+ * Kontroler faktur.
  * Klasa ta odpowiedzialna jest za odbieranie danych od uzytkownika,
  * pakowania ich w obiekt i wysylania go do dalszej pracy.
  */
@@ -19,9 +19,22 @@ public class KontrolerFaktur {
   public void utworzNowaFakture() {
     aktualnaFaktura = new Faktura();
     listaFaktur.add(aktualnaFaktura);
+
+    // wprowadzenie ogolnych danych o fakturze
+    System.out.print("Wprowadz miejsce wystawienia faktury: ");
+    String miejsce = scanner.nextLine();
+    aktualnaFaktura.wprowadzInformacjeOgolne(miejsce);
+
+    System.out.println();
+    this.wczytajDaneStrony("sprzedawcy");
+    System.out.println();
+    this.wczytajDaneStrony("nabywcy");
   }
 
-  private void wczytajDaneStrony(Faktura faktura, String strona) {
+  private void wczytajDaneStrony(String strona) {
+    System.out.println("Wprowadz informacje o " + strona);
+    System.out.println("---------------------------------");
+
     System.out.print("Podaj nazwę " + strona + ": ");
     final String nazwa = scanner.nextLine();
     System.out.print("Podaj NIP " + strona + ": ");
@@ -30,7 +43,8 @@ public class KontrolerFaktur {
     final String adres = scanner.nextLine();
     System.out.print("Podaj kod pocztowy i miasto " + strona + ": ");
     final String kodPocztowyMiasto = scanner.nextLine();
-    faktura.wprowadzDaneStrony(strona, nazwa, nip, adres, kodPocztowyMiasto);
+
+    aktualnaFaktura.wprowadzDaneStrony(strona, nazwa, nip, adres, kodPocztowyMiasto);
   }
 
   /**
