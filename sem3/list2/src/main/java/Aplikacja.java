@@ -18,23 +18,23 @@ public class Aplikacja {
     int wybor = 0;
     while (wybor != 2) {
       if (kontrolerFaktur.czyIstniejaUtworzoneFaktury()) {
-        System.out.print("""
+        System.out.println("""
             Wybierz porzadana czynnosc:
              1 -> utworzenie nowej faktury
              2 -> wyswietl poprzednie faktury
              3 -> koniec dzialania programu
              ->:""");
       } else {
-        System.out.print("""
+        System.out.println("""
             Wybierz porzadana czynnosc:
              1 -> utworzenie nowej faktury
              2 -> koniec dzialania programu
-             ->:""");
+             ->:\s""");
       }
       String wprowadzonaWartosc = scanner.nextLine();
 
       // sprawdz czy wprowadzono liczbe
-      if (czyLiczba(wprowadzonaWartosc)) {
+      if (czyLiczba(wprowadzonaWartosc) && !wprowadzonaWartosc.isEmpty()) {
         wybor = Integer.parseInt(wprowadzonaWartosc);
       } else {
         System.out.println("Wprowadzono nieprawidlowe dane\n");
@@ -58,6 +58,7 @@ public class Aplikacja {
         System.out.println("Dokonano nieprawidlowego wyboru.\n");
       }
     }  // koniec petli
+    scanner.close();
   }
 
   private static boolean czyLiczba(String napis) {

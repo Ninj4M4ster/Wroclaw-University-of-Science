@@ -7,21 +7,21 @@ import java.util.Scanner;
  * pakowania ich w obiekt i wysylania go do dalszej pracy.
  */
 public class KontrolerFaktur {
-  Scanner scanner;
   ArrayList<Faktura> listaFaktur;
   Faktura aktualnaFaktura;
 
   public KontrolerFaktur() {
-    scanner = new Scanner(System.in);
     listaFaktur = new ArrayList<>();
   }
 
   public void utworzNowaFakture() {
     aktualnaFaktura = new Faktura();
     listaFaktur.add(aktualnaFaktura);
+    Scanner scanner = new Scanner(System.in);
 
     // wprowadzenie ogolnych danych o fakturze
-    System.out.print("Wprowadz miejsce wystawienia faktury: ");
+    System.out.println("-----------Nowa faktura-----------");
+    System.out.println("Wprowadz miejsce wystawienia faktury: ");
     String miejsce = scanner.nextLine();
     aktualnaFaktura.wprowadzInformacjeOgolne(miejsce);
 
@@ -32,16 +32,17 @@ public class KontrolerFaktur {
   }
 
   private void wczytajDaneStrony(String strona) {
+    Scanner scanner = new Scanner(System.in);
     System.out.println("Wprowadz informacje o " + strona);
-    System.out.println("---------------------------------");
+    System.out.println("----------------------------------");
 
-    System.out.print("Podaj nazwę " + strona + ": ");
+    System.out.println("Podaj nazwe " + strona + ": ");
     final String nazwa = scanner.nextLine();
-    System.out.print("Podaj NIP " + strona + ": ");
+    System.out.println("Podaj NIP " + strona + ": ");
     final String nip = scanner.nextLine();
-    System.out.print("Podaj ulice " + strona + ": ");
+    System.out.println("Podaj ulice " + strona + ": ");
     final String adres = scanner.nextLine();
-    System.out.print("Podaj kod pocztowy i miasto " + strona + ": ");
+    System.out.println("Podaj kod pocztowy i miasto " + strona + ": ");
     final String kodPocztowyMiasto = scanner.nextLine();
 
     aktualnaFaktura.wprowadzDaneStrony(strona, nazwa, nip, adres, kodPocztowyMiasto);
