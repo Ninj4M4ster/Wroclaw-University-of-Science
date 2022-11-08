@@ -50,18 +50,17 @@ public class KontrolerFaktur {
    * @param strona Napis "sprzedawcy" lub "nabywcy" identyfikujacy strone tranzakcji.
    */
   private void wczytajDaneStrony(String strona) {
-    Scanner scanner = new Scanner(System.in);
     System.out.println("Wprowadz informacje o " + strona);
     System.out.println("----------------------------------");
 
-    System.out.println("Podaj nazwe " + strona + ": ");
-    final String nazwa = scanner.nextLine();
-    System.out.println("Podaj NIP " + strona + ": ");
-    final String nip = scanner.nextLine();
-    System.out.println("Podaj ulice " + strona + ": ");
-    final String adres = scanner.nextLine();
-    System.out.println("Podaj kod pocztowy i miasto " + strona + ": ");
-    final String kodPocztowyMiasto = scanner.nextLine();
+    final String nazwa =
+        WczytDanychFaktury.wprowadzNapis("Podaj nazwe " + strona + ":");
+    final String nip =
+        WczytDanychFaktury.wprowadzNapis("Podaj NIP " + strona + ":");
+    final String adres =
+        WczytDanychFaktury.wprowadzNapis("Podaj ulice " + strona + ":");
+    final String kodPocztowyMiasto =
+        WczytDanychFaktury.wprowadzNapis("Podaj kod pocztowy i miasto " + strona + ":");
 
     aktualnaFaktura.wprowadzDaneStrony(strona, nazwa, nip, adres, kodPocztowyMiasto);
   }
@@ -81,10 +80,11 @@ public class KontrolerFaktur {
       wybor = scanner.nextLine();
       if (wybor.equalsIgnoreCase("y")) {
         // pobierz dane od uzytkownika
-        String nazwaTowarUsluga = this.wprowadzNazweElementu();
-        int iloscLiczba = this.wprowadzIloscElementu();
-        double cenaLiczba = this.wprowadzCeneElementu();
-        double podatek = this.wprowadzPodatek();
+        String nazwaTowarUsluga =
+            WczytDanychFaktury.wprowadzNapis("Wprowadz nazwe towaru lub uslugi:");
+        int iloscLiczba = WczytDanychFaktury.wprowadzIloscElementu();
+        double cenaLiczba = WczytDanychFaktury.wprowadzCeneElementu();
+        double podatek = WczytDanychFaktury.wprowadzPodatek();
 
         // wprowadz element do faktury
         aktualnaFaktura.wprowadzElement(nazwaTowarUsluga, iloscLiczba, cenaLiczba, podatek);
@@ -100,103 +100,6 @@ public class KontrolerFaktur {
         System.out.println();
       }
     } // end while
-  }
-
-  /**
-   * Metoda ta pobiera od uzytkownika nazwe elementu na fakturze.
-   * Waliduje ona, czy uzytkownik wprowadzil poprawne dane.
-   *
-   * @return Nazwa elementu na fakturze.
-   */
-  private String wprowadzNazweElementu() {
-    Scanner scanner = new Scanner(System.in);
-    String nazwaTowarUsluga;
-    while (true) {
-      System.out.println("Wprowadz nazwe towaru lub uslugi: ");
-      nazwaTowarUsluga = scanner.nextLine();
-      if (nazwaTowarUsluga.isEmpty()) {
-        System.out.println("Nie wprowadzono danych.");
-        System.out.println();
-      } else {
-        break;
-      }
-    }
-    return nazwaTowarUsluga;
-  }
-
-  /**
-   * Metoda ta pobiera od uzytkownika ilosc elementu na fakturze.
-   * Waliduje ona, czy uzytkownika wprowadzil poprawne dane.
-   *
-   * @return Ilosc elementu na fakturze.
-   */
-  private int wprowadzIloscElementu() {
-    Scanner scanner = new Scanner(System.in);
-    String ilosc;
-    int iloscLiczba;
-    // sprawdzaj czy wprowadzona ilosc jest liczba
-    while (true) {
-      System.out.println("Wprowadz ilosc: ");
-      ilosc = scanner.nextLine();
-      if (KontrolerDanych.czyLiczbaCalkowita(ilosc)) {
-        iloscLiczba = Integer.parseInt(ilosc);
-        break;
-      } else {
-        System.out.println("Wprowadzono nieprawidlowe dane.");
-        System.out.println();
-      }
-    }
-    return iloscLiczba;
-  }
-
-  /**
-   * Metoda ta pobiera od uzytkownika cene za sztuke elementu na fakturze.
-   * Waliduje ona, czy uzytkownik wprowadzil poprawne dane.
-   *
-   * @return Cena elementu na fakturze.
-   */
-  private double wprowadzCeneElementu() {
-    Scanner scanner = new Scanner(System.in);
-    double cenaLiczba;
-    String kwota;
-    // sprawdzaj czy wprowadzona kwota jest liczba
-    while (true) {
-      System.out.println("Wprowadz cene brutto: ");
-      kwota = scanner.nextLine();
-      if (KontrolerDanych.czyLiczbaRzeczywista(kwota)) {
-        cenaLiczba = Double.parseDouble(kwota);
-        break;
-      } else {
-        System.out.println("Wprowadzono nieprawidlowe dane.");
-        System.out.println();
-      }
-    }
-    return cenaLiczba;
-  }
-
-  /**
-   * Metoda ta pobiera od uzytkownika podatek od elementu na fakturze.
-   * Waliduje ona, czy uzytkownik wprowadzil poprawne dane.
-   *
-   * @return Podatek od elementu na fakturze.
-   */
-  private double wprowadzPodatek() {
-    Scanner scanner = new Scanner(System.in);
-    double podatekLiczba;
-    String podatek;
-    // sprawdzaj czy wprowadzony podatek jest poprawna liczba
-    while (true) {
-      System.out.println("Wprowadz podatek (liczba 0-100): ");
-      podatek = scanner.nextLine();
-      if (KontrolerDanych.czyProcent(podatek)) {
-        podatekLiczba = Double.parseDouble(podatek);
-        break;
-      } else {
-        System.out.println("Wprowadzono nieprawidlowe dane.");
-        System.out.println();
-      }
-    }
-    return podatekLiczba;
   }
 
   /**
