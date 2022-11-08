@@ -84,9 +84,10 @@ public class KontrolerFaktur {
         String nazwaTowarUsluga = this.wprowadzNazweElementu();
         int iloscLiczba = this.wprowadzIloscElementu();
         double cenaLiczba = this.wprowadzCeneElementu();
+        double podatek = this.wprowadzPodatek();
 
         // wprowadz element do faktury
-        aktualnaFaktura.wprowadzElement(nazwaTowarUsluga, iloscLiczba, cenaLiczba);
+        aktualnaFaktura.wprowadzElement(nazwaTowarUsluga, iloscLiczba, cenaLiczba, podatek);
       } else if (wybor.equalsIgnoreCase("n")) {
         if (aktualnaFaktura.iloscElementow() == 0) {
           System.out.println("Faktura musi posiadac chociaz jeden element.");
@@ -171,6 +172,31 @@ public class KontrolerFaktur {
       }
     }
     return cenaLiczba;
+  }
+
+  /**
+   * Metoda ta pobiera od uzytkownika podatek od elementu na fakturze.
+   * Waliduje ona, czy uzytkownik wprowadzil poprawne dane.
+   *
+   * @return Podatek od elementu na fakturze.
+   */
+  private double wprowadzPodatek() {
+    Scanner scanner = new Scanner(System.in);
+    double podatekLiczba;
+    String podatek;
+    // sprawdzaj czy wprowadzony podatek jest poprawna liczba
+    while (true) {
+      System.out.println("Wprowadz podatek (liczba 0-100): ");
+      podatek = scanner.nextLine();
+      if (KontrolerDanych.czyProcent(podatek)) {
+        podatekLiczba = Double.parseDouble(podatek);
+        break;
+      } else {
+        System.out.println("Wprowadzono nieprawidlowe dane.");
+        System.out.println();
+      }
+    }
+    return podatekLiczba;
   }
 
   /**

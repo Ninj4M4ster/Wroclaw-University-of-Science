@@ -44,4 +44,23 @@ public final class KontrolerDanych {
     }
     return true;
   }
+
+  /**
+   * Sprawdz czy podany napis jest procentem i znajduje sie w zakresie 0-100.
+   *
+   * @param napis Napis do sprawdzenia.
+   * @return Czy napis jest liczba z przedzialu 0-100?
+   */
+  public static boolean czyProcent(String napis) {
+    if (napis.isEmpty()) {
+      return false;
+    }
+    double procent;
+    try {
+      procent = Double.parseDouble(napis);
+    } catch (NumberFormatException e) {
+      return false;
+    }
+    return procent >= 0 && procent <= 100;
+  }
 }

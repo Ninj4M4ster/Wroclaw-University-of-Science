@@ -76,9 +76,10 @@ public class Faktura {
    * @param nazwaTowarUsluga Nazwa towaru lub uslugi.
    * @param ilosc Ilosc towaru/uslugi.
    * @param cena Cena za sztuke.
+   * @param podatek Podatek od towaru/uslugi.
    */
-  public void wprowadzElement(String nazwaTowarUsluga, int ilosc, double cena) {
-    ElementFaktury element = new ElementFaktury(nazwaTowarUsluga, ilosc, cena);
+  public void wprowadzElement(String nazwaTowarUsluga, int ilosc, double cena, double podatek) {
+    ElementFaktury element = new ElementFaktury(nazwaTowarUsluga, ilosc, cena, podatek);
     elementyFaktury.add(element);
   }
 
