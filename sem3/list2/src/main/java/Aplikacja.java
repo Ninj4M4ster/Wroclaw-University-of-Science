@@ -19,14 +19,14 @@ public class Aplikacja {
     while (wybor != 2) {
       if (kontrolerFaktur.czyIstniejaUtworzoneFaktury()) {
         System.out.println("""
-            Wybierz porzadana czynnosc:
+            Wybierz pozzadana czynnosc:
              1 -> utworzenie nowej faktury
              2 -> wyswietl poprzednie faktury
              3 -> koniec dzialania programu
              ->:""");
       } else {
         System.out.println("""
-            Wybierz porzadana czynnosc:
+            Wybierz pozadana czynnosc:
              1 -> utworzenie nowej faktury
              2 -> koniec dzialania programu
              ->:\s""");
@@ -61,7 +61,16 @@ public class Aplikacja {
     scanner.close();
   }
 
+  /**
+   * Sprawdz czy podany napis jest liczba.
+   *
+   * @param napis Napis do sprawdzenia.
+   * @return Czy napis jest liczba?
+   */
   private static boolean czyLiczba(String napis) {
+    if (napis.isEmpty()) {
+      return false;
+    }
     try {
       Integer.parseInt(napis);
     } catch (NumberFormatException e) {

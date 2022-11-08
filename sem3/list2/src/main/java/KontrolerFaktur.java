@@ -10,10 +10,17 @@ public class KontrolerFaktur {
   ArrayList<Faktura> listaFaktur;
   Faktura aktualnaFaktura;
 
+  /**
+   * Konstruktor. Tworzy tablice do przechowywania wszystkich utworzonych faktur.
+   */
   public KontrolerFaktur() {
     listaFaktur = new ArrayList<>();
   }
 
+  /**
+   * Metoda odpowiedzialna za utworzenie nowej faktury.
+   * Prosi ona uzytkownika o wszyskie potrzebne dane oraz pakuje je do obiektu Faktura.
+   */
   public void utworzNowaFakture() {
     aktualnaFaktura = new Faktura();
     listaFaktur.add(aktualnaFaktura);
@@ -31,6 +38,12 @@ public class KontrolerFaktur {
     this.wczytajDaneStrony("nabywcy");
   }
 
+  /**
+   * Metoda odpowiedzialna za wczytanie danych dotyczacych jednej ze stron tranzakcji,
+   * dla ktorej tworzona jest faktura.
+   *
+   * @param strona Napis "sprzedawcy" lub "nabywcy" identyfikujacy strone tranzakcji.
+   */
   private void wczytajDaneStrony(String strona) {
     Scanner scanner = new Scanner(System.in);
     System.out.println("Wprowadz informacje o " + strona);
