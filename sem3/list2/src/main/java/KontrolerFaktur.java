@@ -32,10 +32,15 @@ public class KontrolerFaktur {
     String miejsce = scanner.nextLine();
     aktualnaFaktura.wprowadzInformacjeOgolne(miejsce);
 
+    // wczytywanie danych dotyczacych stron tranzakcji
     System.out.println();
     this.wczytajDaneStrony("sprzedawcy");
     System.out.println();
     this.wczytajDaneStrony("nabywcy");
+
+    // wczytywanie przedmiotow faktury
+    System.out.println();
+    this.wczytajElementyFaktury();
   }
 
   /**
@@ -59,6 +64,113 @@ public class KontrolerFaktur {
     final String kodPocztowyMiasto = scanner.nextLine();
 
     aktualnaFaktura.wprowadzDaneStrony(strona, nazwa, nip, adres, kodPocztowyMiasto);
+  }
+
+  /**
+   * Metoda ta wczytuje od uzytkownika elementy faktury razem z kwota i iloscia.
+   * Nastepnie wysyla dane do faktury.
+   */
+  private void wczytajElementyFaktury() {
+    System.out.println("---------Elementy faktury----------");
+    String wybor;
+    Scanner scanner = new Scanner(System.in);
+
+    // wprowadzaj elementy poki uzytkownik nie zdecyduje inaczej
+    while (true) {
+      System.out.println("Czy chcesz dodac kolejny element faktury? (Y/N): ");
+      wybor = scanner.nextLine();
+      if (wybor.equalsIgnoreCase("y")) {
+        // pobierz dane od uzytkownika
+        String nazwaTowarUsluga = this.wprowadzNazweElementu();
+        int iloscLiczba = this.wprowadzIloscElementu();
+        double cenaLiczba = this.wprowadzCeneElementu();
+
+        // wprowadz element do faktury
+        aktualnaFaktura.wprowadzElement(nazwaTowarUsluga, iloscLiczba, cenaLiczba);
+      } else if (wybor.equalsIgnoreCase("n")) {
+        if (aktualnaFaktura.iloscElementow() == 0) {
+          System.out.println("Faktura musi posiadac chociaz jeden element.");
+          System.out.println();
+        } else {
+          break;
+        }
+      } else {
+        System.out.println("Nieprawidlowy wybor.");
+        System.out.println();
+      }
+    } // end while
+  }
+
+  /**
+   * Metoda ta pobiera od uzytkownika nazwe elementu na fakturze.
+   * Waliduje ona, czy uzytkownik wprowadzil poprawne dane.
+   *
+   * @return Nazwa elementu na fakturze.
+   */
+  private String wprowadzNazweElementu() {
+    Scanner scanner = new Scanner(System.in);
+    String nazwaTowarUsluga;
+    while (true) {
+      System.out.println("Wprowadz nazwe towaru lub uslugi: ");
+      nazwaTowarUsluga = scanner.nextLine();
+      if (nazwaTowarUsluga.isEmpty()) {
+        System.out.println("Nie wprowadzono danych.");
+        System.out.println();
+      } else {
+        break;
+      }
+    }
+    return nazwaTowarUsluga;
+  }
+
+  /**
+   * Metoda ta pobiera od uzytkownika ilosc elementu na fakturze.
+   * Waliduje ona, czy uzytkownika wprowadzil poprawne dane.
+   *
+   * @return Ilosc elementu na fakturze.
+   */
+  private int wprowadzIloscElementu() {
+    Scanner scanner = new Scanner(System.in);
+    String ilosc;
+    int iloscLiczba;
+    // sprawdzaj czy wprowadzona ilosc jest liczba
+    while (true) {
+      System.out.println("Wprowadz ilosc: ");
+      ilosc = scanner.nextLine();
+      if (KontrolerDanych.czyLiczbaCalkowita(ilosc)) {
+        iloscLiczba = Integer.parseInt(ilosc);
+        break;
+      } else {
+        System.out.println("Wprowadzono nieprawidlowe dane.");
+        System.out.println();
+      }
+    }
+    return iloscLiczba;
+  }
+
+  /**
+   * Metoda ta pobiera od uzytkownika cene za sztuke elementu na fakturze.
+   * Waliduje ona, czy uzytkownik wprowadzil poprawne dane.
+   *
+   * @return Cena elementu na fakturze.
+   */
+  private double wprowadzCeneElementu() {
+    Scanner scanner = new Scanner(System.in);
+    double cenaLiczba;
+    String kwota;
+    // sprawdzaj czy wprowadzona kwota jest liczba
+    while (true) {
+      System.out.println("Wprowadz cene brutto: ");
+      kwota = scanner.nextLine();
+      if (KontrolerDanych.czyLiczbaRzeczywista(kwota)) {
+        cenaLiczba = Double.parseDouble(kwota);
+        break;
+      } else {
+        System.out.println("Wprowadzono nieprawidlowe dane.");
+        System.out.println();
+      }
+    }
+    return cenaLiczba;
   }
 
   /**

@@ -34,7 +34,8 @@ public class Aplikacja {
       String wprowadzonaWartosc = scanner.nextLine();
 
       // sprawdz czy wprowadzono liczbe
-      if (czyLiczba(wprowadzonaWartosc) && !wprowadzonaWartosc.isEmpty()) {
+      if (KontrolerDanych.czyLiczbaCalkowita(wprowadzonaWartosc)
+          && !wprowadzonaWartosc.isEmpty()) {
         wybor = Integer.parseInt(wprowadzonaWartosc);
       } else {
         System.out.println("Wprowadzono nieprawidlowe dane\n");
@@ -57,25 +58,8 @@ public class Aplikacja {
       } else {
         System.out.println("Dokonano nieprawidlowego wyboru.\n");
       }
-    }  // koniec petli
+    }  // end while
     scanner.close();
   }
 
-  /**
-   * Sprawdz czy podany napis jest liczba.
-   *
-   * @param napis Napis do sprawdzenia.
-   * @return Czy napis jest liczba?
-   */
-  private static boolean czyLiczba(String napis) {
-    if (napis.isEmpty()) {
-      return false;
-    }
-    try {
-      Integer.parseInt(napis);
-    } catch (NumberFormatException e) {
-      return false;
-    }
-    return true;
-  }
 }

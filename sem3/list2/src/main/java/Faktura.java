@@ -1,7 +1,7 @@
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
-import java.util.Objects;
 
 /**
  * Klasa reprezentujaca dane na fakturze.
@@ -24,6 +24,15 @@ public class Faktura {
   private String ulicaNabywcy;
   private String kodPocztowyMiastoNabywcy;
 
+  // elementy faktury
+  private ArrayList<ElementFaktury> elementyFaktury = new ArrayList<>();
+
+  /**
+   * Metoda ta zapisuje informacje ogolne otrzymane od kontrolera, czyli miejsce.
+   * Data jest automatycznie generowana.
+   *
+   * @param miejsce Miejsce wystawienia faktury.
+   */
   public void wprowadzInformacjeOgolne(String miejsce) {
     this.miejsceWystawienia = miejsce;
     DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, Locale.FRANCE);
@@ -59,5 +68,26 @@ public class Faktura {
     } else {
       throw new IllegalArgumentException("Wprowadzono nieprawidlowa strone");
     }
+  }
+
+  /**
+   * Metoda ta tworzy nowy element faktury i wprowadza go do listy wszystkich elementow.
+   *
+   * @param nazwaTowarUsluga Nazwa towaru lub uslugi.
+   * @param ilosc Ilosc towaru/uslugi.
+   * @param cena Cena za sztuke.
+   */
+  public void wprowadzElement(String nazwaTowarUsluga, int ilosc, double cena) {
+    ElementFaktury element = new ElementFaktury(nazwaTowarUsluga, ilosc, cena);
+    elementyFaktury.add(element);
+  }
+
+  /**
+   * Metoda ta zwraca ilosc elementow wprowadzonych do tej faktury.
+   *
+   * @return Ilosc elementow na tej fakturze.
+   */
+  public int iloscElementow() {
+    return elementyFaktury.size();
   }
 }
