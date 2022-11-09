@@ -41,6 +41,13 @@ public class KontrolerFaktur {
     // wczytywanie przedmiotow faktury
     System.out.println();
     this.wczytajElementyFaktury();
+
+    // skonczono wpisywac dane, wiec faktura moze obliczyc sume
+    aktualnaFaktura.obliczSumy();
+
+    // po wszystkim wyswietl fakture i zapytaj o edycje
+    System.out.println();
+    this.konczTworzycFakture();
   }
 
   /**
@@ -100,6 +107,12 @@ public class KontrolerFaktur {
         System.out.println();
       }
     } // end while
+  }
+
+  private void konczTworzycFakture() {
+    System.out.println();
+    System.out.println(aktualnaFaktura);
+    System.out.println();
   }
 
   /**

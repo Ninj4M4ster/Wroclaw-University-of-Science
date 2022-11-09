@@ -63,4 +63,14 @@ public final class KontrolerDanych {
     }
     return procent >= 0 && procent <= 100;
   }
+
+  /**
+   * Metoda ta zaokrogla podana liczbe do dwoch miejsc po przecinku.
+   *
+   * @param liczba Liczba do zaokraglenia.
+   * @return Podana liczba zaokraglona do dwoch miejsc po przecinku.
+   */
+  public static double zaokraglDoDwoch(double liczba) {
+    return Math.round(liczba * 100.0) / 100.0;
+  }
 }

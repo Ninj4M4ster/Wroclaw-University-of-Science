@@ -25,7 +25,19 @@ public class Faktura {
   private String kodPocztowyMiastoNabywcy;
 
   // elementy faktury
-  private ArrayList<ElementFaktury> elementyFaktury = new ArrayList<>();
+  private final ArrayList<ElementFaktury> elementyFaktury = new ArrayList<>();
+
+  // koncowe sumy kwot
+  private double sumaNetto = 0;
+  private double sumaVat = 0;
+  private double sumaBrutto = 0;
+
+  // stale
+  /**
+   * Odleglosc informacji o nabywcy od poczatku linii.
+   */
+  private static int ODLEGLOSC_NAPIS_NABYWCA = 38;
+  private static int SZEROKOSC_FAKTURY = 106;
 
   /**
    * Metoda ta zapisuje informacje ogolne otrzymane od kontrolera, czyli miejsce.
@@ -91,4 +103,83 @@ public class Faktura {
   public int iloscElementow() {
     return elementyFaktury.size();
   }
+
+  /**
+   * Metoda ta oblicza koncowe sumy na fakturze: netto, brutto i VAT.
+   */
+  public void obliczSumy() {
+    double sumaNetto = 0;
+    double sumaBrutto = 0;
+    double sumaVat = 0;
+    for (ElementFaktury element : elementyFaktury) {
+      double cenaNetto = element.dajNetto();
+      double cenaBrutto = element.dajBrutto();
+      int ilosc = element.dajIlosc();
+      sumaVat += (cenaBrutto - cenaNetto) * ilosc;
+      sumaNetto += cenaNetto * ilosc;
+      sumaBrutto += cenaBrutto * ilosc;
+    }
+    this.sumaNetto = sumaNetto;
+    this.sumaBrutto = sumaBrutto;
+    this.sumaVat = sumaVat;
+  }
+
+  /**
+   * Metoda ta zwraca czytelnie sformatowane dane na tej fakturze.
+   * -------------------------------------------------------------
+   * Zasada Ekspert oraz Niskie sprzezenie:
+   * Faktura posiada wszystkie informacje potrzebne do jej wyswietlenia, wiec
+   * w wiekszosci to ona realizuje sformatowanie ich w czytelny dla czlowieka sposob.
+   *
+   * @return Sformatowane dane na fakturze.
+   */
+  @Override
+  public String toString() {
+    String poczatek = """
+    Data wystawienia:        %s
+    Miejsce wystawienia:     %s
+    
+        """.formatted(
+        this.dataWystawienia,
+        this.miejsceWystawienia);
+    poczatek += "-".repeat(SZEROKOSC_FAKTURY) + "\n";
+    poczatek += this.formatujInformacjeSprzedawcyNabywcy();
+
+    StringBuilder produkty = FormatowanieDoWyswietlenia.stworzPierwszyWierszTabeli();
+    for (int i = 0; i < elementyFaktury.size(); i++) {
+      produkty.append(FormatowanieDoWyswietlenia.sformatujElementFaktury(i, elementyFaktury.get(i)));
+    }
+    return poczatek + produkty;
+  }
+
+  /**
+   * Metoda ta tworzy odpowiednio sformatowany lancuch
+   * znakow z informacjami o sprzedawcy i nabywcy.
+   * -------------------------------------------------------------
+   * Zasada Ekspert oraz Niskie sprzezenie:
+   * Ze wzgledu na duza ilosc informacji przechowywanych
+   * w fakturze, jest ona odpowiedzialna za czesciowe formatowanie.
+   *
+   * @return Lancuch znakow z informacjami o sprzedawcy i nabywcy.
+   */
+  private String formatujInformacjeSprzedawcyNabywcy() {
+    String napis = """
+    Sprzedawca                            Nabywca
+        """;
+    napis += FormatowanieDoWyswietlenia.ulozDwaNapisy(this.nazwaSprzedawcy,
+        this.nazwaNabywcy,
+        ODLEGLOSC_NAPIS_NABYWCA) + "\n";
+    napis += FormatowanieDoWyswietlenia.ulozDwaNapisy(this.nipSprzedawcy,
+        this.nipNabywcy,
+        ODLEGLOSC_NAPIS_NABYWCA) + "\n";
+    napis += FormatowanieDoWyswietlenia.ulozDwaNapisy(this.ulicaSprzedawcy,
+        this.ulicaNabywcy,
+        ODLEGLOSC_NAPIS_NABYWCA) + "\n";
+    napis += FormatowanieDoWyswietlenia.ulozDwaNapisy(this.kodPocztowyMiastoSprzedawcy,
+        this.kodPocztowyMiastoNabywcy,
+        ODLEGLOSC_NAPIS_NABYWCA) + "\n";
+    napis += "-".repeat(SZEROKOSC_FAKTURY) + "\n";
+    return napis;
+  }
+
 }
