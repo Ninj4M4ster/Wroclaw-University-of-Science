@@ -49,11 +49,11 @@ public class Aplikacja {
       }
       if (kontrolerFaktur.czyIstniejaUtworzoneFaktury()) {
         if (wybor == 2) {
-          // TODO: dodac funkcjonalnosc wyswietlania poprzednich faktur
+          kontrolerFaktur.wyswietlajWczesniejUtworzoneFaktury();
         } else if (wybor == 3) {
           break;
         }
-      } else if (wybor == 2) {
+      } else if (!kontrolerFaktur.czyIstniejaUtworzoneFaktury() && wybor == 2) {
         break;
       } else {
         System.out.println("Dokonano nieprawidlowego wyboru.\n");

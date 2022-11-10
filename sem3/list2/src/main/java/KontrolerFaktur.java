@@ -61,13 +61,13 @@ public class KontrolerFaktur {
     System.out.println("----------------------------------");
 
     final String nazwa =
-        WczytDanychFaktury.wprowadzNapis("Podaj nazwe " + strona + ":");
+        WczytDanych.wprowadzNapis("Podaj nazwe " + strona + ":");
     final String nip =
-        WczytDanychFaktury.wprowadzNapis("Podaj NIP " + strona + ":");
+        WczytDanych.wprowadzNapis("Podaj NIP " + strona + ":");
     final String adres =
-        WczytDanychFaktury.wprowadzNapis("Podaj ulice " + strona + ":");
+        WczytDanych.wprowadzNapis("Podaj ulice " + strona + ":");
     final String kodPocztowyMiasto =
-        WczytDanychFaktury.wprowadzNapis("Podaj kod pocztowy i miasto " + strona + ":");
+        WczytDanych.wprowadzNapis("Podaj kod pocztowy i miasto " + strona + ":");
 
     aktualnaFaktura.wprowadzDaneStrony(strona, nazwa, nip, adres, kodPocztowyMiasto);
   }
@@ -88,10 +88,10 @@ public class KontrolerFaktur {
       if (wybor.equalsIgnoreCase("y")) {
         // pobierz dane od uzytkownika
         String nazwaTowarUsluga =
-            WczytDanychFaktury.wprowadzNapis("Wprowadz nazwe towaru lub uslugi:");
-        int iloscLiczba = WczytDanychFaktury.wprowadzIloscElementu();
-        double cenaLiczba = WczytDanychFaktury.wprowadzCeneElementu();
-        double podatek = WczytDanychFaktury.wprowadzPodatek();
+            WczytDanych.wprowadzNapis("Wprowadz nazwe towaru lub uslugi:");
+        int iloscLiczba = WczytDanych.wprowadzIloscElementu();
+        double cenaLiczba = WczytDanych.wprowadzCeneElementu();
+        double podatek = WczytDanych.wprowadzPodatek();
 
         // wprowadz element do faktury
         aktualnaFaktura.wprowadzElement(nazwaTowarUsluga, iloscLiczba, cenaLiczba, podatek);
@@ -109,6 +109,9 @@ public class KontrolerFaktur {
     } // end while
   }
 
+  /**
+   * Metoda majaca za zadanie wyswietlic fakture po skonczeniu jej wypelniania.
+   */
   private void konczTworzycFakture() {
     System.out.println();
     System.out.println(aktualnaFaktura);
@@ -122,6 +125,46 @@ public class KontrolerFaktur {
    */
   public boolean czyIstniejaUtworzoneFaktury() {
     return !listaFaktur.isEmpty();
+  }
+
+  /**
+   * Metoda odpowiedzialna za wyswietlanie uzytkownikowi faktur:
+   * w zaleznosci od wyboru kolejnej lub poprzedniej.
+   */
+  public void wyswietlajWczesniejUtworzoneFaktury() {
+    String wybor;
+    int indeks = 0;
+    if (!listaFaktur.isEmpty()) {
+      while (true) {
+        Faktura faktura = listaFaktur.get(indeks);
+        System.out.println(faktura);
+        System.out.println();
+        if (indeks == 0 && indeks == listaFaktur.size() - 1) {
+          wybor = WczytDanych.wczytajDopuszczalna(new String[]{"e"},
+              "Nacisnij 'e' aby opuscic wyswietlanie faktur.");
+        } else if (indeks == 0) {
+          wybor = WczytDanych.wczytajDopuszczalna(new String[]{"l", "e"},
+              "Nacisnij 'l' aby wyswietlic kolejna fakture "
+                  + "lub 'e' aby opuscic wyswietlanie faktur.");
+        } else if (indeks == listaFaktur.size() - 1) {
+          wybor = WczytDanych.wczytajDopuszczalna(new String[]{"k", "e"},
+              "Nacisnij 'k' aby wyswietlic poprzednia fakture "
+                  + "lub 'e' aby opuscic wyswietlanie faktur");
+        } else {
+          wybor = WczytDanych.wczytajDopuszczalna(new String[]{"l", "k", "e"},
+              "Nacisnij 'k' aby wyswietlic poprzednia fakture, 'l' "
+                  + "aby wyswietlic nastepna lub 'e' aby opuscic wyswietlanie faktur");
+        }
+        if (wybor.equals("l")) {
+          indeks += 1;
+        } else if (wybor.equals("k")) {
+          indeks -= 1;
+        } else {
+          break;
+        }
+      }
+    }
+
   }
 
 }

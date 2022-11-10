@@ -4,12 +4,12 @@ import java.util.Scanner;
  * Klasa odpowiedzialna za wczytywanie i walidacje danych wprowadzanych do faktury.
  * Niemozliwe jest stworzenie jej instancji.
  */
-public final class WczytDanychFaktury {
+public final class WczytDanych {
 
   /**
    * Prywatny konstruktor w celu uniemozliwienia utworzenia obiektu tej klasy.
    */
-  private WczytDanychFaktury() {}
+  private WczytDanych() {}
 
   /**
    * Metoda ta pobiera od uzytkownika napis.
@@ -109,5 +109,34 @@ public final class WczytDanychFaktury {
       }
     }
     return podatekLiczba;
+  }
+
+  /**
+   * Metoda ta wyswietla podany przez parametr komunikat oraz wczytuje od uzytkownika dane.
+   * Waliduje ona czy wprowadzone przez uzytkownika dane sa dopuszczone przez program.
+   *
+   * @param dopuszczalneZnaki Znaki mozliwe do wprowadzenia przez uzytkownika.
+   * @param komunikat Komunikat do wyswietlenia w celu poinstruowania uzytkownika co wpisac.
+   * @return Znak wprowadzony przez uzytkownika.
+   */
+  public static String wczytajDopuszczalna(String[] dopuszczalneZnaki, String komunikat) {
+    Scanner scanner = new Scanner(System.in);
+    String wybor = "";
+    boolean poprawnyWybor = false;
+    // wczytuj dane od uzytkownika poki nie poda poprawnego wyboru
+    while (!poprawnyWybor) {
+      System.out.println(komunikat);
+      wybor = scanner.nextLine();
+      for (String znak : dopuszczalneZnaki) {
+        if (wybor.equalsIgnoreCase(znak)) {
+          poprawnyWybor = true;
+          break;
+        }
+      }
+      if (!poprawnyWybor) {
+        System.out.println("Dokonano nieprawidlowego wybor.\n");
+      }
+    }
+    return wybor;
   }
 }

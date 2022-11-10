@@ -25,7 +25,7 @@ public final class FormatowanieDoWyswietlenia {
    * Lista ta przedstawia odleglosc separatora komorek tabeli sum od poczatku linii w konsoli.
    */
   private static final int[] ODLEGLOSCI_WIERSZY_TABELI_SUM = {
-      74, 86
+      73, 85
   };
 
   /**
@@ -100,7 +100,7 @@ public final class FormatowanieDoWyswietlenia {
     tabela += sumaVat;
     tabela += " ".repeat(Math.max(1, ODLEGLOSCI_WIERSZY_TABELI_SUM[1] - tabela.length())) + "| ";
     tabela += sumaBrutto;
-    return pierwszyWiersz + tabela;
+    return pierwszyWiersz + tabela + "\n";
   }
 
 }

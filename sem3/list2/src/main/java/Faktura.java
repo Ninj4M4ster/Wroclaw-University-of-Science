@@ -136,7 +136,8 @@ public class Faktura {
   @Override
   public String toString() {
     // przygotuj napis przedstawiajacy ogolne informacje o fakturze
-    String poczatek = """
+    String poczatek = "-".repeat(SZEROKOSC_FAKTURY) + "\n";
+    poczatek += """
     Data wystawienia:        %s
     Miejsce wystawienia:     %s
     
@@ -159,6 +160,7 @@ public class Faktura {
         String.valueOf(KontrolerDanych.zaokraglDoDwoch(this.sumaNetto)),
         String.valueOf(KontrolerDanych.zaokraglDoDwoch(this.sumaVat)),
         String.valueOf(KontrolerDanych.zaokraglDoDwoch(this.sumaBrutto)));
+    koniec += "-".repeat(SZEROKOSC_FAKTURY);
     return poczatek + produkty + koniec;
   }
 
