@@ -2,11 +2,11 @@
  * Klasa reprezentujaca element faktury.
  */
 public class ElementFaktury {
-  private String nazwaElementu;
-  private int ilosc;
-  private double cenaBrutto;
-  private double cenaNetto;
-  private double podatek;
+  private final String nazwaElementu;
+  private final int ilosc;
+  private final double cenaBrutto;
+  private final double cenaNetto;
+  private final double podatek;
 
   /**
    * Konstruktor. Tworzy element faktury z wprowadzonymi danymi.
@@ -53,7 +53,8 @@ public class ElementFaktury {
 
   @Override
   public String toString() {
-    return this.nazwaElementu + ";;" + this.ilosc + ";;" + this.cenaNetto + ";;"
+    return this.nazwaElementu + ";;" + this.ilosc + ";;"
+        + KontrolerDanych.zaokraglDoDwoch(this.cenaNetto) + ";;"
         + KontrolerDanych.zaokraglDoDwoch(this.cenaNetto * this.ilosc)
         + ";;" + this.podatek + ";;"
         + KontrolerDanych.zaokraglDoDwoch(this.cenaBrutto - this.cenaNetto) + ";;"

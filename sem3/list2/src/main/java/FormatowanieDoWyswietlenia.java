@@ -1,5 +1,3 @@
-import java.util.ArrayList;
-
 /**
  * Klasa ta odpowiedzialna jest za wspomaganiem przy formatowaniy danych w
  * taki sposob, aby byly czytelne dla czlowieka.
@@ -16,6 +14,18 @@ public final class FormatowanieDoWyswietlenia {
    */
   private static final int[] ODLEGLOSCI_WIERSZY_TABELI = {
     4, 32, 40, 57, 73, 81, 89
+  };
+
+  /**
+   * Stala ta przedstawia przesuniecie tabeli sum od poczatku linii terminala.
+   */
+  private static final int ODLEGLOSC_TABELI_SUM = 61;
+
+  /**
+   * Lista ta przedstawia odleglosc separatora komorek tabeli sum od poczatku linii w konsoli.
+   */
+  private static final int[] ODLEGLOSCI_WIERSZY_TABELI_SUM = {
+      74, 86
   };
 
   /**
@@ -65,23 +75,32 @@ public final class FormatowanieDoWyswietlenia {
         .append("| ");
     String[] wartosciDoWyswietlenia = element.toString().split(";;");
     for (int i = 0; i < wartosciDoWyswietlenia.length; i++) {
-      // sprawdz czy napis nie jest dluzszy niz dlugosc komorki
-      if (i < ODLEGLOSCI_WIERSZY_TABELI.length - 1
-          && napisKoncowy.length() + wartosciDoWyswietlenia[i].length()
-          > napisKoncowy.length() + ODLEGLOSCI_WIERSZY_TABELI[i + 1] - 1) {
-        napisKoncowy.append(wartosciDoWyswietlenia[i]);
-        napisKoncowy.append(" | ");
-      } else {
-        napisKoncowy.append(wartosciDoWyswietlenia[i]);
-        // sprawdz czy trzeba dodac separator kolumn
-        if (i < ODLEGLOSCI_WIERSZY_TABELI.length - 1) {
-          int iloscSpacji = ODLEGLOSCI_WIERSZY_TABELI[i + 1] - napisKoncowy.length();
-          napisKoncowy.append(" ".repeat(iloscSpacji));
-          napisKoncowy.append("| ");
-        }
+      napisKoncowy.append(wartosciDoWyswietlenia[i]);
+      // jesli trzeba to dodaj spacje oraz separator komorek
+      if (i < ODLEGLOSCI_WIERSZY_TABELI.length - 1) {
+        int iloscSpacji = ODLEGLOSCI_WIERSZY_TABELI[i + 1] - napisKoncowy.length();
+        napisKoncowy.append(" ".repeat(Math.max(1, iloscSpacji)));
+        napisKoncowy.append("| ");
       }
     }
-    return napisKoncowy.toString() + "\n";
+    return napisKoncowy + "\n";
+  }
+
+  /**
+   * Metoda odpowiedzialna za utworzenie tabeli zawierajacej sumy kwot wszystkich
+   * elementow na fakturze.
+   *
+   * @return Napis z tabela sum.
+   */
+  public static String stworzTabeleSum(String sumaNetto, String sumaVat, String sumaBrutto) {
+    final String pierwszyWiersz = " ".repeat(ODLEGLOSC_TABELI_SUM)
+        + "Razem netto | Razem VAT | Razem brutto\n";
+    String tabela = " ".repeat(ODLEGLOSC_TABELI_SUM + 1) + sumaNetto;
+    tabela += " ".repeat(Math.max(1, ODLEGLOSCI_WIERSZY_TABELI_SUM[0] - tabela.length())) + "| ";
+    tabela += sumaVat;
+    tabela += " ".repeat(Math.max(1, ODLEGLOSCI_WIERSZY_TABELI_SUM[1] - tabela.length())) + "| ";
+    tabela += sumaBrutto;
+    return pierwszyWiersz + tabela;
   }
 
 }

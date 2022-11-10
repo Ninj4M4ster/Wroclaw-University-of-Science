@@ -36,8 +36,8 @@ public class Faktura {
   /**
    * Odleglosc informacji o nabywcy od poczatku linii.
    */
-  private static int ODLEGLOSC_NAPIS_NABYWCA = 38;
-  private static int SZEROKOSC_FAKTURY = 106;
+  private static final int ODLEGLOSC_NAPIS_NABYWCA = 38;
+  private static final int SZEROKOSC_FAKTURY = 106;
 
   /**
    * Metoda ta zapisuje informacje ogolne otrzymane od kontrolera, czyli miejsce.
@@ -135,6 +135,7 @@ public class Faktura {
    */
   @Override
   public String toString() {
+    // przygotuj napis przedstawiajacy ogolne informacje o fakturze
     String poczatek = """
     Data wystawienia:        %s
     Miejsce wystawienia:     %s
@@ -145,11 +146,20 @@ public class Faktura {
     poczatek += "-".repeat(SZEROKOSC_FAKTURY) + "\n";
     poczatek += this.formatujInformacjeSprzedawcyNabywcy();
 
+    // przygotuj napis przedstawiajacy wszystkie elementy faktury, sformatowany w tabele
     StringBuilder produkty = FormatowanieDoWyswietlenia.stworzPierwszyWierszTabeli();
     for (int i = 0; i < elementyFaktury.size(); i++) {
-      produkty.append(FormatowanieDoWyswietlenia.sformatujElementFaktury(i, elementyFaktury.get(i)));
+      produkty.append(
+          FormatowanieDoWyswietlenia.sformatujElementFaktury(i, elementyFaktury.get(i)));
     }
-    return poczatek + produkty;
+    produkty.append("-".repeat(SZEROKOSC_FAKTURY)).append("\n");
+
+    // przygotuj sumy kwot wszystkich produktow
+    String koniec = FormatowanieDoWyswietlenia.stworzTabeleSum(
+        String.valueOf(KontrolerDanych.zaokraglDoDwoch(this.sumaNetto)),
+        String.valueOf(KontrolerDanych.zaokraglDoDwoch(this.sumaVat)),
+        String.valueOf(KontrolerDanych.zaokraglDoDwoch(this.sumaBrutto)));
+    return poczatek + produkty + koniec;
   }
 
   /**
