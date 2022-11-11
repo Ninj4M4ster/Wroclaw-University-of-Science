@@ -113,9 +113,7 @@ public class KontrolerFaktur {
    * Metoda majaca za zadanie wyswietlic fakture po skonczeniu jej wypelniania.
    */
   private void konczTworzycFakture() {
-    System.out.println();
     System.out.println(aktualnaFaktura);
-    System.out.println();
   }
 
   /**
