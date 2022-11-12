@@ -17,30 +17,28 @@ public class Aplikacja {
     // petla wyboru dzialania
     int wybor = 0;
     while (wybor != 2) {
+      String komunikat;
+      String[] dopuszczalne;
       if (kontrolerFaktur.czyIstniejaUtworzoneFaktury()) {
-        System.out.println("""
+        komunikat = """
             Wybierz pozzadana czynnosc:
              1 -> utworzenie nowej faktury
              2 -> wyswietl poprzednie faktury
              3 -> koniec dzialania programu
-             ->:""");
+             ->:""";
+        dopuszczalne = new String[]{"1", "2", "3"};
       } else {
-        System.out.println("""
+        komunikat = """
             Wybierz pozadana czynnosc:
              1 -> utworzenie nowej faktury
              2 -> koniec dzialania programu
-             ->:\s""");
+             ->:\s""";
+        dopuszczalne = new String[]{"1", "2"};
       }
-      String wprowadzonaWartosc = scanner.nextLine();
 
-      // sprawdz czy wprowadzono liczbe
-      if (KontrolerDanych.czyLiczbaCalkowita(wprowadzonaWartosc)
-          && !wprowadzonaWartosc.isEmpty()) {
-        wybor = Integer.parseInt(wprowadzonaWartosc);
-      } else {
-        System.out.println("Wprowadzono nieprawidlowe dane\n");
-        continue;
-      }
+      // pobierz wybor od uzytkownika
+      String wprowadzonaWartosc = WczytDanych.wczytajDopuszczalna(dopuszczalne, komunikat);
+      wybor = Integer.parseInt(wprowadzonaWartosc);
 
       // wykonaj akcje zaleznie od wyboru
       if (wybor == 1) {

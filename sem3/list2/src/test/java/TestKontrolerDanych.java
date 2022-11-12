@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test klasy Kontroler Danych.
+ *
+ * @see TestKontrolerDanych
  */
 public class TestKontrolerDanych {
 

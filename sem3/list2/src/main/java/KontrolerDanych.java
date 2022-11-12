@@ -16,7 +16,7 @@ public final class KontrolerDanych {
    * @return Czy napis jest liczba calkowita?
    */
   public static boolean czyLiczbaCalkowita(String napis) {
-    if (napis.isEmpty()) {
+    if (napis.isBlank()) {
       return false;
     }
     try {
@@ -34,7 +34,7 @@ public final class KontrolerDanych {
    * @return Czy napis jest liczba rzeczywista?
    */
   public static boolean czyLiczbaRzeczywista(String napis) {
-    if (napis.isEmpty()) {
+    if (napis.isBlank()) {
       return false;
     }
     try {
@@ -52,7 +52,7 @@ public final class KontrolerDanych {
    * @return Czy napis jest liczba z przedzialu 0-100?
    */
   public static boolean czyProcent(String napis) {
-    if (napis.isEmpty()) {
+    if (napis.isBlank()) {
       return false;
     }
     double procent;

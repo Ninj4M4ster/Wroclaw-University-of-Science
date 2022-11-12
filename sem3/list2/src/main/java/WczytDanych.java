@@ -26,9 +26,8 @@ public final class WczytDanych {
     while (true) {
       System.out.println(komunikat);
       nazwaTowarUsluga = scanner.nextLine();
-      if (nazwaTowarUsluga.isEmpty()) {
-        System.out.println("Nie wprowadzono danych.");
-        System.out.println();
+      if (nazwaTowarUsluga.isEmpty() || nazwaTowarUsluga.equals(" ")) {
+        System.out.println("Nie wprowadzono danych.\n");
       } else {
         break;
       }
@@ -54,8 +53,7 @@ public final class WczytDanych {
         iloscLiczba = Integer.parseInt(ilosc);
         break;
       } else {
-        System.out.println("Wprowadzono nieprawidlowe dane.");
-        System.out.println();
+        System.out.println("Wprowadzono nieprawidlowe dane.\n");
       }
     }
     return iloscLiczba;
@@ -79,8 +77,7 @@ public final class WczytDanych {
         cenaLiczba = Double.parseDouble(kwota);
         break;
       } else {
-        System.out.println("Wprowadzono nieprawidlowe dane.");
-        System.out.println();
+        System.out.println("Wprowadzono nieprawidlowe dane.\n");
       }
     }
     return cenaLiczba;
@@ -104,8 +101,7 @@ public final class WczytDanych {
         podatekLiczba = Double.parseDouble(podatek);
         break;
       } else {
-        System.out.println("Wprowadzono nieprawidlowe dane.");
-        System.out.println();
+        System.out.println("Wprowadzono nieprawidlowe dane.\n");
       }
     }
     return podatekLiczba;
@@ -134,7 +130,7 @@ public final class WczytDanych {
         }
       }
       if (!poprawnyWybor) {
-        System.out.println("Dokonano nieprawidlowego wybor.\n");
+        System.out.println("Dokonano nieprawidlowego wyboru.\n");
       }
     }
     return wybor;
