@@ -22,6 +22,13 @@ public class KontrolerFaktur {
   /**
    * Metoda odpowiedzialna za utworzenie nowej faktury.
    * Prosi ona uzytkownika o wszyskie potrzebne dane oraz pakuje je do obiektu Faktura.
+   *
+   * @see Faktura
+   * @see Faktura#wprowadzInformacjeOgolne
+   * @see Faktura#obliczSumy
+   * @see KontrolerFaktur#wczytajDaneStrony
+   * @see KontrolerFaktur#wczytajElementyFaktury
+   * @see KontrolerFaktur#konczTworzycFakture
    */
   public void utworzNowaFakture() {
     aktualnaFaktura = new Faktura();
@@ -56,6 +63,8 @@ public class KontrolerFaktur {
    * dla ktorej tworzona jest faktura.
    *
    * @param strona Napis "sprzedawcy" lub "nabywcy" identyfikujacy strone tranzakcji.
+   * @see WczytDanych#wprowadzNapis
+   * @see Faktura#wprowadzDaneStrony
    */
   private void wczytajDaneStrony(String strona) {
     System.out.println("Wprowadz informacje o " + strona);
@@ -76,6 +85,13 @@ public class KontrolerFaktur {
   /**
    * Metoda ta wczytuje od uzytkownika elementy faktury razem z kwota i iloscia.
    * Nastepnie wysyla dane do faktury.
+   *
+   * @see WczytDanych#wprowadzNapis
+   * @see WczytDanych#wprowadzIloscElementu
+   * @see WczytDanych#wprowadzCeneElementu
+   * @see WczytDanych#wprowadzPodatek
+   * @see Faktura#wprowadzElement
+   * @see Faktura#iloscElementow
    */
   private void wczytajElementyFaktury() {
     System.out.println("---------Elementy faktury----------");
@@ -126,6 +142,8 @@ public class KontrolerFaktur {
   /**
    * Metoda odpowiedzialna za wyswietlanie uzytkownikowi faktur:
    * w zaleznosci od wyboru kolejnej lub poprzedniej.
+   *
+   * @see WczytDanych#wczytajDopuszczalna
    */
   public void wyswietlajWczesniejUtworzoneFaktury() {
     String wybor;

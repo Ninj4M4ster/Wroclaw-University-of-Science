@@ -39,6 +39,7 @@ public final class WczytDanych {
    * Waliduje ona, czy uzytkownika wprowadzil poprawne dane.
    *
    * @return Ilosc elementu na fakturze.
+   * @see KontrolerDanych#czyLiczbaCalkowita
    */
   public static int wprowadzIloscElementu(Scanner scanner) {
     String ilosc;
@@ -62,6 +63,7 @@ public final class WczytDanych {
    * Waliduje ona, czy uzytkownik wprowadzil poprawne dane.
    *
    * @return Cena elementu na fakturze.
+   * @see KontrolerDanych#czyLiczbaRzeczywista
    */
   public static double wprowadzCeneElementu(Scanner scanner) {
     double cenaLiczba;
@@ -85,6 +87,7 @@ public final class WczytDanych {
    * Waliduje ona, czy uzytkownik wprowadzil poprawne dane.
    *
    * @return Podatek od elementu na fakturze.
+   * @see KontrolerDanych#czyProcent
    */
   public static double wprowadzPodatek(Scanner scanner) {
     double podatekLiczba;

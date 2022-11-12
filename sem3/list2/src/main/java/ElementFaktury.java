@@ -15,6 +15,7 @@ public class ElementFaktury {
    * @param ilosc Ilosc towaru/uslugi.
    * @param cena Cena brutto za sztuke.
    * @param podatek Podatek od towaru/uslugi.
+   * @see KontrolerDanych#zaokraglDoDwoch
    */
   public ElementFaktury(String nazwaElementu, int ilosc, double cena, double podatek) {
     this.nazwaElementu = nazwaElementu;
@@ -51,6 +52,14 @@ public class ElementFaktury {
     return this.cenaNetto;
   }
 
+  /**
+   * Nadpisana metoda toString.
+   * Jej celem jest utworzenie sformatowanego ciagu danych o
+   * elemencie faktury oddzielonych za pomoca znakow ';;'.
+   *
+   * @return Ciag znakow zawierajacy informacje o elemencie faktury.
+   * @see KontrolerDanych#zaokraglDoDwoch
+   */
   @Override
   public String toString() {
     return this.nazwaElementu + ";;" + this.ilosc + ";;"

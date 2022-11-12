@@ -37,6 +37,9 @@ public class Faktura {
    * Odleglosc informacji o nabywcy od poczatku linii.
    */
   private static final int ODLEGLOSC_NAPIS_NABYWCA = 38;
+  /**
+   * Szerokosc faktury w terminalu.
+   */
   private static final int SZEROKOSC_FAKTURY = 106;
 
   /**
@@ -60,6 +63,7 @@ public class Faktura {
    * @param nip Nip strony.
    * @param adres Ulica na ktora zarejestrowana jest firma strony.
    * @param kodPocztowyMiasto Kod pocztowy oraz miasto, w ktorym zarejestrowana jest firma strony.
+   * @throws IllegalArgumentException Podano nieprawidlowa strone faktury.
    */
   public void wprowadzDaneStrony(
       String strona,
@@ -89,6 +93,7 @@ public class Faktura {
    * @param ilosc Ilosc towaru/uslugi.
    * @param cena Cena za sztuke.
    * @param podatek Podatek od towaru/uslugi.
+   * @see ElementFaktury
    */
   public void wprowadzElement(String nazwaTowarUsluga, int ilosc, double cena, double podatek) {
     ElementFaktury element = new ElementFaktury(nazwaTowarUsluga, ilosc, cena, podatek);
@@ -132,6 +137,11 @@ public class Faktura {
    * w wiekszosci to ona realizuje sformatowanie ich w czytelny dla czlowieka sposob.
    *
    * @return Sformatowane dane na fakturze.
+   * @see Faktura#formatujInformacjeSprzedawcyNabywcy
+   * @see FormatowanieDoWyswietlenia#stworzPierwszyWierszTabeli
+   * @see FormatowanieDoWyswietlenia#sformatujElementFaktury
+   * @see FormatowanieDoWyswietlenia#stworzTabeleSum
+   * @see KontrolerDanych#zaokraglDoDwoch
    */
   @Override
   public String toString() {
@@ -173,6 +183,7 @@ public class Faktura {
    * w fakturze, jest ona odpowiedzialna za czesciowe formatowanie.
    *
    * @return Lancuch znakow z informacjami o sprzedawcy i nabywcy.
+   * @see FormatowanieDoWyswietlenia#ulozDwaNapisy
    */
   private String formatujInformacjeSprzedawcyNabywcy() {
     String napis = """

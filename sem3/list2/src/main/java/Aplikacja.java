@@ -10,6 +10,11 @@ public class Aplikacja {
    * Glowna metoda programu. Tworzy petle dajaca wybor porzadanego dzialania.
    *
    * @param args Argumenty z linii komend.
+   * @see KontrolerFaktur
+   * @see KontrolerFaktur#utworzNowaFakture
+   * @see KontrolerFaktur#czyIstniejaUtworzoneFaktury
+   * @see WczytDanych#wczytajDopuszczalna
+   * @see KontrolerFaktur#wyswietlajWczesniejUtworzoneFaktury
    */
   public static void main(String[] args) {
     Scanner scanner = new Scanner(System.in);
