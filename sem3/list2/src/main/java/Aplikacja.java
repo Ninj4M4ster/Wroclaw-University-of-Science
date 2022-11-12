@@ -12,8 +12,8 @@ public class Aplikacja {
    * @param args Argumenty z linii komend.
    */
   public static void main(String[] args) {
-    KontrolerFaktur kontrolerFaktur = new KontrolerFaktur();
     Scanner scanner = new Scanner(System.in);
+    KontrolerFaktur kontrolerFaktur = new KontrolerFaktur(scanner);
     // petla wyboru dzialania
     int wybor = 0;
     while (wybor != 2) {
@@ -37,7 +37,7 @@ public class Aplikacja {
       }
 
       // pobierz wybor od uzytkownika
-      String wprowadzonaWartosc = WczytDanych.wczytajDopuszczalna(dopuszczalne, komunikat);
+      String wprowadzonaWartosc = WczytDanych.wczytajDopuszczalna(dopuszczalne, komunikat, scanner);
       wybor = Integer.parseInt(wprowadzonaWartosc);
 
       // wykonaj akcje zaleznie od wyboru

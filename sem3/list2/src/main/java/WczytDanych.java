@@ -20,13 +20,12 @@ public final class WczytDanych {
    * @param komunikat Komunikat wyswietlany przed wprowadzaniem danych.
    * @return Napis wprowadzony przez uzytkownika.
    */
-  public static String wprowadzNapis(String komunikat) {
-    Scanner scanner = new Scanner(System.in);
+  public static String wprowadzNapis(String komunikat, Scanner scanner) {
     String nazwaTowarUsluga;
     while (true) {
       System.out.println(komunikat);
       nazwaTowarUsluga = scanner.nextLine();
-      if (nazwaTowarUsluga.isEmpty() || nazwaTowarUsluga.equals(" ")) {
+      if (nazwaTowarUsluga.isBlank()) {
         System.out.println("Nie wprowadzono danych.\n");
       } else {
         break;
@@ -41,8 +40,7 @@ public final class WczytDanych {
    *
    * @return Ilosc elementu na fakturze.
    */
-  public static int wprowadzIloscElementu() {
-    Scanner scanner = new Scanner(System.in);
+  public static int wprowadzIloscElementu(Scanner scanner) {
     String ilosc;
     int iloscLiczba;
     // sprawdzaj czy wprowadzona ilosc jest liczba
@@ -65,8 +63,7 @@ public final class WczytDanych {
    *
    * @return Cena elementu na fakturze.
    */
-  public static double wprowadzCeneElementu() {
-    Scanner scanner = new Scanner(System.in);
+  public static double wprowadzCeneElementu(Scanner scanner) {
     double cenaLiczba;
     String kwota;
     // sprawdzaj czy wprowadzona kwota jest liczba
@@ -89,8 +86,7 @@ public final class WczytDanych {
    *
    * @return Podatek od elementu na fakturze.
    */
-  public static double wprowadzPodatek() {
-    Scanner scanner = new Scanner(System.in);
+  public static double wprowadzPodatek(Scanner scanner) {
     double podatekLiczba;
     String podatek;
     // sprawdzaj czy wprowadzony podatek jest poprawna liczba
@@ -115,8 +111,9 @@ public final class WczytDanych {
    * @param komunikat Komunikat do wyswietlenia w celu poinstruowania uzytkownika co wpisac.
    * @return Znak wprowadzony przez uzytkownika.
    */
-  public static String wczytajDopuszczalna(String[] dopuszczalneZnaki, String komunikat) {
-    Scanner scanner = new Scanner(System.in);
+  public static String wczytajDopuszczalna(String[] dopuszczalneZnaki,
+      String komunikat,
+      Scanner scanner) {
     String wybor = "";
     boolean poprawnyWybor = false;
     // wczytuj dane od uzytkownika poki nie poda poprawnego wyboru

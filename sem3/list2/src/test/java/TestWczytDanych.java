@@ -1,6 +1,7 @@
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.Scanner;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -20,17 +21,19 @@ public class TestWczytDanych {
   public void testWprowadzNapis() {
     ByteArrayInputStream wejscie = new ByteArrayInputStream("abc".getBytes());
     System.setIn(wejscie);
-    assertEquals(WczytDanych.wprowadzNapis(""), "abc");
+    Scanner scanner = new Scanner(System.in);
+    assertEquals(WczytDanych.wprowadzNapis("", scanner), "abc");
 
     wejscie = new ByteArrayInputStream("\n6".getBytes());
     System.setIn(wejscie);
+    scanner = new Scanner(System.in);
 
     String komunikat = "Nie wprowadzono danych.";
     ByteArrayOutputStream wyjscie = new ByteArrayOutputStream();
     PrintStream strumienWyjscia = new PrintStream(wyjscie);
     System.setOut(strumienWyjscia);
 
-    WczytDanych.wprowadzNapis("a");
+    WczytDanych.wprowadzNapis("a", scanner);
 
     String[] linie = wyjscie.toString().split("\n");
     String wynik = linie[1];
@@ -46,17 +49,19 @@ public class TestWczytDanych {
   public void testWprowadzIloscElementu() {
     ByteArrayInputStream wejscie = new ByteArrayInputStream("5".getBytes());
     System.setIn(wejscie);
-    assertEquals(WczytDanych.wprowadzIloscElementu(), 5);
+    Scanner scanner = new Scanner(System.in);
+    assertEquals(WczytDanych.wprowadzIloscElementu(scanner), 5);
 
     wejscie = new ByteArrayInputStream("s\n6".getBytes());
     System.setIn(wejscie);
+    scanner = new Scanner(System.in);
 
     String komunikat = "Wprowadzono nieprawidlowe dane.";
     ByteArrayOutputStream wyjscie = new ByteArrayOutputStream();
     PrintStream strumienWyjscia = new PrintStream(wyjscie);
     System.setOut(strumienWyjscia);
 
-    WczytDanych.wprowadzIloscElementu();
+    WczytDanych.wprowadzIloscElementu(scanner);
 
     String[] linie = wyjscie.toString().split("\n");
     String wynik = linie[1];
@@ -72,17 +77,19 @@ public class TestWczytDanych {
   public void testWprowadzCeneElementu() {
     ByteArrayInputStream wejscie = new ByteArrayInputStream("5".getBytes());
     System.setIn(wejscie);
-    assertEquals(WczytDanych.wprowadzCeneElementu(), 5);
+    Scanner scanner = new Scanner(System.in);
+    assertEquals(WczytDanych.wprowadzCeneElementu(scanner), 5);
 
     wejscie = new ByteArrayInputStream("s\n6".getBytes());
     System.setIn(wejscie);
+    scanner = new Scanner(System.in);
 
     String komunikat = "Wprowadzono nieprawidlowe dane.";
     ByteArrayOutputStream wyjscie = new ByteArrayOutputStream();
     PrintStream strumienWyjscia = new PrintStream(wyjscie);
     System.setOut(strumienWyjscia);
 
-    WczytDanych.wprowadzCeneElementu();
+    WczytDanych.wprowadzCeneElementu(scanner);
 
     String[] linie = wyjscie.toString().split("\n");
     String wynik = linie[1];
@@ -98,17 +105,19 @@ public class TestWczytDanych {
   public void testWprowadzPodatek() {
     ByteArrayInputStream wejscie = new ByteArrayInputStream("5".getBytes());
     System.setIn(wejscie);
-    assertEquals(WczytDanych.wprowadzPodatek(), 5);
+    Scanner scanner = new Scanner(System.in);
+    assertEquals(WczytDanych.wprowadzPodatek(scanner), 5);
 
     wejscie = new ByteArrayInputStream("121\n6".getBytes());
     System.setIn(wejscie);
+    scanner = new Scanner(System.in);
 
     String komunikat = "Wprowadzono nieprawidlowe dane.";
     ByteArrayOutputStream wyjscie = new ByteArrayOutputStream();
     PrintStream strumienWyjscia = new PrintStream(wyjscie);
     System.setOut(strumienWyjscia);
 
-    WczytDanych.wprowadzPodatek();
+    WczytDanych.wprowadzPodatek(scanner);
 
     String[] linie = wyjscie.toString().split("\n");
     String wynik = linie[1];
@@ -125,21 +134,24 @@ public class TestWczytDanych {
     String[] dopuszczalneZnaki = {"a", "b"};
     ByteArrayInputStream wejscie = new ByteArrayInputStream("a".getBytes());
     System.setIn(wejscie);
-    assertEquals(WczytDanych.wczytajDopuszczalna(dopuszczalneZnaki, ""), "a");
+    Scanner scanner = new Scanner(System.in);
+    assertEquals(WczytDanych.wczytajDopuszczalna(dopuszczalneZnaki, "", scanner), "a");
 
     wejscie = new ByteArrayInputStream("b".getBytes());
     System.setIn(wejscie);
-    assertEquals("b", WczytDanych.wczytajDopuszczalna(dopuszczalneZnaki, ""));
+    scanner = new Scanner(System.in);
+    assertEquals("b", WczytDanych.wczytajDopuszczalna(dopuszczalneZnaki, "", scanner));
 
     wejscie = new ByteArrayInputStream("c\nb".getBytes());
     System.setIn(wejscie);
+    scanner = new Scanner(System.in);
 
     String komunikat = "Dokonano nieprawidlowego wyboru.";
     ByteArrayOutputStream wyjscie = new ByteArrayOutputStream();
     PrintStream strumienWyjscia = new PrintStream(wyjscie);
     System.setOut(strumienWyjscia);
 
-    WczytDanych.wczytajDopuszczalna(dopuszczalneZnaki, "komunikat");
+    WczytDanych.wczytajDopuszczalna(dopuszczalneZnaki, "komunikat", scanner);
 
     String[] linie = wyjscie.toString().split("\n");
     String wynik = linie[1];
