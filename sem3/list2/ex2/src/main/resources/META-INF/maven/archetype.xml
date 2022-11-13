@@ -1,0 +1,9 @@
+<archetype>
+  <id>list2</id>
+  <sources>
+    <source>src/main/java/Aplikacja.java</source>
+  </sources>
+  <testSources>
+    <source>src/test/java/TestKontrolerDanych.java</source>
+  </testSources>
+</archetype>
