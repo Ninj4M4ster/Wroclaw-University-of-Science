@@ -4,7 +4,19 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="592f11d5-1f37-446d-a649-0930bfc1df9b" name="Changes" comment="Rearranged list2" />
+    <list default="true" id="592f11d5-1f37-446d-a649-0930bfc1df9b" name="Changes" comment="Rearranged list2">
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/ex1.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/ex1.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Aplikacja.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Aplikacja.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ElementFaktury.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ElementFaktury.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Faktura.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Faktura.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/FormatowanieDoWyswietlenia.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/FormatowanieDoWyswietlenia.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/KontrolerDanych.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/KontrolerDanych.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/KontrolerFaktur.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/KontrolerFaktur.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/WczytDanych.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/WczytDanych.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -18,10 +30,23 @@
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$/../../.." value="374c206ae73ace562f805e27b5208c9009f8331d" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../../.." />
+    <option name="RESET_MODE" value="HARD" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="useMavenConfig" value="true" />
+      </MavenGeneralSettings>
+    </option>
   </component>
   <component name="MavenRunner">
     <option name="delegateBuildToMaven" value="true" />
@@ -32,22 +57,21 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;last_opened_file_path&quot;: &quot;G:/Programowanie/Wroclaw-University-of-Science&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;project.propVCSSupport.DirectoryMappings&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "last_opened_file_path": "G:/Programowanie/Wroclaw-University-of-Science",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "run.code.analysis.last.selected.profile": "pProject Default",
+    "settings.editor.selected.configurable": "project.propVCSSupport.DirectoryMappings"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="G:\Programowanie\Wroclaw-University-of-Science\sem3\list2\ex1" />
@@ -128,9 +152,9 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="JUnit.TestAplikacja.testMain" />
-        <item itemvalue="JUnit.TestKontrolerDanych" />
         <item itemvalue="JUnit.TestKontrolerDanych.czyLiczbaCalkowitaTest" />
+        <item itemvalue="JUnit.TestKontrolerDanych" />
+        <item itemvalue="JUnit.TestAplikacja.testMain" />
         <item itemvalue="Application.Aplikacja (1)" />
         <item itemvalue="Application.Aplikacja" />
       </list>
@@ -168,6 +192,7 @@
       <workItem from="1668379137281" duration="677000" />
       <workItem from="1668380159219" duration="54000" />
       <workItem from="1668380458951" duration="121000" />
+      <workItem from="1668380606610" duration="2409000" />
     </task>
     <task id="LOCAL-00001" summary="Configured google style for code, configured maven">
       <created>1667486540662</created>
@@ -281,7 +306,14 @@
       <option name="project" value="LOCAL" />
       <updated>1668380497437</updated>
     </task>
-    <option name="localTasksCounter" value="17" />
+    <task id="LOCAL-00017" summary="Rearranged list2">
+      <created>1668380971324</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1668380971324</updated>
+    </task>
+    <option name="localTasksCounter" value="18" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -292,7 +324,19 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="main" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
           </value>
         </entry>
       </map>

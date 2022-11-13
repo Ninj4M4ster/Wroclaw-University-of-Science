@@ -1,6 +1,9 @@
 /**
  * Klasa odpowiedzialna za walidacje danych.
  * Niemozliwe jest utworzenie jej instancji.
+ * -------------------------------------------------------------
+ * Zasada Czysty wymysl, Wysoka spojnosc, Ochrona zmiennosci
+ * Klasa nie nalezy do domeny systemu, jej jedynym zadaniem jest walidacja danych.
  */
 public final class KontrolerDanych {
 

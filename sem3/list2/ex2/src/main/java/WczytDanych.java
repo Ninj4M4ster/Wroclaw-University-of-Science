@@ -3,6 +3,10 @@ import java.util.Scanner;
 /**
  * Klasa odpowiedzialna za wczytywanie i walidacje danych wprowadzanych do faktury.
  * Niemozliwe jest stworzenie jej instancji.
+ * -------------------------------------------------------------
+ * Zasada Czysty wymysl, Wysoka spojnosc, Posrednictwo, Ochrona zmiennosci
+ * Klasa nie nalezy do domeny systemu, jej jedynym zadaniem jest wczytanie i walidacja danych.
+ * Dzieki niej inne klasy nie komunikuja sie bezposrednio z uzytkownikiem.
  */
 public final class WczytDanych {
 

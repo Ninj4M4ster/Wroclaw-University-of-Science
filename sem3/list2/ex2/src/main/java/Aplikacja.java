@@ -3,6 +3,10 @@ import java.util.Scanner;
 /**
  * Główna klasa aplikacji.
  * Odpowiedzialna za uruchomienie aplikacji oraz utworzenie kontrolerów.
+ * -------------------------------------------------------------
+ * Zasada Kontroler, Wysoka spojnosc, Pośrednictwo:
+ * Kontroluje dzialanie calego programu, przydziela odpowiedzialnosc tworzenia faktury
+ * kontrolerowi faktur. Klasa ta nie bierze bezposredniego udzialu w tworzeniu faktur.
  */
 public class Aplikacja {
 
@@ -15,6 +19,10 @@ public class Aplikacja {
    * @see KontrolerFaktur#czyIstniejaUtworzoneFaktury
    * @see WczytDanych#wczytajDopuszczalna
    * @see KontrolerFaktur#wyswietlajWczesniejUtworzoneFaktury
+   * -------------------------------------------------------------
+   * Zasada Ochrona zmiennosci:
+   * Wczytywanie danych przez uzytkownika wymaga walidacji, wiec uzyto specjalna klase
+   * odpowiedzialna za wczytanie i sprawdzenie danych od uzytkownika.
    */
   public static void main(String[] args) {
     Scanner scanner = new Scanner(System.in);
@@ -42,6 +50,7 @@ public class Aplikacja {
       }
 
       // pobierz wybor od uzytkownika
+      // niestabilny obiekt
       String wprowadzonaWartosc = WczytDanych.wczytajDopuszczalna(dopuszczalne, komunikat, scanner);
       wybor = Integer.parseInt(wprowadzonaWartosc);
 

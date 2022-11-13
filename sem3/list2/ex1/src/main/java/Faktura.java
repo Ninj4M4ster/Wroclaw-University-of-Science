@@ -5,6 +5,9 @@ import java.util.Locale;
 
 /**
  * Klasa reprezentujaca dane na fakturze.
+ * -------------------------------------------------------------
+ * Zasada Wysoka spojnosc
+ * Klasa ta przechowuje dane o fakturze.
  */
 public class Faktura {
 
@@ -96,6 +99,7 @@ public class Faktura {
    * @see ElementFaktury
    */
   public void wprowadzElement(String nazwaTowarUsluga, int ilosc, double cena, double podatek) {
+    // niskie sprzezenie
     ElementFaktury element = new ElementFaktury(nazwaTowarUsluga, ilosc, cena, podatek);
     elementyFaktury.add(element);
   }
@@ -111,6 +115,10 @@ public class Faktura {
 
   /**
    * Metoda ta oblicza koncowe sumy na fakturze: netto, brutto i VAT.
+   * -------------------------------------------------------------
+   * Zasada Ekspert:
+   * Skoro elementy sa przypisane do faktury, to powinna ona sama obliczyc
+   * sumy cen wszystkich elementow.
    */
   public void obliczSumy() {
     double sumaNetto = 0;
@@ -131,10 +139,6 @@ public class Faktura {
 
   /**
    * Metoda ta zwraca czytelnie sformatowane dane na tej fakturze.
-   * -------------------------------------------------------------
-   * Zasada Ekspert oraz Niskie sprzezenie:
-   * Faktura posiada wszystkie informacje potrzebne do jej wyswietlenia, wiec
-   * w wiekszosci to ona realizuje sformatowanie ich w czytelny dla czlowieka sposob.
    *
    * @return Sformatowane dane na fakturze.
    * @see Faktura#formatujInformacjeSprzedawcyNabywcy
@@ -142,6 +146,10 @@ public class Faktura {
    * @see FormatowanieDoWyswietlenia#sformatujElementFaktury
    * @see FormatowanieDoWyswietlenia#stworzTabeleSum
    * @see KontrolerDanych#zaokraglDoDwoch
+   * -------------------------------------------------------------
+   * Zasada Ekspert oraz Niskie sprzezenie:
+   * Faktura posiada wszystkie informacje potrzebne do jej wyswietlenia, wiec
+   * w wiekszosci to ona realizuje sformatowanie ich w czytelny dla czlowieka sposob.
    */
   @Override
   public String toString() {
@@ -177,13 +185,13 @@ public class Faktura {
   /**
    * Metoda ta tworzy odpowiednio sformatowany lancuch
    * znakow z informacjami o sprzedawcy i nabywcy.
+   *
+   * @return Lancuch znakow z informacjami o sprzedawcy i nabywcy.
+   * @see FormatowanieDoWyswietlenia#ulozDwaNapisy
    * -------------------------------------------------------------
    * Zasada Ekspert oraz Niskie sprzezenie:
    * Ze wzgledu na duza ilosc informacji przechowywanych
    * w fakturze, jest ona odpowiedzialna za czesciowe formatowanie.
-   *
-   * @return Lancuch znakow z informacjami o sprzedawcy i nabywcy.
-   * @see FormatowanieDoWyswietlenia#ulozDwaNapisy
    */
   private String formatujInformacjeSprzedawcyNabywcy() {
     String napis = """

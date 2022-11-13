@@ -5,7 +5,7 @@
  * -------------------------------------------------------------
  * Zasada Czysty wymysl, Wysoka spojnosc:
  * Klasa ta powstala w celu wspomagania formatowania danych w czytelny sposob.
- * Jest to jej jedyne zadanie.
+ * Nie nalezy ona do domeny systemu.
  */
 public final class FormatowanieDoWyswietlenia {
 

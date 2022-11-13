@@ -1,5 +1,9 @@
 /**
  * Klasa reprezentujaca element faktury.
+ * ---------------------------------------------
+ * Zasada Posrednictwo, Wysoka spojnosc.
+ * Klasa sluzaca do przechowywania informacji o elementach faktury.
+ * Dzieki niej informacje te nie sa bezposrednio przechowywane w klasie Faktura.
  */
 public class ElementFaktury {
   private final String nazwaElementu;

@@ -5,7 +5,7 @@
  * -------------------------------------------------------------
  * Zasada Czysty wymysl, Wysoka spojnosc:
  * Klasa ta powstala w celu wspomagania formatowania danych w czytelny sposob.
- * Jest to jej jedyne zadanie.
+ * Nie nalezy ona do domeny systemu.
  */
 public final class FormatowanieDoWyswietlenia {
 
@@ -13,7 +13,7 @@ public final class FormatowanieDoWyswietlenia {
    * Lista ta przedstawia odleglosc separatora komorek tabeli od poczatku linii w konsoli.
    */
   private static final int[] ODLEGLOSCI_WIERSZY_TABELI = {
-    4, 32, 40, 57, 73, 81, 89
+      4, 32, 40, 57, 73, 81, 89
   };
 
   /**
@@ -57,7 +57,7 @@ public final class FormatowanieDoWyswietlenia {
    */
   public static StringBuilder stworzPierwszyWierszTabeli() {
     return new StringBuilder("Lp  |    Nazwa towaru/uslugi    | ilosc |   Cena jedn.   |"
-            + " Wartosc netto | VAT % |  VAT  | Wartosc Brutto\n");
+        + " Wartosc netto | VAT % |  VAT  | Wartosc Brutto\n");
   }
 
   /**

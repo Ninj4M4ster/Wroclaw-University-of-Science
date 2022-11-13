@@ -5,6 +5,10 @@ import java.util.Scanner;
  * Kontroler faktur.
  * Klasa ta odpowiedzialna jest za odbieranie danych od uzytkownika,
  * pakowania ich w obiekt i wysylania go do dalszej pracy.
+ * -------------------------------------------------------------
+ * Zasada Kontroler, Wysoka spojnosc, Tworca
+ * Kontroler faktur odpowiedzialny jest za tworzenie i wyswietlanie faktur,
+ * to on powinien tworzyc nowe obiekty faktur.
  */
 public class KontrolerFaktur {
   Scanner scanner;
@@ -29,6 +33,10 @@ public class KontrolerFaktur {
    * @see KontrolerFaktur#wczytajDaneStrony
    * @see KontrolerFaktur#wczytajElementyFaktury
    * @see KontrolerFaktur#konczTworzycFakture
+   * -------------------------------------------------------------
+   * Zasada Niskie sprzezenie:
+   * Obiekt faktury tylko i wylacznie zapisuje wprowadzone przez uzytkownika dane pod
+   * odpowiednimi zmiennymi oraz oblicza finalne sumy.
    */
   public void utworzNowaFakture() {
     aktualnaFaktura = new Faktura();
@@ -38,6 +46,7 @@ public class KontrolerFaktur {
     System.out.println("-----------Nowa faktura-----------");
     System.out.println("Wprowadz miejsce wystawienia faktury: ");
     String miejsce = scanner.nextLine();
+    // niskie sprzezenie
     aktualnaFaktura.wprowadzInformacjeOgolne(miejsce);
 
     // wczytywanie danych dotyczacych stron tranzakcji
@@ -65,6 +74,10 @@ public class KontrolerFaktur {
    * @param strona Napis "sprzedawcy" lub "nabywcy" identyfikujacy strone tranzakcji.
    * @see WczytDanych#wprowadzNapis
    * @see Faktura#wprowadzDaneStrony
+   * -------------------------------------------------------------
+   * Zasada Niskie sprzezenie:
+   * Obiekt faktury tylko i wylacznie zapisuje wprowadzone przez uzytkownika dane pod
+   * odpowiednimi zmiennymi oraz oblicza finalne sumy.
    */
   private void wczytajDaneStrony(String strona) {
     System.out.println("Wprowadz informacje o " + strona);
@@ -79,6 +92,7 @@ public class KontrolerFaktur {
     final String kodPocztowyMiasto =
         WczytDanych.wprowadzNapis("Podaj kod pocztowy i miasto " + strona + ":", scanner);
 
+    // niskie sprzezenie
     aktualnaFaktura.wprowadzDaneStrony(strona, nazwa, nip, adres, kodPocztowyMiasto);
   }
 
@@ -92,6 +106,10 @@ public class KontrolerFaktur {
    * @see WczytDanych#wprowadzPodatek
    * @see Faktura#wprowadzElement
    * @see Faktura#iloscElementow
+   * -------------------------------------------------------------
+   * Zasada Niskie sprzezenie:
+   * Obiekt faktury tylko i wylacznie zapisuje wprowadzone przez uzytkownika dane pod
+   * odpowiednimi zmiennymi oraz oblicza finalne sumy.
    */
   private void wczytajElementyFaktury() {
     System.out.println("---------Elementy faktury----------");
@@ -110,6 +128,7 @@ public class KontrolerFaktur {
         double podatek = WczytDanych.wprowadzPodatek(scanner);
 
         // wprowadz element do faktury
+        // niskie sprzezenie
         aktualnaFaktura.wprowadzElement(nazwaTowarUsluga, iloscLiczba, cenaLiczba, podatek);
       } else if (wybor.equalsIgnoreCase("n")) {
         if (aktualnaFaktura.iloscElementow() == 0) {
