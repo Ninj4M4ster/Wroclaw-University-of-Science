@@ -1,6 +1,9 @@
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.text.DateFormat;
+import java.util.Date;
+import java.util.Locale;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -45,21 +48,24 @@ public class TestAplikacja {
 
     Aplikacja.main(new String[]{});
 
+    DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, Locale.FRANCE);
+    String dataWystawienia = df.format(new Date());
+
     String[] linie = wyjscie.toString().split("\n");
-    assertEquals(linie[31], "Data wystawienia:        12/11/2022");
-    assertEquals(linie[32], "Miejsce wystawienia:     miejsce");
-    assertEquals(linie[35], "Sprzedawca                            Nabywca");
-    assertEquals(linie[36], "nazwa                                 nazwa");
-    assertEquals(linie[37], "nip                                   nip");
-    assertEquals(linie[38], "adres                                 adres");
-    assertEquals(linie[39], "kod                                   kod");
-    assertEquals(linie[41], "Lp  |    Nazwa towaru/uslugi    | ilosc |   Cena jedn.   "
+    assertEquals("Data wystawienia:        " + dataWystawienia, linie[33]);
+    assertEquals(linie[34], "Miejsce wystawienia:     miejsce");
+    assertEquals(linie[37], "Sprzedawca                            Nabywca");
+    assertEquals(linie[38], "nazwa                                 nazwa");
+    assertEquals(linie[39], "nip                                   nip");
+    assertEquals(linie[40], "adres                                 adres");
+    assertEquals(linie[41], "kod                                   kod");
+    assertEquals(linie[43], "Lp  |    Nazwa towaru/uslugi    | ilosc |   Cena jedn.   "
         + "| Wartosc netto | VAT % |  VAT  | Wartosc Brutto");
-    assertEquals(linie[42], "1   | nazwa                     | 2     | 2.88           "
+    assertEquals(linie[44], "1   | nazwa                     | 2     | 2.88           "
         + "| 5.76          | 4.0   | 0.12  | 6.0");
-    assertEquals(linie[44], "                                                             "
+    assertEquals(linie[46], "                                                             "
         + "Razem netto | Razem VAT | Razem brutto");
-    assertEquals(linie[45], "                                                              "
+    assertEquals(linie[47], "                                                              "
         + "5.76       | 0.24      | 6.0");
   }
 }

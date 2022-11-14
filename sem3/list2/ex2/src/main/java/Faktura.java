@@ -213,10 +213,26 @@ public class Faktura {
     return napis;
   }
 
+  /**
+   * Metoda ta zwraca liste lancuchow znakowych zawierajaca informacje ogolne o fakturze:
+   * 0 - miejsce wystawienia faktury.
+   * 1 - data wystawienia faktury.
+   *
+   * @return Lista lancuchow znakowych z informacjami ogolnymi o fakturze.
+   */
   public String[] dajInformacjeOgolne() {
     return new String[]{this.miejsceWystawienia, this.dataWystawienia};
   }
 
+  /**
+   * Metoda ta zwraca liste lancuchow znakowych zawierajaca informacje o sprzedawcy:
+   * 0 - nazwa sprzedawcy.
+   * 1 - numer nip sprzedawcy.
+   * 2 - ulica sprzedawcy.
+   * 3 - kod pocztowy i miasto sprzedawcy.
+   *
+   * @return Lista lancuchow znakowych zawierajaca informacje o sprzedawcy.
+   */
   public String[] dajInformacjeSprzedawcy() {
     return new String[]{
         this.nazwaSprzedawcy,
@@ -225,6 +241,15 @@ public class Faktura {
         this.kodPocztowyMiastoSprzedawcy};
   }
 
+  /**
+   * Metoda ta zwraca liste lancuchow znakowych zawierajaca informacje o nabywcy:
+   * 0 - nazwa nabywcy.
+   * 1 - numer nip nabywcy.
+   * 2 - ulica nabywcy.
+   * 3 - kod pocztowy i miasto sprzedawcy.
+   *
+   * @return Lista lancuchow znakowych zawierajaca informacje o nabywcy.
+   */
   public String[] dajInformacjeNabywcy() {
     return new String[]{
         this.nazwaNabywcy,
@@ -234,19 +259,37 @@ public class Faktura {
     };
   }
 
+  /**
+   * Metoda ta zwraca liste lancuchow znakowych zawierajaca informacje o wszystkich elementach:
+   * i - nazwa elementu.
+   * i + 1 - ilosc.
+   * i + 2 - cena netto.
+   * i + 3 - podatek.
+   * i = i + 4.
+   *
+   * @return Lista lancuchow znakowych zawierajaca infomacje o wszystkich elementach faktury.
+   */
   public String[] dajElementy() {
     String[] elementyNapisy = new String[this.elementyFaktury.size() * 4];
-    for (int i = 0; i < elementyFaktury.size(); i += 4) {
+    for (int i = 0, k = 0; i < elementyFaktury.size(); i++, k += 4) {
       ElementFaktury element = elementyFaktury.get(i);
       String[] dane = element.dajDane();
-      elementyNapisy[i] = dane[0];
-      elementyNapisy[i + 1] = dane[1];
-      elementyNapisy[i + 2] = dane[2];
-      elementyNapisy[i + 3] = dane[3];
+      elementyNapisy[k] = dane[0];
+      elementyNapisy[k + 1] = dane[1];
+      elementyNapisy[k + 2] = dane[2];
+      elementyNapisy[k + 3] = dane[3];
     }
     return elementyNapisy;
   }
 
+  /**
+   * Metoda ta zwraca liste lancuchow znakowych zawierajaca informacje o wszystkich sumach:
+   * 0 - suma kwot brutto.
+   * 1 - suma VATu.
+   * 2 - suma kwot netto.
+   *
+   * @return Lista lancuchow znakowych zawierajaca informace o wszystkich sumach na fakturze.
+   */
   public String[] dajSumy() {
     return new String[]{
         String.valueOf(this.sumaBrutto),

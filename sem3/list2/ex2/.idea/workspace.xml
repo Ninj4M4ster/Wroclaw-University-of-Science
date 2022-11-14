@@ -4,12 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="592f11d5-1f37-446d-a649-0930bfc1df9b" name="Changes" comment="Filled missing documentation">
-      <change afterPath="$PROJECT_DIR$/src/main/java/ObslugaBazyDanych.java" afterDir="false" />
+    <list default="true" id="592f11d5-1f37-446d-a649-0930bfc1df9b" name="Changes" comment="Created part of database usage functionality.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Aplikacja.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Aplikacja.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ElementFaktury.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ElementFaktury.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Faktura.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Faktura.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/KontrolerFaktur.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/KontrolerFaktur.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ObslugaBazyDanych.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ObslugaBazyDanych.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/TestAplikacja.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/TestAplikacja.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -45,24 +46,24 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "last_opened_file_path": "G:/Programowanie/Wroclaw-University-of-Science/sem3/list2/ex2",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "Project",
-    "project.structure.proportion": "0.0",
-    "project.structure.side.proportion": "0.0",
-    "run.code.analysis.last.selected.profile": "pProject Default",
-    "settings.editor.selected.configurable": "org.infernus.idea.checkstyle.CheckStyleConfigurable"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;last_opened_file_path&quot;: &quot;G:/Programowanie/Wroclaw-University-of-Science/sem3/list2/ex2&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
+    &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;org.infernus.idea.checkstyle.CheckStyleConfigurable&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="G:\Programowanie\Wroclaw-University-of-Science\sem3\list2\ex1" />
@@ -70,7 +71,7 @@
       <recent name="G:\Programowanie\Wroclaw-University-of-Science\sem3\list2\src\main\java" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.TestAplikacja.testMain">
+  <component name="RunManager" selected="Application.Aplikacja">
     <configuration name="Aplikacja (1)" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="Aplikacja" />
       <method v="2">
@@ -78,8 +79,10 @@
       </method>
     </configuration>
     <configuration name="Aplikacja" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="ALTERNATIVE_JRE_PATH" value="C:/Program Files/Eclipse Adoptium/jdk-17.0.3.7-hotspot" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
       <option name="MAIN_CLASS_NAME" value="Aplikacja" />
-      <module name="list2" />
+      <module name="ex2" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -143,11 +146,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.Aplikacja" />
         <item itemvalue="JUnit.TestAplikacja.testMain" />
         <item itemvalue="JUnit.TestKontrolerDanych" />
         <item itemvalue="JUnit.TestKontrolerDanych.czyLiczbaCalkowitaTest" />
         <item itemvalue="Application.Aplikacja (1)" />
-        <item itemvalue="Application.Aplikacja" />
       </list>
     </recent_temporary>
   </component>
@@ -183,7 +186,8 @@
       <workItem from="1668379137281" duration="677000" />
       <workItem from="1668380214374" duration="71000" />
       <workItem from="1668380328351" duration="129000" />
-      <workItem from="1668383108683" duration="1137000" />
+      <workItem from="1668383108683" duration="1963000" />
+      <workItem from="1668420023451" duration="2373000" />
     </task>
     <task id="LOCAL-00001" summary="Configured google style for code, configured maven">
       <created>1667486540662</created>
@@ -290,7 +294,14 @@
       <option name="project" value="LOCAL" />
       <updated>1668217547326</updated>
     </task>
-    <option name="localTasksCounter" value="16" />
+    <task id="LOCAL-00016" summary="Created part of database usage functionality.">
+      <created>1668385067218</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1668385067218</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -326,7 +337,8 @@
     <MESSAGE value="Added tests for data input class" />
     <MESSAGE value="Added test for the whole application" />
     <MESSAGE value="Filled missing documentation" />
-    <option name="LAST_COMMIT_MESSAGE" value="Filled missing documentation" />
+    <MESSAGE value="Created part of database usage functionality." />
+    <option name="LAST_COMMIT_MESSAGE" value="Created part of database usage functionality." />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

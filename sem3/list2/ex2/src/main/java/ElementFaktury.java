@@ -74,6 +74,11 @@ public class ElementFaktury {
         + KontrolerDanych.zaokraglDoDwoch(this.cenaBrutto * this.ilosc);
   }
 
+  /**
+   * Zwroc informacje o danym elemencie.
+   *
+   * @return Lista lancuchow znakowych zawierajaca informacje o elemencie.
+   */
   public String[] dajDane() {
     return new String[]{this.nazwaElementu,
         String.valueOf(this.ilosc),

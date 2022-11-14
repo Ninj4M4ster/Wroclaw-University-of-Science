@@ -155,7 +155,11 @@ public class KontrolerFaktur {
   private void konczTworzycFakture() {
     System.out.println(aktualnaFaktura);
     // niskie sprzezenie
-    this.obslugaBazyDanych.wprowadzFakture(aktualnaFaktura);
+    this.obslugaBazyDanych.wprowadzFakture(aktualnaFaktura.dajInformacjeOgolne(),
+        aktualnaFaktura.dajInformacjeSprzedawcy(),
+        aktualnaFaktura.dajInformacjeNabywcy(),
+        aktualnaFaktura.dajElementy(),
+        aktualnaFaktura.dajSumy());
   }
 
   /**
