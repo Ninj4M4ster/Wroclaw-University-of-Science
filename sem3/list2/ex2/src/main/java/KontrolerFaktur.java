@@ -14,13 +14,15 @@ public class KontrolerFaktur {
   Scanner scanner;
   ArrayList<Faktura> listaFaktur;
   Faktura aktualnaFaktura;
+  ObslugaBazyDanych obslugaBazyDanych;
 
   /**
    * Konstruktor. Tworzy tablice do przechowywania wszystkich utworzonych faktur.
    */
-  public KontrolerFaktur(Scanner scanner) {
+  public KontrolerFaktur(Scanner scanner, ObslugaBazyDanych obslugaBazyDanych) {
     this.scanner = scanner;
     this.listaFaktur = new ArrayList<>();
+    this.obslugaBazyDanych = obslugaBazyDanych;
   }
 
   /**
@@ -143,10 +145,17 @@ public class KontrolerFaktur {
   }
 
   /**
-   * Metoda majaca za zadanie wyswietlic fakture po skonczeniu jej wypelniania.
+   * Metoda majaca za zadanie wyswietlic fakture po skonczeniu jej wypelniania oraz
+   * wprowadzenie jej do bazy danych.
+   * --------------------------------------------------------
+   * Zasada Posrednictwo:
+   * Faktura nie jest bezposrednio wprowadzana do bazy danych, lecz robi to lepiej przystosowana
+   * do tego klasa.
    */
   private void konczTworzycFakture() {
     System.out.println(aktualnaFaktura);
+    // niskie sprzezenie
+    this.obslugaBazyDanych.wprowadzFakture(aktualnaFaktura);
   }
 
   /**

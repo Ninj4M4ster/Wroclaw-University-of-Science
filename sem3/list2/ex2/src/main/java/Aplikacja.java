@@ -26,7 +26,8 @@ public class Aplikacja {
    */
   public static void main(String[] args) {
     Scanner scanner = new Scanner(System.in);
-    KontrolerFaktur kontrolerFaktur = new KontrolerFaktur(scanner);
+    ObslugaBazyDanych obslugaBazyDanych = new ObslugaBazyDanych();
+    KontrolerFaktur kontrolerFaktur = new KontrolerFaktur(scanner, obslugaBazyDanych);
     // petla wyboru dzialania
     int wybor = 0;
     while (wybor != 2) {

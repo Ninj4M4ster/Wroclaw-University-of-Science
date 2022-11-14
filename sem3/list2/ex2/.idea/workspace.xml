@@ -5,101 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="592f11d5-1f37-446d-a649-0930bfc1df9b" name="Changes" comment="Filled missing documentation">
-      <change afterPath="$PROJECT_DIR$/../../../.idea/other.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../ex1/.idea/checkstyleidea-libs/readme.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../ex1/.idea/codeStyles/codeStyleConfig.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../ex1/list2.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../ex1/target/classes/Aplikacja.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../ex1/target/classes/ElementFaktury.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../ex1/target/classes/Faktura.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../ex1/target/classes/FormatowanieDoWyswietlenia.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../ex1/target/classes/KontrolerDanych.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../ex1/target/classes/KontrolerFaktur.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../ex1/target/classes/WczytDanych.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../ex1/target/list2-1.0-SNAPSHOT.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../ex1/target/maven-archiver/pom.properties" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../ex1/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../ex1/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../ex1/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/createdFiles.lst" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../ex1/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../ex1/target/surefire-reports/TEST-TestAplikacja.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../ex1/target/surefire-reports/TEST-TestKontrolerDanych.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../ex1/target/surefire-reports/TEST-TestWczytDanych.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../ex1/target/surefire-reports/TestAplikacja.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../ex1/target/surefire-reports/TestKontrolerDanych.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../ex1/target/surefire-reports/TestWczytDanych.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../ex1/target/test-classes/TestAplikacja.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../ex1/target/test-classes/TestKontrolerDanych.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../ex1/target/test-classes/TestWczytDanych.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/checkstyle-idea.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/checkstyleidea-libs/readme.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/codeStyles/codeStyleConfig.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/ex1.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/google-java-format.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/list2.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/Aplikacja.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/ElementFaktury.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/Faktura.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/FormatowanieDoWyswietlenia.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/KontrolerDanych.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/KontrolerFaktur.java" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/src/main/java/ObslugaBazyDanych.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/WczytDanych.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/META-INF/maven/archetype.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/intellij-java-google-style.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/TestAplikacja.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/TestKontrolerDanych.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/TestWczytDanych.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/Aplikacja.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/ElementFaktury.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/Faktura.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/FormatowanieDoWyswietlenia.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/KontrolerDanych.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/KontrolerFaktur.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/WczytDanych.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/list2-1.0-SNAPSHOT.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/maven-archiver/pom.properties" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/createdFiles.lst" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/surefire-reports/TEST-TestAplikacja.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/surefire-reports/TEST-TestKontrolerDanych.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/surefire-reports/TEST-TestWczytDanych.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/surefire-reports/TestAplikacja.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/surefire-reports/TestKontrolerDanych.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/surefire-reports/TestWczytDanych.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/test-classes/TestAplikacja.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/test-classes/TestKontrolerDanych.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/test-classes/TestWczytDanych.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../.idea/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../ex1/.idea/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../.idea/checkstyle-idea.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../ex1/.idea/checkstyle-idea.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../ex1/.idea/compiler.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../.idea/google-java-format.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../ex1/.idea/google-java-format.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../.idea/jarRepositories.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../ex1/.idea/jarRepositories.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../ex1/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../.idea/uiDesigner.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../ex1/.idea/uiDesigner.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../ex1/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../ex1/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../src/main/java/Aplikacja.java" beforeDir="false" afterPath="$PROJECT_DIR$/../ex1/src/main/java/Aplikacja.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../src/main/java/ElementFaktury.java" beforeDir="false" afterPath="$PROJECT_DIR$/../ex1/src/main/java/ElementFaktury.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../src/main/java/Faktura.java" beforeDir="false" afterPath="$PROJECT_DIR$/../ex1/src/main/java/Faktura.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../src/main/java/FormatowanieDoWyswietlenia.java" beforeDir="false" afterPath="$PROJECT_DIR$/../ex1/src/main/java/FormatowanieDoWyswietlenia.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../src/main/java/KontrolerDanych.java" beforeDir="false" afterPath="$PROJECT_DIR$/../ex1/src/main/java/KontrolerDanych.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../src/main/java/KontrolerFaktur.java" beforeDir="false" afterPath="$PROJECT_DIR$/../ex1/src/main/java/KontrolerFaktur.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../src/main/java/WczytDanych.java" beforeDir="false" afterPath="$PROJECT_DIR$/../ex1/src/main/java/WczytDanych.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../src/main/resources/META-INF/maven/archetype.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../ex1/src/main/resources/META-INF/maven/archetype.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../src/main/resources/intellij-java-google-style.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../ex1/src/main/resources/intellij-java-google-style.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../src/test/java/TestAplikacja.java" beforeDir="false" afterPath="$PROJECT_DIR$/../ex1/src/test/java/TestAplikacja.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../src/test/java/TestKontrolerDanych.java" beforeDir="false" afterPath="$PROJECT_DIR$/../ex1/src/test/java/TestKontrolerDanych.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../src/test/java/TestWczytDanych.java" beforeDir="false" afterPath="$PROJECT_DIR$/../ex1/src/test/java/TestWczytDanych.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Aplikacja.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Aplikacja.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/KontrolerFaktur.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/KontrolerFaktur.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -119,6 +29,13 @@
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="useMavenConfig" value="true" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
   <component name="MavenRunner">
     <option name="delegateBuildToMaven" value="true" />
   </component>
@@ -132,16 +49,18 @@
   "keyToString": {
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "WebServerToolWindowFactoryState": "false",
-    "last_opened_file_path": "G:/Programowanie/Wroclaw-University-of-Science/sem3/list2/ex1",
+    "last_opened_file_path": "G:/Programowanie/Wroclaw-University-of-Science/sem3/list2/ex2",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Project",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.0",
     "run.code.analysis.last.selected.profile": "pProject Default",
-    "settings.editor.selected.configurable": "project.propVCSSupport.DirectoryMappings"
+    "settings.editor.selected.configurable": "org.infernus.idea.checkstyle.CheckStyleConfigurable"
   }
 }]]></component>
   <component name="RecentsManager">
@@ -264,6 +183,7 @@
       <workItem from="1668379137281" duration="677000" />
       <workItem from="1668380214374" duration="71000" />
       <workItem from="1668380328351" duration="129000" />
+      <workItem from="1668383108683" duration="1137000" />
     </task>
     <task id="LOCAL-00001" summary="Configured google style for code, configured maven">
       <created>1667486540662</created>

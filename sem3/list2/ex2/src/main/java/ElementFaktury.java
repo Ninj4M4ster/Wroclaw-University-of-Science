@@ -73,4 +73,12 @@ public class ElementFaktury {
         + KontrolerDanych.zaokraglDoDwoch(this.cenaBrutto - this.cenaNetto) + ";;"
         + KontrolerDanych.zaokraglDoDwoch(this.cenaBrutto * this.ilosc);
   }
+
+  public String[] dajDane() {
+    return new String[]{this.nazwaElementu,
+        String.valueOf(this.ilosc),
+        String.valueOf(this.cenaNetto),
+        String.valueOf(this.podatek)
+    };
+  }
 }

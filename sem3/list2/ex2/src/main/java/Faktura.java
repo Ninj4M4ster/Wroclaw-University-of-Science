@@ -213,4 +213,46 @@ public class Faktura {
     return napis;
   }
 
+  public String[] dajInformacjeOgolne() {
+    return new String[]{this.miejsceWystawienia, this.dataWystawienia};
+  }
+
+  public String[] dajInformacjeSprzedawcy() {
+    return new String[]{
+        this.nazwaSprzedawcy,
+        this.nipSprzedawcy,
+        this.ulicaSprzedawcy,
+        this.kodPocztowyMiastoSprzedawcy};
+  }
+
+  public String[] dajInformacjeNabywcy() {
+    return new String[]{
+        this.nazwaNabywcy,
+        this.nipNabywcy,
+        this.ulicaNabywcy,
+        this.kodPocztowyMiastoNabywcy
+    };
+  }
+
+  public String[] dajElementy() {
+    String[] elementyNapisy = new String[this.elementyFaktury.size() * 4];
+    for (int i = 0; i < elementyFaktury.size(); i += 4) {
+      ElementFaktury element = elementyFaktury.get(i);
+      String[] dane = element.dajDane();
+      elementyNapisy[i] = dane[0];
+      elementyNapisy[i + 1] = dane[1];
+      elementyNapisy[i + 2] = dane[2];
+      elementyNapisy[i + 3] = dane[3];
+    }
+    return elementyNapisy;
+  }
+
+  public String[] dajSumy() {
+    return new String[]{
+        String.valueOf(this.sumaBrutto),
+        String.valueOf(this.sumaVat),
+        String.valueOf(this.sumaNetto)
+    };
+  }
+
 }
