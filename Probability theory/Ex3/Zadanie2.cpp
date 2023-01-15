@@ -4,10 +4,35 @@
 #include <unordered_map>
 #include <vector>
 
+/**
+ * Zmienna losowa o rozkładzie Bernouliego.
+ *
+ * @param generator Generator liczb losowych.
+ * @param distribution Dystrybuanta zmiennej losowej.
+ * @return 1 jeśli wylosowano prawdę, lub -1 w przeciwnym wypadku.
+ */
 int random_variable(std::mt19937_64 &generator, std::bernoulli_distribution &distribution) {
     if(distribution(generator))
         return 1;
     return -1;
+}
+
+/**
+ * Znajdź ilość liczb w mapie, która jest mniejsza od podanej wartości.
+ *
+ * @param N Indeks mapy.
+ * @param results Mapa z wynikami symulacji.
+ * @param accuracy Ilosc wygenerowanych wartości.
+ * @param value Porównywana wartość.
+ * @return Ilość liczb mniejszych od podanej.
+ */
+int count_smaller_equal(int N, std::unordered_map<int, std::vector<int>> &results, int accuracy, int value) {
+    int sum = 0;
+    for(int i=0; i < accuracy; i++) {
+        if(results[N].at(i) <= value)
+            sum++;
+    }
+    return sum;
 }
 
 int main() {
@@ -38,16 +63,33 @@ int main() {
         results[100].push_back(wynik);
     }
 
+    // calculate distributions
+    std::unordered_map<int, std::vector<double>> distributions;
+    for(int N=5; N <= 30; N+=5) {
+        for(int i=-N; i <= N; i++) {
+            double sum = count_smaller_equal(N, results, accuracy, i);
+            distributions[N].push_back(sum / (double)accuracy);
+        }
+    }
+
+    // calculate distribution for N = 100
+    for(int i=-100; i <= 100; i++) {
+        double sum = count_smaller_equal(100, results, accuracy, i);
+        distributions[100].push_back(sum / (double)accuracy);
+    }
+
     // save results in file
     std::fstream output_file;
     output_file.open("zadanie2.txt", std::fstream::out);
-    output_file << "5;10;15;20;25;30;100\n";
-    for(int i=0; i<accuracy; i++) {
-        for(int n=5; n<=30; n+=5) {
-            output_file << results[n].at(i);
-            output_file << ";";
+    for(int N=5; N <= 30; N+=5) {
+        output_file << N << "\n";
+        for(int i = 0; i < distributions[N].size(); i++) {
+            output_file << i - N << ";" << distributions[N].at(i) << "\n";
         }
-        output_file << results[100].at(i) << "\n";
+    }
+    output_file << "100" << "\n";
+    for(int i = 0; i < distributions[100].size(); i++) {
+        output_file << i - 100 << ";" << distributions[100].at(i) << "\n";
     }
     output_file.close();
 }

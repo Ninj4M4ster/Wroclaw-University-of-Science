@@ -25,4 +25,12 @@ int main() {
         mt_file << bitset;
     }
     mt_file.close();
+
+    std::string surname = "4ceb9e6424fcec312cbc4387a0164446d38c618c";  // SHA-1 mojego nazwiska
+    std::fstream surname_file;
+    surname_file.open("sha-1 output.txt", std::fstream::out);
+    for(char i : surname) {
+        surname_file << std::bitset<8>(i);
+    }
+    surname_file.close();
 }

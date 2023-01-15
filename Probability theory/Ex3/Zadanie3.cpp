@@ -3,12 +3,25 @@
 #include <random>
 #include <unordered_map>
 
+/**
+ * Zmienna losowa o rozkładzie Bernouliego.
+ *
+ * @param generator Generator liczb losowych.
+ * @param distribution Dystrybuanta zmiennej losowej.
+ * @return 1 jeśli wylosowano prawdę, lub -1 w przeciwnym wypadku.
+ */
 int random_variable(std::mt19937_64 &generator, std::bernoulli_distribution &distribution) {
     if(distribution(generator))
         return 1;
     return -1;
 }
 
+/**
+ * Metoda odpowiedzialna za znalezienie, do którego kubełka należy podana wartość.
+ *
+ * @param value Wartość z przedziału [0, 1].
+ * @return Numerek kubełka (od 1 do 20).
+ */
 int find_bin(double value) {
     double current_max_bin = 1.0 / 20.0;
     int current_bin = 0;
