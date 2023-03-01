@@ -62,6 +62,8 @@ std::pair<unsigned int, unsigned int> readEdge() {
     throw std::runtime_error("No arguments given for edge");
 }
 
+typedef std::vector<std::vector<int>> ProximityMatrix;
+
 /**
  * This function reads information about graph from standard input and returns a matrix of proximity
  * of this graph.
@@ -72,11 +74,11 @@ std::pair<unsigned int, unsigned int> readEdge() {
  *
  * @return Matrix of proximity of a graph.
  */
-std::vector<std::vector<int>> readGraphToProximityMatrix() {
+ProximityMatrix readGraphToProximityMatrix() {
     bool isDirected = readGraphDirection();
     unsigned int n = readSingleNumber();
     unsigned int m = readSingleNumber();
-    std::vector<std::vector<int>> matrix(n, std::vector<int>(n, 0));
+    ProximityMatrix matrix(n, std::vector<int>(n, 0));
     for(unsigned int i = 0; i < m; i++) {
         std::pair<unsigned int, unsigned int> edge = readEdge();
         if(isDirected) {
@@ -89,6 +91,8 @@ std::vector<std::vector<int>> readGraphToProximityMatrix() {
     return matrix;
 }
 
+typedef std::vector<std::vector<int>> IncidenceMatrix;
+
 /**
  * This function reads information about graph from standard input and returns a matrix of incidence
  * of this graph.
@@ -99,11 +103,11 @@ std::vector<std::vector<int>> readGraphToProximityMatrix() {
  *
  * @return Matrix of incidence of a graph.
  */
-std::vector<std::vector<int>> readGraphToIncidenceMatrix() {
+IncidenceMatrix readGraphToIncidenceMatrix() {
     bool isDirected = readGraphDirection();
     unsigned int n = readSingleNumber();
     unsigned int m = readSingleNumber();
-    std::vector<std::vector<int>> matrix(n, std::vector<int>(m, 0));
+    IncidenceMatrix matrix(n, std::vector<int>(m, 0));
     for(unsigned int i = 0; i < m; i++) {
         std::pair<unsigned int, unsigned int> edge = readEdge();
         if(isDirected) {
@@ -117,6 +121,7 @@ std::vector<std::vector<int>> readGraphToIncidenceMatrix() {
     return matrix;
 }
 
+typedef std::vector<std::vector<unsigned int>> ProximityList;
 /**
  * This function reads information about graph from standard input and returns a list of proximity
  * of this graph.
@@ -124,18 +129,18 @@ std::vector<std::vector<int>> readGraphToIncidenceMatrix() {
  *
  * @return List of proximity of a graph.
  */
-std::vector<std::vector<int>> readGraphToProximityList() {
+ProximityList readGraphToProximityList() {
     bool isDirected = readGraphDirection();
     unsigned int n = readSingleNumber();
     unsigned int m = readSingleNumber();
-    std::vector<std::vector<int>> matrix(n);
+    ProximityList matrix(n);
     for(unsigned int i = 0; i < m; i++) {
         std::pair<unsigned int, unsigned int> edge = readEdge();
         if(isDirected) {
-            matrix.at(edge.first - 1).push_back((int)edge.second - 1);
+            matrix.at(edge.first - 1).push_back(edge.second - 1);
         } else {
-            matrix.at(edge.first - 1).push_back((int)edge.second - 1);
-            matrix.at(edge.second - 1).push_back((int)edge.first - 1);
+            matrix.at(edge.first - 1).push_back(edge.second - 1);
+            matrix.at(edge.second - 1).push_back(edge.first - 1);
         }
     }
     return matrix;
