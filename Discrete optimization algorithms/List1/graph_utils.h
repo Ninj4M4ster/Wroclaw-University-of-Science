@@ -23,11 +23,11 @@ bool readGraphDirection() {
  *
  * @return Unsigned decimal number.
  */
-unsigned int readSingleNumber() {
+unsigned long long int readSingleNumber() {
     std::string input_string;
     std::getline(std::cin, input_string);
     if(input_string.length() > 0) {
-        return std::stoul(input_string);
+        return std::stoull(input_string);
     }
     throw std::runtime_error("No argument given as single number");
 }
@@ -76,10 +76,10 @@ typedef std::vector<std::vector<int>> ProximityMatrix;
  */
 ProximityMatrix readGraphToProximityMatrix() {
     bool isDirected = readGraphDirection();
-    unsigned int n = readSingleNumber();
-    unsigned int m = readSingleNumber();
+    unsigned long long int n = readSingleNumber();
+    unsigned long long int m = readSingleNumber();
     ProximityMatrix matrix(n, std::vector<int>(n, 0));
-    for(unsigned int i = 0; i < m; i++) {
+    for(unsigned long long int i = 0; i < m; i++) {
         std::pair<unsigned int, unsigned int> edge = readEdge();
         if(isDirected) {
             matrix.at(edge.first - 1).at(edge.second - 1) = 1;
@@ -105,10 +105,10 @@ typedef std::vector<std::vector<int>> IncidenceMatrix;
  */
 IncidenceMatrix readGraphToIncidenceMatrix() {
     bool isDirected = readGraphDirection();
-    unsigned int n = readSingleNumber();
-    unsigned int m = readSingleNumber();
+    unsigned long long int n = readSingleNumber();
+    unsigned long long int m = readSingleNumber();
     IncidenceMatrix matrix(n, std::vector<int>(m, 0));
-    for(unsigned int i = 0; i < m; i++) {
+    for(unsigned long long int i = 0; i < m; i++) {
         std::pair<unsigned int, unsigned int> edge = readEdge();
         if(isDirected) {
             matrix.at(edge.first - 1).at(i) = 1;
@@ -131,10 +131,10 @@ typedef std::vector<std::vector<unsigned int>> ProximityList;
  */
 ProximityList readGraphToProximityList() {
     bool isDirected = readGraphDirection();
-    unsigned int n = readSingleNumber();
-    unsigned int m = readSingleNumber();
+    unsigned long long int n = readSingleNumber();
+    unsigned long long int m = readSingleNumber();
     ProximityList matrix(n);
-    for(unsigned int i = 0; i < m; i++) {
+    for(unsigned long long int i = 0; i < m; i++) {
         std::pair<unsigned int, unsigned int> edge = readEdge();
         if(isDirected) {
             matrix.at(edge.first - 1).push_back(edge.second - 1);

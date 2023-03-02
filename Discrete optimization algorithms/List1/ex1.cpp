@@ -82,6 +82,9 @@ int main(int argc, char* argv[]) {
         return 0;
     }
     ProximityList graph = readGraphToProximityList();
+    std::cout << "Depth-first search\n";
     depthFirstSearch(graph, return_search_tree_flag);
+    std::cout << "\nBreadth-first search\n";
+    breadthFirstSearch(graph, return_search_tree_flag);
     return 0;
 }
