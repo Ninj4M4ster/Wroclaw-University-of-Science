@@ -79,7 +79,7 @@ int main(int argc, char* argv[]) {
             return_search_tree_flag = true;
     } else if(argc > 1) {
         std::cout << "Type -r argument to return the search tree after function execution";
-        return 0;
+        return 1;
     }
     ProximityList graph = readGraphToProximityList();
     std::cout << "Depth-first search\n";

@@ -4,8 +4,8 @@
 void topologicalSort(const ProximityList & graph) {
     // create list of indegree of vertices
     std::vector<int> verticesIndegree(graph.size(), 0);
-    for(unsigned int vertex = 0; vertex < graph.size(); vertex++) {
-        for(unsigned int connection : graph.at(vertex)) {
+    for(const auto & vertex : graph) {
+        for(unsigned int connection : vertex) {
             verticesIndegree.at(connection)++;
         }
     }
@@ -36,7 +36,7 @@ void topologicalSort(const ProximityList & graph) {
         std::cout << "Graph contains a directed cycle" << std::endl;
         return;
     }
-    if(graph.size() < 200) {
+    if(graph.size() <= 200) {
         std::cout << "Ordering\n";
         for(unsigned int vertex : outputList) {
             std::cout << vertex + 1 << std::endl;
