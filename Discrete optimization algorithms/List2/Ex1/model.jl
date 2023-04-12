@@ -20,17 +20,3 @@ model = Model(Clp.Optimizer)
 @objective(model, Min, 40*x1 + 43*x2 + 35*x3)
 
 @constraint(model, c1, y1 + y2 + y3 + y4 == x1 + x2 + x3)
-
-print(model)
-
-optimize!(model)
-
-println("x1 = ", value(x1))
-
-println("x2 = ", value(x2))
-
-println("x3 = ", value(x3))
-
-# 1 485 000
-# 1 100 000 
-
