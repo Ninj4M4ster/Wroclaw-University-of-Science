@@ -1,3 +1,5 @@
+# Jakub Drzewiecki
+
 import Pkg
 Pkg.add("JuMP")
 import Pkg

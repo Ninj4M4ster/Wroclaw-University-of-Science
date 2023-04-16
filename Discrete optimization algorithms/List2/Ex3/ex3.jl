@@ -1,3 +1,5 @@
+# Jakub Drzewiecki
+
 include("model.jl")
 
 optimize!(model)

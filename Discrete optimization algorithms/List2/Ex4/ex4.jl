@@ -1,9 +1,13 @@
+# Jakub Drzewiecki
+
+# Uruchomienie optymalizacji dla k = 1
 include("k1.jl")
 
 optimize!(model)
 
 result1 = cameras
 
+# Uruchomienie optymalizacji dla k = 3
 include("k3.jl")
 
 optimize!(model)
@@ -12,6 +16,7 @@ result2 = cameras
 
 value.(cameras)
 
+# Uruchomienie optymalizacji dla k = 5
 include("k5.jl")
 
 optimize!(model)

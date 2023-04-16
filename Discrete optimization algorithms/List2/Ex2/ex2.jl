@@ -1,3 +1,5 @@
+# Jakub Drzewiecki
+
 include("ilp_model.jl")
 
 optimize!(model)
