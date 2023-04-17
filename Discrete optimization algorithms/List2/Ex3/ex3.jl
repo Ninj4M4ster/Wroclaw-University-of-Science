@@ -1,7 +1,9 @@
 # Jakub Drzewiecki
 
-include("model.jl")
+include("new_model.jl")
+
+print(model)
 
 optimize!(model)
 
-value.(result_graph)
+value.(X)
