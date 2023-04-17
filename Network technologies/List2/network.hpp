@@ -9,7 +9,11 @@ namespace network {
 
 class Network {
  public:
-  explicit Network(std::string graph_file_name, double probability, double max_delay, int mean_packet_size);
+  explicit Network(std::string graph_file_name,
+                   std::string intensity_matrix_file_name,
+                   double probability,
+                   double max_delay,
+                   int mean_packet_size);
   bool simulateFlow();
  private:
   std::random_device rd_;
@@ -30,6 +34,7 @@ class Network {
   double max_delay_ = 0.0;
 
   void loadGraphFromFile(std::string file_name);
+  void loadIntensityMatrixFromFile(std::string file_name);
   std::vector<int> splitAndFormat(std::string text_line);
   bool sendFlow(int start_node, int end_node, int flow);
   bool isGraphConsistent();

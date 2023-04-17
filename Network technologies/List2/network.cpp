@@ -5,11 +5,16 @@
 
 namespace network {
 
-Network::Network(std::string graph_file_name, double probability, double max_delay, int mean_packet_size) {
+Network::Network(std::string graph_file_name,
+                 std::string intensity_matrix_file_name,
+                 double probability,
+                 double max_delay,
+                 int mean_packet_size) {
   p_ = probability;
   max_delay_ = max_delay;
   mean_packet_size_ = mean_packet_size;
   loadGraphFromFile(graph_file_name);
+  loadIntensityMatrixFromFile(intensity_matrix_file_name);
 }
 
 bool Network::simulateFlow() {
@@ -38,29 +43,49 @@ void Network::loadGraphFromFile(std::string file_name) {
   std::getline(file, input);
   nodes_count_ = std::stoi(input);
   graph_ = std::vector<std::vector<int>>(nodes_count_, std::vector<int>());
-  intensity_matrix_ = std::vector<std::vector<int>>(nodes_count_, std::vector<int>(nodes_count_, 0));
-  throughput_matrix_ = std::vector<std::vector<int>>(nodes_count_, std::vector<int>(nodes_count_, 0));
-  flow_matrix_ = std::vector<std::vector<int>>(nodes_count_, std::vector<int>(nodes_count_, 0));
+  throughput_matrix_ =
+      std::vector<std::vector<int>>(nodes_count_, std::vector<int>(nodes_count_, 0));
+  flow_matrix_ =
+      std::vector<std::vector<int>>(nodes_count_, std::vector<int>(nodes_count_, 0));
 
   while(std::getline(file, input)) {
     std::vector<int> data = splitAndFormat(input);
     graph_.at(data.at(0)).push_back(data.at(1));
-    intensity_matrix_.at(data.at(0)).at(data.at(1)) = data.at(2);
-    throughput_matrix_.at(data.at(0)).at(data.at(1)) = data.at(3);
+    throughput_matrix_.at(data.at(0)).at(data.at(1)) = data.at(2);
   }
+  file.close();
+
+  // create reverse graph
+  for(int vertex = 0; vertex < graph_.size(); vertex++) {
+    for(int neighbour : graph_.at(vertex)) {
+      reverse_graph_.at(neighbour).push_back(vertex);
+    }
+  }
+}
+
+void Network::loadIntensityMatrixFromFile(std::string file_name) {
+  std::fstream file;
+  file.open(file_name.c_str());
+  std::string input;
+  intensity_matrix_ =
+      std::vector<std::vector<int>>(nodes_count_, std::vector<int>(nodes_count_, 0));
+
+  int row = 0, column = 0;
+  while(std::getline(file, input, ';')) {
+    intensity_matrix_.at(row).at(column) = std::stoi(input);
+    column++;
+    if(column == nodes_count_) {
+      column = 0;
+      row++;
+    }
+  }
+
   file.close();
 
   // calculate G for future
   for(std::vector<int> & line : intensity_matrix_) {
     for(int intensity : line) {
       G_ += intensity;
-    }
-  }
-
-  // create reverse graph
-  for(int vertex = 0; vertex < graph_.size(); vertex++) {
-    for(int neighbour : graph_.at(vertex)) {
-      reverse_graph_.at(neighbour).push_back(vertex);
     }
   }
 }
