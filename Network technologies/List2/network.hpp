@@ -21,7 +21,9 @@ class Network {
   std::uniform_real_distribution<double> distribution_{0.0, 1.0};
 
   std::vector<std::vector<int>> graph_;
+  std::vector<std::vector<int>> original_graph_;
   std::vector<std::vector<int>> reverse_graph_;
+  std::vector<std::vector<int>> original_reverse_graph_;
   std::vector<std::vector<int>> intensity_matrix_;
   std::vector<std::vector<int>> throughput_matrix_;
   std::vector<std::vector<int>> flow_matrix_;
@@ -40,7 +42,7 @@ class Network {
   bool isGraphConsistent();
   std::vector<int> findRoute(int start_node, int end_node);
   double calculateMeanDelay();
-  void clear_flow_matrix();
+  void reset_network();
 };
 
 }  // namespace network

@@ -26,13 +26,13 @@ bool Network::simulateFlow() {
         status = sendFlow(i, j, flow);
       }
       if(!status) {
-        clear_flow_matrix();
+        reset_network();
         return status;
       }
     }
   }
   double mean_delay = calculateMeanDelay();
-  clear_flow_matrix();
+  reset_network();
   return mean_delay < max_delay_;
 }
 
@@ -42,7 +42,9 @@ void Network::loadGraphFromFile(std::string file_name) {
   std::string input;
   std::getline(file, input);
   nodes_count_ = std::stoi(input);
-  graph_ = std::vector<std::vector<int>>(nodes_count_, std::vector<int>());
+  original_graph_ = std::vector<std::vector<int>>(nodes_count_, std::vector<int>());
+  original_reverse_graph_ =
+      std::vector<std::vector<int>>(nodes_count_, std::vector<int>());
   throughput_matrix_ =
       std::vector<std::vector<int>>(nodes_count_, std::vector<int>(nodes_count_, 0));
   flow_matrix_ =
@@ -50,17 +52,20 @@ void Network::loadGraphFromFile(std::string file_name) {
 
   while(std::getline(file, input)) {
     std::vector<int> data = splitAndFormat(input);
-    graph_.at(data.at(0)).push_back(data.at(1));
+    original_graph_.at(data.at(0)).push_back(data.at(1));
     throughput_matrix_.at(data.at(0)).at(data.at(1)) = data.at(2);
   }
   file.close();
 
   // create reverse graph
-  for(int vertex = 0; vertex < graph_.size(); vertex++) {
-    for(int neighbour : graph_.at(vertex)) {
-      reverse_graph_.at(neighbour).push_back(vertex);
+  for(int vertex = 0; vertex < original_graph_.size(); vertex++) {
+    for(int neighbour : original_graph_.at(vertex)) {
+      original_reverse_graph_.at(neighbour).push_back(vertex);
     }
   }
+
+  graph_ = original_graph_;
+  reverse_graph_ = original_reverse_graph_;
 }
 
 void Network::loadIntensityMatrixFromFile(std::string file_name) {
@@ -112,6 +117,11 @@ bool Network::sendFlow(int start_node, int end_node, int flow) {
       iterator++;
     }
     graph_.at(start_node).erase(iterator);
+    iterator = reverse_graph_.at(end_node).cbegin();
+    while(*iterator != start_node) {
+      iterator++;
+    }
+    graph_.at(end_node).erase(iterator);
     if(!isGraphConsistent())
       return false;
   }
@@ -215,8 +225,11 @@ double Network::calculateMeanDelay() {
   return sum * (1.0 / (double)G_);
 }
 
-void Network::clear_flow_matrix() {
-  flow_matrix_ = std::vector<std::vector<int>>(nodes_count_, std::vector<int>(nodes_count_, 0));
+void Network::reset_network() {
+  flow_matrix_ =
+      std::vector<std::vector<int>>(nodes_count_, std::vector<int>(nodes_count_, 0));
+  graph_ = original_graph_;
+  reverse_graph_ = original_reverse_graph_;
 }
 
 }  // namespace network
