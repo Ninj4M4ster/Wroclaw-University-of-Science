@@ -14,6 +14,7 @@ Network::Network(std::string graph_file_name,
   mean_packet_size_ = mean_packet_size;
   loadGraphFromFile(graph_file_name);
   loadIntensityMatrixFromFile(intensity_matrix_file_name);
+  previous_flow_matrix_ = std::vector<std::vector<int>>();
 }
 
 bool Network::simulateFlow() {
@@ -33,6 +34,24 @@ bool Network::simulateFlow() {
   double mean_delay = calculateMeanDelay();
   reset_network();
   return mean_delay < max_delay_;
+}
+
+void Network::printPreviousFlow() {
+  for(std::vector<int> & line : previous_flow_matrix_) {
+    for(int flow : line) {
+      std::cout << flow << " ";
+    }
+    std::cout << std::endl;
+  }
+}
+
+void Network::printIntensityMatrix() {
+  for(std::vector<int> & line : intensity_matrix_) {
+    for(int intensity : line) {
+      std::cout << intensity << " ";
+    }
+    std::cout << std::endl;
+  }
 }
 
 void Network::loadGraphFromFile(std::string file_name) {
@@ -225,6 +244,7 @@ double Network::calculateMeanDelay() {
 }
 
 void Network::reset_network() {
+  previous_flow_matrix_ = flow_matrix_;
   flow_matrix_ =
       std::vector<std::vector<int>>(nodes_count_, std::vector<int>(nodes_count_, 0));
   graph_ = original_graph_;

@@ -1,5 +1,6 @@
 #include "network.cpp"
 #include <memory>
+#define N 100000
 
 int main() {
   std::string graph_file = "Network technologies/List2/graph.txt";
@@ -8,15 +9,17 @@ int main() {
       std::make_shared<network::Network>(graph_file,
                                          intensity_matrix_file,
                                          0.999,
-                                         0.85,
+                                         0.75,
                                          8);
+//  net->printIntensityMatrix();
   int counter = 0;
-  for(int i = 0; i < 20000; i++) {
+  for(int i = 0; i < N; i++) {
     bool status = net->simulateFlow();
     if(status)
       counter++;
   }
-  std::cout << "Niezawodnosc: " << (double)counter / 20000.0 << std::endl;
+  std::cout << "Niezawodnosc: " << (double)counter / (double)N << std::endl;
+//  net->printPreviousFlow();
 
   return 0;
 }

@@ -15,6 +15,8 @@ class Network {
                    double max_delay,
                    int mean_packet_size);
   bool simulateFlow();
+  void printPreviousFlow();
+  void printIntensityMatrix();
  private:
   std::random_device rd_;
   std::mt19937 gen_{rd_()};
@@ -27,6 +29,8 @@ class Network {
   std::vector<std::vector<int>> intensity_matrix_;
   std::vector<std::vector<int>> throughput_matrix_;
   std::vector<std::vector<int>> flow_matrix_;
+
+  std::vector<std::vector<int>> previous_flow_matrix_;
 
   int nodes_count_ = 0;
 
