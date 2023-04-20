@@ -153,8 +153,6 @@ bool Network::sendFlow(int start_node, int end_node, int flow) {
       flow_matrix_.at(start_node).at(route.at(start_node)) += flow;
     } else {
       flow = max_packet_count - flow_matrix_.at(start_node).at(route.at(start_node)) - 1;
-      if(flow == 0)
-        return true;
       flow_matrix_.at(start_node).at(route.at(start_node)) = max_packet_count - 1;
     }
     start_node = route.at(start_node);
