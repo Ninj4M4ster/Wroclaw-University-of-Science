@@ -14,27 +14,9 @@ uint16_t crc16arc_bit(uint16_t crc, std::string & data) {
   return crc;
 }
 
-std::string encode(std::fstream & file_ds) {
-  uint16_t crc_sum = 0;
-  int one_count = 0;
-  std::string result_string;
-  char buffer[1] = {};
-  // gather all bits from file
-  while(file_ds.read(buffer, sizeof(char))) {
-    if(buffer[0] == '0') {
-      one_count = 0;
-    } else {  // buffer[0] == '1'
-      if(one_count == 5) {
-        result_string += '0';
-        one_count = 0;
-      }
-      one_count++;
-    }
-    result_string += buffer[0];
-  }
-
+std::string parse_frame(std::string current_frame) {
   // find crc sum
-  crc_sum = crc16arc_bit(crc_sum, result_string);
+  int crc_sum = crc16arc_bit(0, current_frame);
 
   // convert crc sum to string
   std::string crc_string;
@@ -44,7 +26,47 @@ std::string encode(std::fstream & file_ds) {
     msb >>= 1;
   }
 
-  return "01111110" +  result_string + crc_string + "01111110";
+  return "01111110" + current_frame + crc_string;
+}
+
+std::string encode(std::fstream & file_ds) {
+  static constexpr auto max_frame_size = 200;
+  int current_frame_size = 8;
+  std::string all_data ;
+  int one_count = 0;
+  std::string current_frame;
+  char buffer[1] = {};
+  // gather all bits from file
+  while(file_ds.read(buffer, sizeof(char))) {
+    if(buffer[0] == '0') {
+      one_count = 0;
+    } else {  // buffer[0] == '1'
+      if(one_count == 5) {
+        current_frame_size++;
+        current_frame += '0';
+        one_count = 0;
+        if(current_frame_size == max_frame_size) {  // parse single frame and continue
+          all_data += parse_frame(current_frame);
+          current_frame = "";
+          current_frame_size = 8;
+        }
+      }
+      one_count++;
+    }
+    current_frame += buffer[0];
+    current_frame_size++;
+    if(current_frame_size == max_frame_size) {  // parse single frame and continue
+      all_data += parse_frame(current_frame);
+      current_frame = "";
+      current_frame_size = 8;
+    }
+  }
+
+  if(current_frame_size > 8) {
+    all_data += parse_frame(current_frame);
+  }
+
+  return all_data;
 }
 
 int main(int argc, char* argv[]) {
