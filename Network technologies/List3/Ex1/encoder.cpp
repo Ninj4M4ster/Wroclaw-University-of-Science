@@ -16,6 +16,7 @@ uint16_t crc16arc_bit(uint16_t crc, std::string & data) {
 
 std::string parse_frame(std::string current_frame) {
   // find crc sum
+  std::cout << current_frame << std::endl;
   int crc_sum = crc16arc_bit(0, current_frame);
 
   // convert crc sum to string
@@ -32,15 +33,18 @@ std::string parse_frame(std::string current_frame) {
 std::string encode(std::fstream & file_ds) {
   static constexpr auto max_frame_size = 200;
   int current_frame_size = 8;
-  std::string all_data ;
+  std::string all_data;
   int one_count = 0;
   std::string current_frame;
   char buffer[1] = {};
   // gather all bits from file
   while(file_ds.read(buffer, sizeof(char))) {
+    current_frame += buffer[0];
+    current_frame_size++;
     if(buffer[0] == '0') {
       one_count = 0;
     } else {  // buffer[0] == '1'
+      one_count++;
       if(one_count == 5) {
         current_frame_size++;
         current_frame += '0';
@@ -51,10 +55,7 @@ std::string encode(std::fstream & file_ds) {
           current_frame_size = 8;
         }
       }
-      one_count++;
     }
-    current_frame += buffer[0];
-    current_frame_size++;
     if(current_frame_size == max_frame_size) {  // parse single frame and continue
       all_data += parse_frame(current_frame);
       current_frame = "";
