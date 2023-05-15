@@ -23,6 +23,7 @@ void TransmissionMedium::sendData(int index, int & status) {
   medium_mutex_.lock();
   if(medium_.at(index) == 1) {
     status = 1;
+    medium_mutex_.unlock();
     return;
   }
   transmitting_nodes_counter_ += 2;
@@ -58,7 +59,11 @@ void TransmissionMedium::push_left(int start_index) {
 
     start_index--;
     if(isIndexConnected(start_index)) {
+      medium_mutex_.unlock();
+      send_mutex_.lock();
       bool status = nodes_map_[start_index]->passData(medium_.at(start_index));
+      send_mutex_.unlock();
+      medium_mutex_.lock();
       if(!status) {
         final_status_num_ = 2;
       }
@@ -96,7 +101,11 @@ void TransmissionMedium::push_right(int start_index) {
 
     start_index++;
     if(isIndexConnected(start_index)) {
+      medium_mutex_.unlock();
+      send_mutex_.lock();
       bool status = nodes_map_[start_index]->passData(medium_.at(start_index));
+      send_mutex_.unlock();
+      medium_mutex_.lock();
       if(!status) {
         final_status_num_ = 2;
       }

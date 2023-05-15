@@ -18,17 +18,15 @@ int main() {
   medium->connectToMedium(node3->getIndexPose(), node3);
 
   std::vector<std::thread> threads;
-  threads.emplace_back([node1](){node1->run(5);});
-  threads.emplace_back([node2](){node2->run(5);});
-  threads.emplace_back([node3](){node3->run(5);});
+  threads.emplace_back([node1](){node1->run(500);});
+  threads.emplace_back([node2](){node2->run(500);});
+  threads.emplace_back([node3](){node3->run(500);});
 
   for(std::thread & t : threads) {
     t.join();
   }
 
-  std::cout << "Pelna ilosc kolizji 1: " << node1->getFullCollisionCounter() << std::endl;
-  std::cout << "Pelna ilosc kolizji 2: " << node1->getFullCollisionCounter() << std::endl;
-  std::cout << "Pelna ilosc kolizji 3: " << node1->getFullCollisionCounter() << std::endl;
+  std::cout << "Pelna ilosc kolizji: " << node1->getFullCollisionCounter() << std::endl;
 
   return 0;
 }

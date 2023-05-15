@@ -25,6 +25,7 @@ class TransmissionMedium {
 
   bool collision_ = false;
   std::mutex medium_mutex_;
+  std::mutex send_mutex_;
   int transmitting_nodes_counter_ = 0;
   int medium_length_ = 0;
   int final_status_num_ = 0;
