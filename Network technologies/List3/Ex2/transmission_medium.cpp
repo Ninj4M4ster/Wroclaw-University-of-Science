@@ -1,32 +1,9 @@
-#include <iostream>
-#include <vector>
-#include <unordered_map>
-#include <mutex>
+#pragma once
+#include "transmission_medium.hpp"
 #include "node.cpp"
-#include <memory>
-#include <thread>
+
 
 namespace transmission_medium {
-
-class TransmissionMedium {
- public:
-  TransmissionMedium(int medium_size);
-  bool connectToMedium(int index, std::shared_ptr<Node> & node);
-  bool sendData(int index);
- private:
-  std::vector<int> medium_;
-  std::vector<int> nodes_indexes_;
-  std::unordered_map<int, std::shared_ptr<Node>> nodes_map_;
-
-  bool collision_ = false;
-  std::mutex medium_mutex_;
-  int transmitting_nodes_counter_ = 0;
-  int medium_length_ = 0;
-
-  void push_right(int start_index);
-  void push_left(int start_index);
-  bool isIndexConnected(int index);
-};
 
 TransmissionMedium::TransmissionMedium(int medium_size) {
   medium_ = std::vector<int>(medium_size, 0);
@@ -34,7 +11,7 @@ TransmissionMedium::TransmissionMedium(int medium_size) {
   medium_length_ = medium_size;
 }
 
-bool TransmissionMedium::connectToMedium(int index, std::shared_ptr<Node> & node) {
+bool TransmissionMedium::connectToMedium(int index, std::shared_ptr<node::Node> &node) {
   if(nodes_indexes_.at(index) == 1)
     return false;
   nodes_indexes_.at(index) = 1;
@@ -42,16 +19,26 @@ bool TransmissionMedium::connectToMedium(int index, std::shared_ptr<Node> & node
   return true;
 }
 
-bool TransmissionMedium::sendData(int index) {
+void TransmissionMedium::sendData(int index, int & status) {
   medium_mutex_.lock();
-  if(medium_.at(index) == 1)
-    return false;
+  if(medium_.at(index) == 1) {
+    status = 1;
+    return;
+  }
   transmitting_nodes_counter_ += 2;
   medium_.at(index) = 1;
   medium_mutex_.unlock();
-  std::thread([this, index]() { push_left(index);});
-  std::thread([this, index]() { push_right(index);});
-  return true;
+
+  std::thread t1 = std::thread([this, index]() { push_left(index);});
+  std::thread t2 = std::thread([this, index]() { push_right(index);});
+  t1.join();
+  t2.join();
+
+  medium_mutex_.lock();
+  status = final_status_num_;
+  if(!collision_)
+    final_status_num_ = 0;
+  medium_mutex_.unlock();
 }
 
 void TransmissionMedium::push_left(int start_index) {
@@ -71,12 +58,16 @@ void TransmissionMedium::push_left(int start_index) {
 
     start_index--;
     if(isIndexConnected(start_index)) {
-      nodes_map_[start_index]->passData(medium_.at(start_index));
+      bool status = nodes_map_[start_index]->passData(medium_.at(start_index));
+      if(!status) {
+        final_status_num_ = 2;
+      }
     }
     medium_mutex_.unlock();
   }
 
   medium_mutex_.lock();
+  medium_.at(start_index) = 0;
   transmitting_nodes_counter_--;
   if(transmitting_nodes_counter_ == 0) {
     collision_ = false;
@@ -85,7 +76,11 @@ void TransmissionMedium::push_left(int start_index) {
 }
 
 void TransmissionMedium::push_right(int start_index) {
-  while(start_index < medium_length_) {
+  medium_mutex_.lock();
+  int length = medium_length_ - 1;
+  medium_mutex_.unlock();
+
+  while(start_index < length) {
     medium_mutex_.lock();
     if(medium_.at(start_index + 1) == 1) {
       collision_ = true;
@@ -101,12 +96,16 @@ void TransmissionMedium::push_right(int start_index) {
 
     start_index++;
     if(isIndexConnected(start_index)) {
-      nodes_map_[start_index]->passData(medium_.at(start_index));
+      bool status = nodes_map_[start_index]->passData(medium_.at(start_index));
+      if(!status) {
+        final_status_num_ = 2;
+      }
     }
     medium_mutex_.unlock();
   }
 
   medium_mutex_.lock();
+  medium_.at(start_index) = 0;
   transmitting_nodes_counter_--;
   if(transmitting_nodes_counter_ == 0) {
     collision_ = false;
@@ -115,13 +114,10 @@ void TransmissionMedium::push_right(int start_index) {
 }
 
 bool TransmissionMedium::isIndexConnected(int index) {
-  for(int node_index : nodes_indexes_) {
-    if(node_index == index)
-      return true;
+  if(nodes_indexes_.at(index) == 1) {
+    return true;
   }
   return false;
 }
-
-
 
 }  // namespace transmission_medium

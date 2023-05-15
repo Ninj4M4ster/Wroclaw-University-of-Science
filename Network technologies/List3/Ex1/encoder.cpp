@@ -16,7 +16,6 @@ uint16_t crc16arc_bit(uint16_t crc, std::string & data) {
 
 std::string parse_frame(std::string current_frame) {
   // find crc sum
-  std::cout << current_frame << std::endl;
   int crc_sum = crc16arc_bit(0, current_frame);
 
   // convert crc sum to string
