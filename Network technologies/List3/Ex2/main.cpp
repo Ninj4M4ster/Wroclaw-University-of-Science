@@ -18,9 +18,9 @@ int main() {
   medium->connectToMedium(node3->getIndexPose(), node3);
 
   std::vector<std::thread> threads;
-  threads.emplace_back([node1](){node1->run(500);});
-  threads.emplace_back([node2](){node2->run(500);});
-  threads.emplace_back([node3](){node3->run(500);});
+  threads.emplace_back([node1](){node1->run(1);});
+  threads.emplace_back([node2](){node2->run(1);});
+  threads.emplace_back([node3](){node3->run(1);});
 
   for(std::thread & t : threads) {
     t.join();

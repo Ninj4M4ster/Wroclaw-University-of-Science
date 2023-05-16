@@ -26,13 +26,6 @@ bool Node::passData(int data) {
   } else {
     std::cout << node_name_ << " otrzymal wiadomosc po kolizji.\n";
     access_mutex_.lock();
-    full_collision_counter_++;
-    retry_counter_++;
-    int K = retry_counter_ <= 10 ? retry_counter_ : 10;
-    std::uniform_int_distribution<int> distribution{0, (int)std::pow(2, K)};
-    int R = distribution(rand_gen);
-    time_delay_ = 51.2 * (double)R;
-    retry_ = true;
     access_mutex_.unlock();
   }
   return false;
@@ -60,6 +53,13 @@ void Node::sendKMessages(int number_of_messages) {
         std::this_thread::sleep_for(std::chrono::nanoseconds(10));
         sending_message_ = false;
       } else {
+        full_collision_counter_++;
+        retry_counter_++;
+        int K = retry_counter_ <= 10 ? retry_counter_ : 10;
+        std::uniform_int_distribution<int> distribution{0, (int)std::pow(2, K)};
+        int R = distribution(rand_gen);
+        time_delay_ = 100 * (double)R;
+        retry_ = true;
         retry_ = true;
       }
     }
@@ -77,6 +77,13 @@ void Node::sendKMessages(int number_of_messages) {
         std::this_thread::sleep_for(std::chrono::nanoseconds(10));
         sending_message_ = false;
       } else {
+        full_collision_counter_++;
+        retry_counter_++;
+        int K = retry_counter_ <= 10 ? retry_counter_ : 10;
+        std::uniform_int_distribution<int> distribution{0, (int)std::pow(2, K)};
+        int R = distribution(rand_gen);
+        time_delay_ = 100 * (double)R;
+        retry_ = true;
         retry_ = true;
       }
     }
