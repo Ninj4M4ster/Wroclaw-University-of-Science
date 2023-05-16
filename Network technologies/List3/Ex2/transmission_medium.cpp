@@ -6,7 +6,9 @@
 namespace transmission_medium {
 
 TransmissionMedium::TransmissionMedium(int medium_size) {
-  medium_ = std::vector<int>(medium_size, 0);
+  medium_ = std::vector<DataNode>(medium_size, {0,
+                                                false,
+                                                false});
   nodes_indexes_ = std::vector<int>(medium_size, 0);
   medium_length_ = medium_size;
 }
@@ -16,110 +18,149 @@ bool TransmissionMedium::connectToMedium(int index, std::shared_ptr<node::Node> 
     return false;
   nodes_indexes_.at(index) = 1;
   nodes_map_[index] = node;
+  connected_nodes_count_++;
   return true;
 }
 
-void TransmissionMedium::sendData(int index, int & status) {
-  medium_mutex_.lock();
-  if(medium_.at(index) == 1) {
-    status = 1;
-    medium_mutex_.unlock();
-    return;
+int TransmissionMedium::sendData(int index, int data) {
+//  medium_mutex_.lock();
+  if(medium_.at(index).data == 1) {
+//    medium_mutex_.unlock();
+    return 1;
   }
-  transmitting_nodes_counter_ += 2;
-  medium_.at(index) = 1;
-  medium_mutex_.unlock();
+  DataNode new_node;
+  new_node.data = data;
+  new_node.go_left = true;
+  new_node.go_right = true;
+  medium_.at(index) = new_node;
 
-  std::thread t1 = std::thread([this, index]() { push_left(index);});
-  std::thread t2 = std::thread([this, index]() { push_right(index);});
-  t1.join();
-  t2.join();
-
-  medium_mutex_.lock();
-  status = final_status_num_;
-  if(!collision_)
-    final_status_num_ = 0;
-  medium_mutex_.unlock();
+  displayMedium();
+//  medium_mutex_.unlock();
+  return 0;
 }
 
-void TransmissionMedium::push_left(int start_index) {
-  while(start_index > 0) {
-    medium_mutex_.lock();
-    if(medium_.at(start_index - 1) == 1) {
-      collision_ = true;
-    }
-
-    if(collision_) {
-      medium_.at(start_index - 1) = 2;
-    } else {
-      medium_.at(start_index - 1) = 1;
-    }
-
-    medium_.at(start_index) = 0;
-
-    start_index--;
-    if(isIndexConnected(start_index)) {
-      medium_mutex_.unlock();
-      send_mutex_.lock();
-      bool status = nodes_map_[start_index]->passData(medium_.at(start_index));
-      send_mutex_.unlock();
-      medium_mutex_.lock();
-      if(!status) {
-        final_status_num_ = 2;
-      }
-    }
-    medium_mutex_.unlock();
-  }
-
+void TransmissionMedium::startFlow() {
   medium_mutex_.lock();
-  medium_.at(start_index) = 0;
-  transmitting_nodes_counter_--;
-  if(transmitting_nodes_counter_ == 0) {
-    collision_ = false;
+  while(flow_allowed_ && connected_nodes_count_ > delivered_messages_) {
+    medium_mutex_.unlock();
+    medium_mutex_.lock();
+    simulateOneFlowTick();
+    displayMedium();
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    medium_mutex_.unlock();
+    medium_mutex_.lock();
   }
   medium_mutex_.unlock();
 }
 
-void TransmissionMedium::push_right(int start_index) {
-  medium_mutex_.lock();
-  int length = medium_length_ - 1;
-  medium_mutex_.unlock();
+void TransmissionMedium::simulateOneFlowTick() {
+  for(int i = 0; i < medium_length_; i++) {
+    DataNode node = medium_.at(i);
+    if(node.go_left && node.go_right) {
+      if(i != 0) {  // moving data left
+        DataNode prev_node = medium_.at(i-1);
+        if(prev_node.data > 0) {  // collision
+          prev_node.data = 2;
+          prev_node.go_left = true;
+        } else {  // pass data to the left
+          prev_node.data = node.data;
+          prev_node.go_left = true;
+        }
+        medium_.at(i-1) = prev_node;
 
-  while(start_index < length) {
-    medium_mutex_.lock();
-    if(medium_.at(start_index + 1) == 1) {
-      collision_ = true;
-    }
+        // check if data arrived
+        if(isIndexConnected(i-1)) {
+          nodes_map_[i-1]->passData(prev_node.data);
+        }
+      }
+      bool collision = false;
 
-    if(collision_) {
-      medium_.at(start_index + 1) = 2;
-    } else {
-      medium_.at(start_index + 1) = 1;
-    }
+      if(i != medium_length_ - 1) {  // moving data right
+        DataNode next_node = medium_.at(i+1);
+        if(next_node.data > 0) {  // collision
+          next_node.data = 2;
+          next_node.go_right = true;
+          collision = true;
+        } else {  // pass data to the right
+          next_node.data = node.data;
+          next_node.go_right = true;
+        }
+        medium_.at(i+1) = next_node;
 
-    medium_.at(start_index) = 0;
+        // check if data arrived
+        if(isIndexConnected(i+1)) {
+          nodes_map_[i+1]->passData(next_node.data);
+        }
+      }
 
-    start_index++;
-    if(isIndexConnected(start_index)) {
-      medium_mutex_.unlock();
-      send_mutex_.lock();
-      bool status = nodes_map_[start_index]->passData(medium_.at(start_index));
-      send_mutex_.unlock();
-      medium_mutex_.lock();
-      if(!status) {
-        final_status_num_ = 2;
+      // clear node
+      node.data = 0;
+      node.go_left = false;
+      node.go_right = false;
+      if(collision) {
+        node.data = 2;
+        node.go_left = true;
+      }
+      medium_.at(i) = node;
+      i++;
+    } else if(node.go_left) {
+      if(i != 0) {
+        DataNode prev_node = medium_.at(i-1);
+        if(prev_node.data > 0) {  // collision
+          prev_node.data = 2;
+          prev_node.go_left = true;
+        } else {  // pass data to the left
+          prev_node.go_left = true;
+          prev_node.data = node.data;
+        }
+
+        medium_.at(i-1) = prev_node;
+
+        // check if data arrived
+        if(isIndexConnected(i-1)) {
+          nodes_map_[i-1]->passData(prev_node.data);
+        }
+      }
+      // clear data from flow node
+      node.go_left = false;
+      node.go_right = false;
+      node.data = 0;
+      medium_.at(i) = node;
+    } else if(node.go_right) {
+      if(i != medium_length_ - 1) {
+        DataNode next_node = medium_.at(i+1);
+        if(next_node.data > 0) {  // collision
+          next_node.data = 2;
+          node.data = 2;
+          next_node.go_right = true;
+          next_node.go_left = false;
+          node.go_left = true;
+          node.go_right = false;
+        } else {  // pass data to the right
+          next_node.data = node.data;
+          next_node.go_right = true;
+          node.data = 0;
+          node.go_right = false;
+        }
+
+        medium_.at(i+1) = next_node;
+        medium_.at(i) = node;
+
+        // check if data arrived
+        if(isIndexConnected(i+1)) {
+          nodes_map_[i+1]->passData(next_node.data);
+        }
+        // move index two places forward
+        i++;
+      } else {
+        // clear data from flow node
+        node.go_right = false;
+        node.data = 0;
+        node.go_left = false;
+        medium_.at(i) = node;
       }
     }
-    medium_mutex_.unlock();
   }
-
-  medium_mutex_.lock();
-  medium_.at(start_index) = 0;
-  transmitting_nodes_counter_--;
-  if(transmitting_nodes_counter_ == 0) {
-    collision_ = false;
-  }
-  medium_mutex_.unlock();
 }
 
 bool TransmissionMedium::isIndexConnected(int index) {
@@ -127,6 +168,23 @@ bool TransmissionMedium::isIndexConnected(int index) {
     return true;
   }
   return false;
+}
+
+void TransmissionMedium::displayMedium() {
+  for(DataNode & node : medium_) {
+    std::cout << node.data;
+  }
+  std::cout << std::endl;
+}
+
+void TransmissionMedium::incDeliveredMessagesCount() {
+  delivered_messages_++;
+}
+
+TransmissionMedium::~TransmissionMedium() {
+  medium_mutex_.lock();
+  flow_allowed_ = false;
+  medium_mutex_.unlock();
 }
 
 }  // namespace transmission_medium
