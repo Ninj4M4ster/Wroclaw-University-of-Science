@@ -8,13 +8,13 @@ int main() {
 
   using transmission_medium::TransmissionMedium;
   std::shared_ptr<TransmissionMedium> medium =
-      std::make_shared<TransmissionMedium>(10);
+      std::make_shared<TransmissionMedium>(50);
 
   using node::Node;
   std::shared_ptr<Node> node1 =
       std::make_shared<Node>("Node_1", 0, medium, rand_gen1, distribution);
   std::shared_ptr<Node> node2 =
-      std::make_shared<Node>("Node_2", 9, medium, rand_gen2, distribution);
+      std::make_shared<Node>("Node_2", 49, medium, rand_gen2, distribution);
 
   medium->connectToMedium(node1->getIndexPose(), node1);
   medium->connectToMedium(node2->getIndexPose(), node2);

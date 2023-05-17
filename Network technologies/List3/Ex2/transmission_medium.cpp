@@ -46,7 +46,7 @@ void TransmissionMedium::startFlow() {
     medium_mutex_.lock();
     simulateOneFlowTick();
     displayMedium();
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    std::this_thread::sleep_for(std::chrono::milliseconds(30));
     medium_mutex_.unlock();
     medium_mutex_.lock();
   }
@@ -172,7 +172,15 @@ bool TransmissionMedium::isIndexConnected(int index) {
 
 void TransmissionMedium::displayMedium() {
   for(DataNode & node : medium_) {
-    std::cout << node.data;
+    int number = node.data;
+    if(number == 1)
+    {
+      std::cout << "\u001b[32m" << number << "\u001b[0m";
+    } else if(number == 2) {
+      std::cout << "\u001b[31m" << number << "\u001b[0m";
+    } else {
+      std::cout << number;
+    }
   }
   std::cout << std::endl;
 }
