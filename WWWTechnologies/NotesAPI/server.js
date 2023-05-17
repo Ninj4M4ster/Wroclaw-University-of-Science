@@ -13,6 +13,10 @@ app.use(bodyParser.json())
 app.set('view engine', 'pug')
 app.set('views','./views');
 
+const web_app_router = require("./routes/web_app");
+
+// REST endpoints
+
 // get all notes
 app.get('/note', (req, res) => {
     res.render('all_notes', {
@@ -42,6 +46,10 @@ app.put('/note/:id', (req, res) => {
 app.delete('/note/:id', (req, res) => {
 
 })
+
+// add router for web app interface
+app.use("/web_app", web_app_router);
+
 
 app.listen(port, () => {
     console.log(`Listening on port ${port}`)
