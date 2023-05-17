@@ -43,9 +43,6 @@ bool check_crc(std::string & data, bool last_frame) {
     msb >>= 1;
   }
 
-  std::cout << "Got: " << frame_crc << std::endl;
-  std::cout << "Calcualted: " << calculated_crc_string << std::endl;
-
   return calculated_crc_string == frame_crc;
 }
 
@@ -84,7 +81,6 @@ std::string decode(std::fstream & file_ds) {
   // gather all bits from file
   while(file_ds.read(buffer, sizeof(char))) {
     current_frame += buffer[0];
-    std::cout << current_frame << std::endl;
     current_frame_size++;
     if(buffer[0] == '0') {
       if(one_count == 6) {
@@ -128,13 +124,9 @@ int main(int argc, char* argv[]) {
   std::string result = decode(f);
   f.close();
 
-  std::cout << result << std::endl;
-
   f.open("X.txt", std::fstream::out);
   for(char c : result) {
-    std::cout << c;
     f << c;
   }
-  std::cout << std::endl;
   f.close();
 }

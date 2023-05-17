@@ -54,10 +54,9 @@ void Node::run() {
       full_collision_counter_++;
       retry_counter_++;
       int K = retry_counter_ <= 10 ? retry_counter_ : 10;
-//      std::uniform_int_distribution<int> distribution{0, (int)std::pow(2, K)};
       int R = distribution_(rand_gen) % K;
       double time_delay = 200 * (double)R;
-      std::this_thread::sleep_for(std::chrono::milliseconds ((int)time_delay));
+      std::this_thread::sleep_for(std::chrono::milliseconds((int)time_delay));
       // turn off retries
       retry_ = false;
       int status = medium_->sendData(node_index_pos_, 1);

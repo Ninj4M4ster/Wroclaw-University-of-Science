@@ -82,9 +82,7 @@ int main(int argc, char* argv[]) {
 
   f.open("W.txt", std::fstream::out);
   for(char c : result) {
-    std::cout << c;
     f << c;
   }
-  std::cout << std::endl;
   f.close();
 }
