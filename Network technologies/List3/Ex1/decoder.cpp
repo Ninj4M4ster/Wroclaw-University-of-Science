@@ -2,7 +2,15 @@
 #include <fstream>
 #include <string>
 
-uint16_t crc16arc_bit(uint16_t crc, std::string & data) {
+/**
+ * Algorithm for calculating 16 bit crc sum using arc algorithm.
+ *
+ * @param crc Current value of crc.
+ * @param data
+ * @return
+ */
+uint16_t crc16arc_bit(std::string & data) {
+  uint16_t crc = 0;
   if (data.empty())
     return 0;
   for (char i : data) {
@@ -14,10 +22,18 @@ uint16_t crc16arc_bit(uint16_t crc, std::string & data) {
   return crc;
 }
 
+/**
+ * Method for checking crc of the frame with the one calculated using data of this frame.
+ *
+ * @param data Frame to be checked.
+ * @param last_frame Was this the last given frame?
+ * @return Is the crc sum correct?
+ */
 bool check_crc(std::string & data, bool last_frame) {
   std::string frame_data;
   std::string frame_crc;
   int index = 0;
+  // gather frame data and crc data
   if(!last_frame) {
     for (; index < data.length() - 24; index++) {
       frame_data += data[index];
@@ -34,7 +50,7 @@ bool check_crc(std::string & data, bool last_frame) {
     }
   }
 
-  uint16_t calculated_crc = crc16arc_bit(0, frame_data);
+  uint16_t calculated_crc = crc16arc_bit(frame_data);
   // convert crc sum to string
   std::string calculated_crc_string;
   uint16_t msb = 0x8000;
@@ -46,7 +62,14 @@ bool check_crc(std::string & data, bool last_frame) {
   return calculated_crc_string == frame_crc;
 }
 
-std::string parse_data(std::string & data, bool last_frame) {
+/**
+ * Method for extracting data from given frame.
+ *
+ * @param data Frame.
+ * @param last_frame Was this the last frame in the flow?
+ * @return Data extracted from frame.
+ */
+std::string extract_data(std::string & data, bool last_frame) {
   int frame_end_offset;
   if(last_frame)
     frame_end_offset = 16;
@@ -72,7 +95,16 @@ std::string parse_data(std::string & data, bool last_frame) {
   return converted_frame;
 }
 
+/**
+ * Method for decoding frames from given file.
+ * It finds frame start sequence and checks crc sum of every frame.
+ * After correct crc sum it deletes inserted '0' bits.
+ *
+ * @param file_ds File to extract bit stream.
+ * @return Reformatted data.
+ */
 std::string decode(std::fstream & file_ds) {
+  bool last_frame_incorrect = false;
   int current_frame_size = 0;
   int one_count = 0;
   std::string current_frame;
@@ -84,30 +116,41 @@ std::string decode(std::fstream & file_ds) {
     current_frame_size++;
     if(buffer[0] == '0') {
       if(one_count == 6) {
-        if(current_frame_size == 8) {  // first frame
+        // frame start
+        if(current_frame_size == 8 || last_frame_incorrect) {
+          last_frame_incorrect = false;
           current_frame_size = 0;
           current_frame = "";
         } else {  // parse frame and start new frame
           if(!check_crc(current_frame, false)) {
-            throw std::runtime_error("Pole crc jest niepoprawne.");
+            last_frame_incorrect = true;
+            current_frame = "";
+            std::cout << "Otrzymano ramke z niepoprawnym polem crc\n";
+          } else {
+            all_data += extract_data(current_frame, false);
+            current_frame = "";
           }
-          all_data += parse_data(current_frame, false);
-          current_frame = "";
         }
       }
       one_count = 0;
     } else {  // buffer[0] == '1'
       if(one_count == 6) {  // TODO: Change for waiting for new frame
-        throw std::runtime_error("Otrzymano niepoprawne dane (ciag 7 jedynek).");
+        last_frame_incorrect = true;
+        current_frame = "";
+        std::cout << "Otrzymano niepoprawna ramke (ciag 7 jedynek).\n";
+        one_count = 0;
+      } else {
+        one_count++;
       }
-      one_count++;
     }
   }
-  if(current_frame.length() > 16) {
+  if(current_frame.length() > 16 && !last_frame_incorrect) {
     if (!check_crc(current_frame, true)) {
-      throw std::runtime_error("Pole crc jest niepoprawne.");
+      std::cout << current_frame << std::endl;
+      std::cout << "Otrzymano ramke z niepoprawnym polem crc\n";
+    } else {
+      all_data += extract_data(current_frame, true);
     }
-    all_data += parse_data(current_frame, true);
   }
 
   return all_data;

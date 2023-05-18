@@ -5,6 +5,15 @@
 
 namespace node {
 
+/**
+ * Constructor. Creates a new node with given parameters.
+ *
+ * @param node_name Name of the node.
+ * @param index_pose Index where the node will be connected with the medium.
+ * @param medium Medium to connect the node.
+ * @param generator Random numbers generator.
+ * @param distribution Distribution.
+ */
 Node::Node(std::string node_name,
            int index_pose,
            std::shared_ptr<transmission_medium::TransmissionMedium> & medium,
@@ -17,10 +26,21 @@ Node::Node(std::string node_name,
   distribution_ = distribution;
 }
 
+/**
+ * Return index, where the node is connected with medium.
+ *
+ * @return Index where the node is connected.
+ */
 int Node::getIndexPose() const {
   return node_index_pos_;
 }
 
+/**
+ * Pass data to the node. This method is called when data passes from another node through medium.
+ *
+ * @param data Passed data.
+ * @return Was the data passed without collision?
+ */
 bool Node::passData(int data) {
   if(data == 1) {
     std::cout << node_name_ << " otrzymal wiadomosc bez kolizji.\n";
@@ -35,6 +55,10 @@ bool Node::passData(int data) {
   return false;
 }
 
+/**
+ * Run node. This method starts transmitting on given medium.
+ * Every time a collision occurs data is re-sent after random, exponential time delay.
+ */
 void Node::run() {
   access_mutex_.lock();
   while(message_not_received_ || !sending_message_) {
@@ -71,6 +95,11 @@ void Node::run() {
   access_mutex_.unlock();
 }
 
+/**
+ * Get number of collisions that occurred during transmission.
+ *
+ * @return Number of collisions.
+ */
 int Node::getFullCollisionCounter() {
   return full_collision_counter_;
 }

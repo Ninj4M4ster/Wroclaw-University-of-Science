@@ -2,7 +2,15 @@
 #include <fstream>
 #include <bitset>
 
-uint16_t crc16arc_bit(uint16_t crc, std::string & data) {
+/**
+ * Algorithm for calculating 16 bit crc sum using arc algorithm.
+ *
+ * @param crc Current value of crc.
+ * @param data
+ * @return
+ */
+uint16_t crc16arc_bit(std::string & data) {
+  uint16_t crc = 0;
   if (data.empty())
     return 0;
   for (char i : data) {
@@ -14,9 +22,15 @@ uint16_t crc16arc_bit(uint16_t crc, std::string & data) {
   return crc;
 }
 
+/**
+ * Method for parsing frame data with frame start sequence and crc sum.
+ *
+ * @param current_frame Frame to parse.
+ * @return Formatted frame.
+ */
 std::string parse_frame(std::string current_frame) {
   // find crc sum
-  int crc_sum = crc16arc_bit(0, current_frame);
+  int crc_sum = crc16arc_bit(current_frame);
 
   // convert crc sum to string
   std::string crc_string;
@@ -29,6 +43,12 @@ std::string parse_frame(std::string current_frame) {
   return "01111110" + current_frame + crc_string;
 }
 
+/**
+ * Method for encoding bit stream from given file. It finds sequences with 6 '1' bits and inserts '0' after 5-th bit.
+ *
+ * @param file_ds File with bit stream.
+ * @return Data parsed as frames.
+ */
 std::string encode(std::fstream & file_ds) {
   static constexpr auto max_frame_size = 200;
   int current_frame_size = 8;

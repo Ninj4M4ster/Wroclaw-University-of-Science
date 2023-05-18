@@ -5,6 +5,11 @@
 
 namespace transmission_medium {
 
+/**
+ * Constructor.
+ *
+ * @param medium_size Size of the medium.
+ */
 TransmissionMedium::TransmissionMedium(int medium_size) {
   medium_ = std::vector<DataNode>(medium_size, {0,
                                                 false,
@@ -13,6 +18,13 @@ TransmissionMedium::TransmissionMedium(int medium_size) {
   medium_length_ = medium_size;
 }
 
+/**
+ * Connect a node to the medium at given index.
+ *
+ * @param index Index at which node will be connected.
+ * @param node Node to be connected.
+ * @return Was the node connected successfully?
+ */
 bool TransmissionMedium::connectToMedium(int index, std::shared_ptr<node::Node> &node) {
   if(nodes_indexes_.at(index) == 1)
     return false;
@@ -22,10 +34,16 @@ bool TransmissionMedium::connectToMedium(int index, std::shared_ptr<node::Node> 
   return true;
 }
 
+/**
+ * Send data through medium, starting on given index.
+ * This method inserts single data on given index. Further, this data will be handled by flow simulation.
+ *
+ * @param index Index where data will be inserted.
+ * @param data Data to be inserted.
+ * @return Status of insertion (0 if data was inserted, 1 if medium was busy on given index).
+ */
 int TransmissionMedium::sendData(int index, int data) {
-//  medium_mutex_.lock();
   if(medium_.at(index).data == 1) {
-//    medium_mutex_.unlock();
     return 1;
   }
   DataNode new_node;
@@ -35,10 +53,12 @@ int TransmissionMedium::sendData(int index, int data) {
   medium_.at(index) = new_node;
 
   displayMedium();
-//  medium_mutex_.unlock();
   return 0;
 }
 
+/**
+ * Method for starting flow in the medium. Every 30 milliseconds it simulates one tick of the flow.
+ */
 void TransmissionMedium::startFlow() {
   medium_mutex_.lock();
   while(flow_allowed_ && connected_nodes_count_ > delivered_messages_) {
@@ -53,6 +73,10 @@ void TransmissionMedium::startFlow() {
   medium_mutex_.unlock();
 }
 
+/**
+ * Simulate one tick of the flow. Every index in medium containing data is pushed in proper direction.
+ * This method also detects collisions.
+ */
 void TransmissionMedium::simulateOneFlowTick() {
   for(int i = 0; i < medium_length_; i++) {
     DataNode node = medium_.at(i);
@@ -163,6 +187,12 @@ void TransmissionMedium::simulateOneFlowTick() {
   }
 }
 
+/**
+ * This method checks if there is a node connected at given index.
+ *
+ * @param index Index to be checked.
+ * @return Is there a node connected at given index?
+ */
 bool TransmissionMedium::isIndexConnected(int index) {
   if(nodes_indexes_.at(index) == 1) {
     return true;
@@ -170,6 +200,9 @@ bool TransmissionMedium::isIndexConnected(int index) {
   return false;
 }
 
+/**
+ * Method for displaying data currently in the medium.
+ */
 void TransmissionMedium::displayMedium() {
   for(DataNode & node : medium_) {
     int number = node.data;
@@ -185,14 +218,18 @@ void TransmissionMedium::displayMedium() {
   std::cout << std::endl;
 }
 
+/**
+ * Increase counter for messages delivered without collisions.
+ */
 void TransmissionMedium::incDeliveredMessagesCount() {
   delivered_messages_++;
 }
 
+/**
+ * Destructor. Stops the flow simulation.
+ */
 TransmissionMedium::~TransmissionMedium() {
-  medium_mutex_.lock();
   flow_allowed_ = false;
-  medium_mutex_.unlock();
 }
 
 }  // namespace transmission_medium

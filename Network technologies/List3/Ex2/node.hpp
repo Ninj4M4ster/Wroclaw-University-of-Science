@@ -13,6 +13,9 @@ class TransmissionMedium;
 
 namespace node {
 
+/**
+ * Node class. It represents a computer connected to given medium.
+ */
 class Node {
  public:
   explicit Node(std::string node_name,

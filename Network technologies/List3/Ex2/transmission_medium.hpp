@@ -13,6 +13,9 @@ class Node;
 
 namespace transmission_medium {
 
+/**
+ * This class represents a medium used to transmit data between nodes connected to it.
+ */
 class TransmissionMedium {
  public:
   explicit TransmissionMedium(int medium_size);
