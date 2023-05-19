@@ -28,6 +28,7 @@ class Node {
   bool passData(int data);
   void run();
   int getFullCollisionCounter();
+  void stop();
  private:
   std::shared_ptr<transmission_medium::TransmissionMedium> medium_;
   std::string node_name_;

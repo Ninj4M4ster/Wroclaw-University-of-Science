@@ -25,6 +25,7 @@ class TransmissionMedium {
   void displayMedium();
   void startFlow();
   void incDeliveredMessagesCount();
+  void stop();
  private:
   typedef struct data_node {
     int data;

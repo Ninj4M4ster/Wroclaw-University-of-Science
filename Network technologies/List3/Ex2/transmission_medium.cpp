@@ -233,4 +233,15 @@ TransmissionMedium::~TransmissionMedium() {
   flow_allowed_ = false;
 }
 
+/**
+ * Stop the work of every connected node.
+ */
+void TransmissionMedium::stop() {
+  auto it = nodes_map_.begin();
+  while(it != nodes_map_.end()) {
+    it->second->stop();
+    it++;
+  }
+}
+
 }  // namespace transmission_medium

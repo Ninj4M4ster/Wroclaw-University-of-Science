@@ -79,6 +79,10 @@ void Node::run() {
       // calculate time delay before sending another message
       full_collision_counter_++;
       retry_counter_++;
+      if(retry_counter_ >= 15) {
+        std::cout << node_name_ << " stopped sending data after 15 collisions\n";
+        medium_->stop();
+      }
       int K = retry_counter_ <= 10 ? retry_counter_ : 10;
       int R = distribution_(rand_gen) % K;
       double time_delay = basic_delay_ * (double)R;
@@ -104,6 +108,15 @@ void Node::run() {
  */
 int Node::getFullCollisionCounter() {
   return full_collision_counter_;
+}
+
+/**
+ * Stop node from sending data.
+ */
+void Node::stop() {
+  std::cout << node_name_ << " stopped sending data\n";
+  message_not_received_ = false;
+  sending_message_ = false;
 }
 
 }  // namespace node
