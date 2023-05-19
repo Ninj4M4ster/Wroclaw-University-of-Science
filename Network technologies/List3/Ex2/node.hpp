@@ -20,6 +20,7 @@ class Node {
  public:
   explicit Node(std::string node_name,
        int index_pose,
+       int basic_delay,
        std::shared_ptr<transmission_medium::TransmissionMedium> &medium,
        std::mt19937_64 & generator,
        std::uniform_int_distribution<int> & distribution);
@@ -33,6 +34,7 @@ class Node {
   int node_index_pos_;
   std::mt19937_64 rand_gen;
   std::uniform_int_distribution<int> distribution_;
+  int basic_delay_ = 0;
 
   int retry_counter_ = 0;
   bool message_not_received_ = true;

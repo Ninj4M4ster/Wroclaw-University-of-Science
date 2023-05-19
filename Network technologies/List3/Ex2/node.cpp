@@ -16,6 +16,7 @@ namespace node {
  */
 Node::Node(std::string node_name,
            int index_pose,
+           int basic_delay,
            std::shared_ptr<transmission_medium::TransmissionMedium> & medium,
            std::mt19937_64 & generator,
            std::uniform_int_distribution<int> & distribution) {
@@ -24,6 +25,7 @@ Node::Node(std::string node_name,
   medium_ = medium;
   rand_gen = generator;
   distribution_ = distribution;
+  basic_delay_ = basic_delay;
 }
 
 /**
@@ -79,7 +81,7 @@ void Node::run() {
       retry_counter_++;
       int K = retry_counter_ <= 10 ? retry_counter_ : 10;
       int R = distribution_(rand_gen) % K;
-      double time_delay = 1000 * (double)R;
+      double time_delay = basic_delay_ * (double)R;
       std::this_thread::sleep_for(std::chrono::milliseconds((int)time_delay));
       // turn off retries
       retry_ = false;

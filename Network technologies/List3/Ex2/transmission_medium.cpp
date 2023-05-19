@@ -10,12 +10,13 @@ namespace transmission_medium {
  *
  * @param medium_size Size of the medium.
  */
-TransmissionMedium::TransmissionMedium(int medium_size) {
+TransmissionMedium::TransmissionMedium(int medium_size, int FPS) {
   medium_ = std::vector<DataNode>(medium_size, {0,
                                                 false,
                                                 false});
   nodes_indexes_ = std::vector<int>(medium_size, 0);
   medium_length_ = medium_size;
+  FPS_ = FPS;
 }
 
 /**
@@ -66,7 +67,7 @@ void TransmissionMedium::startFlow() {
     medium_mutex_.lock();
     simulateOneFlowTick();
     displayMedium();
-    std::this_thread::sleep_for(std::chrono::milliseconds(30));
+    std::this_thread::sleep_for(std::chrono::milliseconds((int)(1000 * (1.0 / (double)FPS_))));
     medium_mutex_.unlock();
     medium_mutex_.lock();
   }

@@ -18,7 +18,7 @@ namespace transmission_medium {
  */
 class TransmissionMedium {
  public:
-  explicit TransmissionMedium(int medium_size);
+  explicit TransmissionMedium(int medium_size, int FPS);
   bool connectToMedium(int index, std::shared_ptr<node::Node> &node);
   int sendData(int index, int data);
   ~TransmissionMedium();
@@ -41,6 +41,8 @@ class TransmissionMedium {
   std::mutex medium_mutex_;
   int medium_length_ = 0;
   bool flow_allowed_ = true;
+
+  int FPS_;
 
   void push_right(int start_index);
   void push_left(int start_index);
