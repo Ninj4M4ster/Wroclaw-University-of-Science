@@ -1,7 +1,12 @@
 html
     head
+        link(rel="stylesheet" type="text/css" href="/css/style.css")
         title Notes
         body
+            nav
+                span Find note
             ul
-                each note in notes
-                    li #{note}
+                each id, note in notes
+                    li
+                        h3.note_id #{id}
+                        div.note_text #{note}

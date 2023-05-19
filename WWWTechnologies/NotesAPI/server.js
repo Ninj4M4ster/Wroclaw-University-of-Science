@@ -10,26 +10,25 @@ app.use(bodyParser.urlencoded({ extended: false }))
 //To parse json data
 app.use(bodyParser.json())
 
+// include statics
+app.use(express.static(__dirname + "/public"));
+
 app.set('view engine', 'pug')
 app.set('views','./views');
 
-const web_app_router = require("./routes/web_app");
+const web_app_router = require("./js/routes/web_app");
+const db_controller = require("./js/controller/db_controller");
 
 // REST endpoints
 
 // get all notes
 app.get('/note', (req, res) => {
-    res.render('all_notes', {
-        notes: ["a", "b"]
-    });
+    res.end(db_controller.get_notes());
 })
 
 // get note by id
 app.get('/note/:id', (req, res) => {
-    let id = req.params.id;
-    res.render('note', {
-        id: id
-    });
+    res.end(db_controller.get_note_by_id());
 })
 
 // create new note
