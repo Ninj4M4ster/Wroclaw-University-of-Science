@@ -5,7 +5,6 @@
 /**
  * Algorithm for calculating 16 bit crc sum using arc algorithm.
  *
- * @param crc Current value of crc.
  * @param data
  * @return
  */
@@ -24,6 +23,7 @@ uint16_t crc16arc_bit(std::string & data) {
 
 /**
  * Method for parsing frame data with frame start sequence and crc sum.
+ * It also moves bits when there are '111111' value.
  *
  * @param current_frame Frame to parse.
  * @return Formatted frame.
@@ -39,8 +39,32 @@ std::string parse_frame(std::string current_frame) {
     crc_string += ((crc_sum & msb) >> (15 - i)) + '0';
     msb >>= 1;
   }
+  std::string final_frame;
 
-  return "01111110" + current_frame + crc_string;
+  std::cout << current_frame << std::endl;
+  std::cout << "CRC STRING: " << crc_string << std::endl;
+
+  current_frame = current_frame + crc_string;
+
+  std::cout << "COnc: " << current_frame << std::endl;
+  int one_count = 0;
+  // move bits
+  for(char i : current_frame) {
+    final_frame += i;
+    if(i == '0') {
+      one_count = 0;
+    } else {  // buffer[0] == '1'
+      one_count++;
+      if(one_count == 5) {
+        final_frame += '0';
+        one_count = 0;
+      }
+    }
+  }
+
+  std::cout << "Final: " << final_frame << std::endl;
+
+  return "01111110" + final_frame;
 }
 
 /**
@@ -51,38 +75,22 @@ std::string parse_frame(std::string current_frame) {
  */
 std::string encode(std::fstream & file_ds) {
   static constexpr auto max_frame_size = 200;
-  int current_frame_size = 8;
+  int current_frame_size = 0;
   std::string all_data;
-  int one_count = 0;
   std::string current_frame;
   char buffer[1] = {};
   // gather all bits from file
   while(file_ds.read(buffer, sizeof(char))) {
     current_frame += buffer[0];
     current_frame_size++;
-    if(buffer[0] == '0') {
-      one_count = 0;
-    } else {  // buffer[0] == '1'
-      one_count++;
-      if(one_count == 5) {
-        current_frame_size++;
-        current_frame += '0';
-        one_count = 0;
-        if(current_frame_size == max_frame_size) {  // parse single frame and continue
-          all_data += parse_frame(current_frame);
-          current_frame = "";
-          current_frame_size = 8;
-        }
-      }
-    }
-    if(current_frame_size == max_frame_size) {  // parse single frame and continue
+    if(current_frame_size >= max_frame_size) {
       all_data += parse_frame(current_frame);
       current_frame = "";
-      current_frame_size = 8;
+      current_frame_size = 0;
     }
   }
 
-  if(current_frame_size > 8) {
+  if(current_frame_size > 0) {
     all_data += parse_frame(current_frame);
   }
 

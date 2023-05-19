@@ -70,11 +70,9 @@ bool check_crc(std::string & data, bool last_frame) {
  * @return Data extracted from frame.
  */
 std::string extract_data(std::string & data, bool last_frame) {
-  int frame_end_offset;
-  if(last_frame)
-    frame_end_offset = 16;
-  else
-    frame_end_offset = 24;
+  int frame_end_offset = 0;
+  if(!last_frame)
+    frame_end_offset = 8;
   int one_count = 0;
   int current_frame_size = 0;
   std::string converted_frame;
@@ -93,6 +91,20 @@ std::string extract_data(std::string & data, bool last_frame) {
     current_frame_size++;
   }
   return converted_frame;
+}
+
+/**
+ * Extract data from frame without crc field.
+ *
+ * @param frame Frame data.
+ * @return Frame data without crc.
+ */
+std::string extract_no_crc(std::string frame) {
+  std::string final;
+  for(int i = 0; i < frame.length() - 16; i++) {
+    final += frame[i];
+  }
+  return final;
 }
 
 /**
@@ -122,12 +134,13 @@ std::string decode(std::fstream & file_ds) {
           current_frame_size = 0;
           current_frame = "";
         } else {  // parse frame and start new frame
-          if(!check_crc(current_frame, false)) {
+          std::string new_frame = extract_data(current_frame, false);
+          if(!check_crc(new_frame, false)) {
             last_frame_incorrect = true;
             current_frame = "";
             std::cout << "Otrzymano ramke z niepoprawnym polem crc\n";
           } else {
-            all_data += extract_data(current_frame, false);
+            all_data += extract_no_crc(new_frame);
             current_frame = "";
           }
         }
@@ -145,11 +158,11 @@ std::string decode(std::fstream & file_ds) {
     }
   }
   if(current_frame.length() > 16 && !last_frame_incorrect) {
-    if (!check_crc(current_frame, true)) {
-      std::cout << current_frame << std::endl;
+    std::string new_frame = extract_data(current_frame, true);
+    if (!check_crc(new_frame, true)) {
       std::cout << "Otrzymano ramke z niepoprawnym polem crc\n";
     } else {
-      all_data += extract_data(current_frame, true);
+      all_data += extract_no_crc(new_frame);
     }
   }
 
