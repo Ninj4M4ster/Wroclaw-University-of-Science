@@ -242,6 +242,7 @@ void TransmissionMedium::stop() {
     it->second->stop();
     it++;
   }
+  flow_allowed_ = false;
 }
 
 }  // namespace transmission_medium
