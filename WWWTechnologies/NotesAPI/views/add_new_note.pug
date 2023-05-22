@@ -7,8 +7,9 @@ html
             nav
                 a(onclick="history.back()") Return to all notes
             main
-                form
+                form(method="post" action="/note" name="note_form")
                     label Input note title
-                        input
+                        input(name="title" type="text" placeholder="Note title" required="true")
                     label Input note data
-                        textarea
+                        textarea(name="data" placeholder="Notes" required="true")
+                    input(type="submit")

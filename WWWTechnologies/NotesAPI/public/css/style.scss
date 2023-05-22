@@ -65,9 +65,45 @@ li {
   background: #d3b043;
   width: 50vw;
   display: block;
-  padding: 2em;
   border: 1px solid #000000;
   border-radius: 0.3em;
+  font-size: 1.5em;
+  box-shadow: 0.1em 0.1em 0.5em 0.1em #696666;
+
+  form {
+    margin: 0;
+  }
+
+  $button_size: 3em;
+
+  button {
+    width: $button_size;
+    height: $button_size;
+    border-radius: 0.7em;
+    border: 2px solid black;
+    overflow: hidden;
+    transition-property: color, background-color;
+    transition-duration: 0.2s;
+    box-shadow: 0.1em 0.1em 0.3em 0.1em #545454;
+  }
+
+  button:hover {
+    color: white;
+    background: black;
+  }
+
+
+  div.header {
+    padding: 0.5em;
+    display: flex;
+    flex-direction: row;
+    place-content: space-between;
+    margin-bottom: 0;
+  }
+
+  div.note_data {
+    padding: 1.5em;
+  }
 
   h3 {
     margin: 0 0 1em 0;

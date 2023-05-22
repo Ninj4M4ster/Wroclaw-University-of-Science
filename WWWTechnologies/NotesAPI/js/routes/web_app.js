@@ -11,10 +11,11 @@ router.use(express.static(__dirname + "/public"))
 
 // get all notes
 router.get('/note', (req, res) => {
-    let notes = JSON.parse(db_controller.get_notes());
-    res.render('all_notes', {
-        notes: notes
-    });
+    db_controller.get_notes().then((r => {
+        res.render('all_notes', {
+            notes: JSON.parse(r)
+        });
+    }));
 });
 
 // add new note
@@ -29,6 +30,22 @@ router.get('/note/:id', (req, res) => {
         id: 31
     });
 });
+
+router.post("/delete_note/:id", (req, res) => {
+    db_controller.delete_note(req.params.id).then((deletedCount) => {
+        if(deletedCount === 0) {
+            console.log("got 0");
+        } else {
+            console.log("deleted succ");
+        }
+        db_controller.get_notes().then((r => {
+
+            res.render('all_notes', {
+                notes: JSON.parse(r)
+            });
+        }));
+    });
+})
 
 
 module.exports = router;

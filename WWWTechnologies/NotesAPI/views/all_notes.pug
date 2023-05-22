@@ -1,16 +1,26 @@
 html
     head
         link(rel="stylesheet" type="text/css" href="/css/style.css")
+        link(rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0")
         script(src="/js/all_notes_controller.js")
         title Notes
         body
             nav
                 a(onclick="findNote()") Find a note
                 a(href="/web_app/note/add_new_note", methods="get") Add new note
-            ul
-                each id, note in notes
-                    li
-                        div.header
-                            button Update
-                            h3.note_id #{id}
-                        div.note_text #{note}
+            if notes.length === 0
+                main
+                    p There are no notes to be displayed. Add a new one!
+            else
+                ul
+                    each note in notes
+                        li
+                            div.header
+                                button
+                                    span(class="material-symbols-outlined") update
+                                form(method="POST" action=`/web_app/delete_note/${note.title}`)
+                                    button.delete(type="submit")
+                                        span(class="material-symbols-outlined") delete
+                            div.note_data
+                                h3.note_title #{note.title}
+                                div.note_text #{note.data}

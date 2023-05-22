@@ -24,17 +24,28 @@ const db_controller = require("./js/controller/db_controller");
 // get all notes
 app.get('/note', (req, res) => {
     res.end(db_controller.get_notes());
+    db_controller.get_notes().then((r => {
+        res.end(JSON.parse(r));
+    }));
 })
 
 // get note by id
 app.get('/note/:id', (req, res) => {
-    let id = req.params.id;
-    res.end(db_controller.get_note_by_id(req.params.id));
+    db_controller.get_note_by_id(req.params.id).then((r) => {
+        res.end(JSON.parse(r));
+    })
 })
 
 // create new note
 app.post('/note', (req, res) => {
-
+    let title = req.body.title;
+    let data = req.body.data;
+    const object_data = {
+        "title": title,
+        "data": data
+    }
+    db_controller.add_note(object_data);
+    res.sendStatus(200);
 })
 
 // actualize note by id
@@ -44,7 +55,7 @@ app.put('/note/:id', (req, res) => {
 
 // delete note by id
 app.delete('/note/:id', (req, res) => {
-
+    res.end();
 })
 
 // add router for web app interface
