@@ -18,10 +18,10 @@ module.exports = {
         return JSON.stringify(final_data);
     },
 
-    get_note_by_id: async function(id) {
+    get_note_by_title: async function(id) {
         const database = client.db("notes");
         const notes = database.collection("notes");
-        const cursor = notes.find({_id: id});
+        const cursor = notes.find({title: id});
         const final_data = {};
         for await(const doc of cursor) {
             final_data["title"] = doc.title;

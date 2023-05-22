@@ -9,9 +9,9 @@ html
                 a(href="/web_app/note/add_new_note", methods="get") Add new note
             #hide_body_div.hidden
             div#find_note_menu.hidden
-                form
-                    label Input note title
-                        input(placeholder="Title")
+                form(action="/web_app/note/find_note" method="post")
+                    label Input note title to search
+                        input(placeholder="Title" name="searched_title")
                     button(type="submit") Search
             if notes.length === 0
                 main

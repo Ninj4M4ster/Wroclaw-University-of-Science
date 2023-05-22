@@ -6,18 +6,16 @@ html
         title Notes
         body
             nav
-                a(onclick="findNote()") Find another note
+                a(onclick="history.back()") Back to all notes
                 a(href="/web_app/note/add_new_note", methods="get") Add new note
-            else
-                ul
-                    each note in notes
-                        li
-                            div.header
-                                button
-                                    span(class="material-symbols-outlined") update
-                                form(method="POST" action=`/web_app/delete_note/${note.title}`)
-                                    button.delete(type="submit")
-                                        span(class="material-symbols-outlined") delete
-                            div.note_data
-                                h3.note_title #{note.title}
-                                div.note_text #{note.data}
+            ul
+                li
+                    div.header
+                        button
+                            span(class="material-symbols-outlined") update
+                        form(method="POST" action=`/web_app/delete_note/${note.title}`)
+                            button.delete(type="submit")
+                                span(class="material-symbols-outlined") delete
+                    div.note_data
+                        h3.note_title #{note.title}
+                        div.note_text #{note.data}

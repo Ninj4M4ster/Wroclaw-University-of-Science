@@ -31,7 +31,7 @@ app.get('/note', (req, res) => {
 
 // get note by id
 app.get('/note/:id', (req, res) => {
-    db_controller.get_note_by_id(req.params.id).then((r) => {
+    db_controller.get_note_by_title(req.params.id).then((r) => {
         res.end(JSON.parse(r));
     })
 })

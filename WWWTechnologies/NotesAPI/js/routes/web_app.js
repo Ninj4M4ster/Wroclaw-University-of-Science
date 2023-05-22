@@ -25,10 +25,27 @@ router.get('/note/add_new_note', (req, res) => {
 
 // get note by id
 router.get('/note/:id', (req, res) => {
-    db_controller.get_note_by_id(req.params.id).then((r) => {
-        console.log(r);
-    })
+    db_controller.get_note_by_title(req.params.id).then((r) => {
+        const note = JSON.parse(r);
+        console.log(Object.keys(note).length);
+        if(Object.keys(note).length !== 0) {
+            res.render('note', {
+                note: note
+            })
+        } else {
+            db_controller.get_notes().then((r) => {
+                res.render('all_notes', {
+                    notes: JSON.parse(r)
+                });
+            });
+        }
+    });
 });
+
+router.post("/note/find_note", (req, res) => {
+    let title = req.body.searched_title;
+    res.redirect(`/web_app/note/${title}`);
+})
 
 router.post("/delete_note/:id", (req, res) => {
     db_controller.delete_note(req.params.id).then((deletedCount) => {
