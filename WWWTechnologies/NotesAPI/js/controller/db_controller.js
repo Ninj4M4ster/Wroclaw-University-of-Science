@@ -17,18 +17,19 @@ module.exports = {
         }
         return JSON.stringify(final_data);
     },
+
     get_note_by_id: async function(id) {
         const database = client.db("notes");
         const notes = database.collection("notes");
         const cursor = notes.find({_id: id});
-        let i = 0;
         const final_data = {};
         for await(const doc of cursor) {
-            final_data[i] = {"title": doc.title, "data": doc.data};
-            i++;
+            final_data["title"] = doc.title;
+            final_data["data"] = doc.data;
         }
         return JSON.stringify(final_data);
     },
+
     add_note: function(data) {
         const database = client.db('notes');
         const notes = database.collection('notes');
@@ -36,6 +37,7 @@ module.exports = {
         notes.insertOne(data).then(r => result = true);
         return result;
     },
+
     delete_note: async function(note_title) {
         const database = client.db("notes");
         const notes = database.collection('notes');
