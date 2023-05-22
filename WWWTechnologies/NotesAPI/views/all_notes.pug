@@ -1,12 +1,16 @@
 html
     head
         link(rel="stylesheet" type="text/css" href="/css/style.css")
+        script(src="/js/all_notes_controller.js")
         title Notes
         body
             nav
-                span Find note
+                a(onclick="findNote()") Find a note
+                a(href="/web_app/note/add_new_note", methods="get") Add new note
             ul
                 each id, note in notes
                     li
-                        h3.note_id #{id}
+                        div.header
+                            button Update
+                            h3.note_id #{id}
                         div.note_text #{note}

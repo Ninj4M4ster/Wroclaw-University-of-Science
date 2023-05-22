@@ -28,7 +28,8 @@ app.get('/note', (req, res) => {
 
 // get note by id
 app.get('/note/:id', (req, res) => {
-    res.end(db_controller.get_note_by_id());
+    let id = req.params.id;
+    res.end(db_controller.get_note_by_id(req.params.id));
 })
 
 // create new note
