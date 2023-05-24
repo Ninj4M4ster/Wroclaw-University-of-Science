@@ -1,122 +1,82 @@
 #pragma once
 #include "node.hpp"
-#include "transmission_medium.cpp"
 
 
-namespace node {
+namespace simulation {
 
-/**
- * Constructor. Creates a new node with given parameters.
- *
- * @param node_name Name of the node.
- * @param index_pose Index where the node will be connected with the medium.
- * @param medium Medium to connect the node.
- * @param generator Random numbers generator.
- * @param distribution Distribution.
- */
-Node::Node(std::string node_name,
-           int index_pose,
-           int basic_delay,
-           std::shared_ptr<transmission_medium::TransmissionMedium> & medium,
-           std::mt19937_64 & generator,
-           std::uniform_int_distribution<int> & distribution) {
-  node_name_ = node_name;
-  node_index_pos_ = index_pose;
-  medium_ = medium;
-  rand_gen = generator;
-  distribution_ = distribution;
-  basic_delay_ = basic_delay;
+Node::Node(std::size_t size, int message_number, int waiting_coefficient) {
+  medium_size_ = size;
+  message_size_ = 2 * size;
+  current_message_size_ = message_size_;
+  generator_ = std::mt19937_64{std::random_device{}()};
+  distribution_ = std::uniform_int_distribution<int>{0, (int)std::pow(2, 10)};
+  message_number_ = message_number;
+  waiting_coefficient_ = waiting_coefficient;
 }
 
-/**
- * Return index, where the node is connected with medium.
- *
- * @return Index where the node is connected.
- */
-int Node::getIndexPose() const {
-  return node_index_pos_;
-}
+int Node::tick() {
+  if(stop_transmission_)
+    return 0;
+  if(current_delay_ > 0)
+    current_delay_--;
+  if(current_delay_ != 0)
+    return 0;
 
-/**
- * Pass data to the node. This method is called when data passes from another node through medium.
- *
- * @param data Passed data.
- * @return Was the data passed without collision?
- */
-bool Node::passData(int data) {
-  if(data == 1) {
-    std::cout << node_name_ << " otrzymal wiadomosc bez kolizji.\n";
-    retry_counter_ = 0;
-    message_not_received_ = false;
-    medium_->incDeliveredMessagesCount();
-    return true;
-  } else if(data == 2){
-    std::cout << node_name_ << " otrzymal wiadomosc po kolizji.\n";
-    retry_ = true;
+  if(collision_in_medium_ && !prev_status_collision_) {
+    current_message_size_ = message_size_;
+    prev_status_collision_ = true;
+    return 0;
+  } else if(collision_in_medium_ && prev_status_collision_) {
+    return 0;
   }
-  return false;
-}
-
-/**
- * Run node. This method starts transmitting on given medium.
- * Every time a collision occurs data is re-sent after random, exponential time delay.
- */
-void Node::run() {
-  access_mutex_.lock();
-  while(message_not_received_ || !sending_message_) {
-    access_mutex_.unlock();
-    access_mutex_.lock();
-    if(!sending_message_) {
-      sending_message_ = true;
-      int status = medium_->sendData(node_index_pos_, 1);
-      if(status == 1) {
-        std::this_thread::sleep_for(std::chrono::microseconds (10));
-        sending_message_ = false;
-      }
-    }
-    // retry sending the message
-    if(retry_) {
-      // calculate time delay before sending another message
-      full_collision_counter_++;
-      retry_counter_++;
-      if(retry_counter_ >= 15) {
-        std::cout << node_name_ << " stopped sending data after 15 collisions\n";
-        medium_->stop();
-      }
-      int K = retry_counter_ <= 10 ? retry_counter_ : 10;
-      int R = distribution_(rand_gen) % K;
-      double time_delay = basic_delay_ * (double)R;
-      std::this_thread::sleep_for(std::chrono::milliseconds((int)time_delay));
-      // turn off retries
-      retry_ = false;
-      int status = medium_->sendData(node_index_pos_, 1);
-      if(status == 1) {
-        std::this_thread::sleep_for(std::chrono::microseconds (10));
-        sending_message_ = false;
-      }
-    }
-    access_mutex_.unlock();
-    access_mutex_.lock();
+  if(is_blocked_) {
+    is_blocked_ = false;
+    current_delay_++;
+    return 0;
   }
-  access_mutex_.unlock();
+
+  if(current_message_size_ > 0) {
+    current_message_size_--;
+    return message_number_;
+  } else if(current_message_size_ == 0 && last_message_to_deliver_) {
+    stop_transmission_ = true;
+  }
+  return 0;
 }
 
-/**
- * Get number of collisions that occurred during transmission.
- *
- * @return Number of collisions.
- */
-int Node::getFullCollisionCounter() {
-  return full_collision_counter_;
+int Node::informFree() {
+  if(stop_transmission_)
+    return 0;
+  if(delivered_) {
+    delivered_ = false;
+    last_message_to_deliver_ = true;
+    return 1;
+  }
+
+  if(prev_status_collision_) {
+    prev_status_collision_ = false;
+    collision_in_medium_ = false;
+    // add delay calculations
+    collision_counter_++;
+    if(collision_counter_ >= 15) {
+      stop_transmission_ = true;
+    }
+    else {
+      int K = collision_counter_ <= 10 ? collision_counter_ : 10;
+      int R = distribution_(generator_) % (int)std::pow(2, K) * waiting_coefficient_;
+      current_delay_ = R;
+    }
+  }
+  return 0;
 }
 
-/**
- * Stop node from sending data.
- */
-void Node::stop() {
-  std::cout << node_name_ << " stopped sending data\n";
-  message_not_received_ = false;
-  sending_message_ = false;
+void Node::informCollision() {
+  collision_in_medium_ = true;
 }
 
-}  // namespace node
+void Node::informBlocked() {
+  is_blocked_ = true;
+  delivered_ = true;
+}
+
+}  // namespace simulation

@@ -6,49 +6,35 @@
 #include <iostream>
 #include <random>
 #include <chrono>
+#include <queue>
+#include "node.cpp"
 
-namespace node {
-class Node;
-}
-
-namespace transmission_medium {
+namespace simulation {
 
 /**
  * This class represents a medium used to transmit data between nodes connected to it.
  */
 class TransmissionMedium {
  public:
-  explicit TransmissionMedium(int medium_size, int FPS);
-  bool connectToMedium(int index, std::shared_ptr<node::Node> &node);
-  int sendData(int index, int data);
-  ~TransmissionMedium();
-  void displayMedium();
-  void startFlow();
-  void incDeliveredMessagesCount();
-  void stop();
+  TransmissionMedium(std::size_t size);
+  void registerNode(std::size_t position, int message_number, int waiting_coefficient);
+
+  void runSimulation();
+  void print();
  private:
   typedef struct data_node {
-    int data;
-    bool go_left;
-    bool go_right;
+    int data = 0;
+    bool go_left_ = false;
+    bool go_right_ = false;
   } DataNode;
 
+  std::size_t size_;
   std::vector<DataNode> medium_;
-  std::vector<int> nodes_indexes_;
-  std::unordered_map<int, std::shared_ptr<node::Node>> nodes_map_;
-  int connected_nodes_count_ = 0;
-  int delivered_messages_ = 0;
+  std::vector<std::queue<DataNode>> medium_queue_;
+  std::vector<std::pair<std::shared_ptr<Node>, int>> nodes_;
+  std::size_t delivered_messages_ = 0;
 
-  std::mutex medium_mutex_;
-  int medium_length_ = 0;
-  bool flow_allowed_ = true;
-
-  int FPS_;
-
-  void push_right(int start_index);
-  void push_left(int start_index);
-  void simulateOneFlowTick();
-  bool isIndexConnected(int index);
+  void tick();
 };
 
-}  // namespace transmission_medium
+}  // namespace simulation
