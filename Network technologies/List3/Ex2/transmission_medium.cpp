@@ -1,26 +1,42 @@
 #pragma once
 #include "transmission_medium.hpp"
-#include "node.cpp"
 
 namespace simulation {
 
+/**
+ * Constructor. Creates a medium with given width.
+ *
+ * @param size Width of the medium.
+ */
 TransmissionMedium::TransmissionMedium(std::size_t size) {
     size_ = size;
     medium_ = std::vector<DataNode>(size, {0, false, false});
     medium_queue_ = std::vector<std::queue<DataNode>>(size, std::queue<DataNode>());
 }
 
+/**
+ * This method creates a new node at given position of the medium
+ * with given message number which will be sent by node and waiting coefficient.
+ *
+ * @brief Register node at current position of the medium with given message number and waiting coefficient
+ * @param position Index of the medium.
+ * @param message_number Message value that will be sent by node.
+ * @param waiting_coefficient Waiting coefficient of the node.
+ */
 void TransmissionMedium::registerNode(std::size_t position, int message_number, int waiting_coefficient) {
   std::shared_ptr<Node> node = std::make_shared<Node>(size_, message_number, waiting_coefficient);
   nodes_.push_back({node, position});
 }
 
+/**
+ * This method runs the simulation. It ticks until all nodes will have message delivered.
+ */
 void TransmissionMedium::runSimulation() {
   while(delivered_messages_ < nodes_.size()) {
     print();
     tick();
     for(auto & pair : nodes_) {
-      if(medium_.at(pair.second).data == 1) {
+      if(medium_.at(pair.second).data == 1 || medium_.at(pair.second).data == 2) {
         pair.first->informBlocked();
       } else if(medium_.at(pair.second).data == 3) {
         pair.first->informCollision();
@@ -38,6 +54,10 @@ void TransmissionMedium::runSimulation() {
   }
 }
 
+/**
+ * This method makes one tick in medium. It moves every data that can be found in
+ * the medium in it's appropriate direction.
+ */
 void TransmissionMedium::tick() {
   for(int i = 0; i < size_; i++) {
     DataNode current_node = medium_.at(i);
@@ -69,6 +89,9 @@ void TransmissionMedium::tick() {
   }
 }
 
+/**
+ * This method prints the current state of the medium.
+ */
 void TransmissionMedium::print() {
   for(std::size_t i = 0; i < size_; i++) {
     int number = medium_.at(i).data;

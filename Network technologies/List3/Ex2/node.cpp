@@ -4,6 +4,13 @@
 
 namespace simulation {
 
+/**
+ * Constructor. It creates node with given parameters.
+ *
+ * @param size Size of the medium.
+ * @param message_number Message number that will be sent by this node.
+ * @param waiting_coefficient Coefficient used to multiply chosen delay.
+ */
 Node::Node(std::size_t size, int message_number, int waiting_coefficient) {
   medium_size_ = size;
   message_size_ = 2 * size;
@@ -14,6 +21,13 @@ Node::Node(std::size_t size, int message_number, int waiting_coefficient) {
   waiting_coefficient_ = waiting_coefficient;
 }
 
+/**
+ * This method simulates one tick of the node.
+ * If it is possible, it returns data.
+ * If node is blocked or is waiting, it returns 0.
+ *
+ * @return Message number or 0.
+ */
 int Node::tick() {
   if(stop_transmission_)
     return 0;
@@ -44,6 +58,11 @@ int Node::tick() {
   return 0;
 }
 
+/**
+ * This method is used to inform the node that the medium is free at it's position.
+ *
+ * @return 1 if node got a message or 0.
+ */
 int Node::informFree() {
   if(stop_transmission_)
     return 0;
@@ -70,10 +89,16 @@ int Node::informFree() {
   return 0;
 }
 
+/**
+ * This method is used to inform the node that a collision occurred at it's position.
+ */
 void Node::informCollision() {
   collision_in_medium_ = true;
 }
 
+/**
+ * This method is used to inform the node that it is currently blocked by other message that just arrived to it.
+ */
 void Node::informBlocked() {
   is_blocked_ = true;
   delivered_ = true;
