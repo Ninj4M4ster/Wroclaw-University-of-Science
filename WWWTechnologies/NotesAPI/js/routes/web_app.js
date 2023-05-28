@@ -32,11 +32,7 @@ router.get('/note/:id', (req, res) => {
                 note: note
             })
         } else {
-            db_controller.get_notes().then((r) => {
-                res.render('all_notes', {
-                    notes: JSON.parse(r)
-                });
-            });
+            res.redirect("/web_app/note");
         }
     });
 });
@@ -56,13 +52,25 @@ router.post("/delete_note/:id", (req, res) => {
             status = "Successfully deleted a note.";
             console.log("deleted succ");
         }
-        db_controller.get_notes().then((r => {
-
-            res.render('all_notes', {
-                notes: JSON.parse(r)
-            });
-        }));
+        res.redirect('/web_app/note');
     });
+})
+
+router.post("/note/update_note", (req, res) => {
+    db_controller.update_note(req.body.prev_title,
+        req.body.note_title,
+        req.body.note_data).then((modified_count) => {
+            let status;
+            if(modified_count === 0) {
+                console.log("not modified");
+                status = "Not modified.";
+            } else {
+                status = "Successfully updated note.";
+                console.log("succ");
+            }
+
+            res.redirect(`/web_app/note`);
+    })
 })
 
 

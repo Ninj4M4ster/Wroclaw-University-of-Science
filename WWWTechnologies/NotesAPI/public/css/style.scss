@@ -90,8 +90,14 @@ nav {
   border: 1px solid white;
   box-shadow: 0.1em 0.1em 1em 0.05em white;
 
+  @media(max-width: 550px) {
+    width: 80vw;
+    font-size: 0.8em;
+  }
+
   &.hidden {
-    left: -100%;
+    display: none;
+    left: -1000%;
   }
 
   form {
@@ -194,5 +200,79 @@ li {
 
   h3 {
     margin: 0 0 1em 0;
+  }
+
+  .hidden_icon {
+    display: none;
+    visibility: hidden;
+  }
+
+  .hidden_form {
+    display: none;
+    visibility: hidden;
+  }
+
+  & > form {
+    padding: 1.5em;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5em;
+  }
+
+  .title_input {
+    font-size: 1.3em;
+    border-radius: 0.2em;
+  }
+
+  .data_input {
+    font-size: 1.1em;
+    overflow-y: auto;
+    height: 10em;
+    word-wrap: break-word;
+    border-radius: 0.2em;
+  }
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+  place-items: center;
+
+  form {
+    display: flex;
+    font-size: 1.5em;
+    flex-direction: column;
+    place-items: center;
+    gap: 1em;
+  }
+
+  label {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    place-items: center;
+  }
+
+  input[type="text"] {
+    width: 20em;
+    height: 3em;
+  }
+
+  textarea {
+    width: 30em;
+    height: 15em;
+    resize: none;
+  }
+
+  input[type="submit"] {
+    width: 8em;
+    height: 2.5em;
+    border-radius: 1em;
+    transition: 0.2s ;
+  }
+
+  input[type="submit"]:hover {
+    border: 2px solid blue;
   }
 }

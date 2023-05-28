@@ -46,5 +46,16 @@ module.exports = {
             result = parseInt(r.deletedCount);
         });
         return result;
+    },
+
+    update_note: async function(note_title, new_note_title, new_note_data) {
+        const database = client.db("notes");
+        const notes = database.collection("notes");
+        let result;
+        await notes.updateOne({"title": note_title},
+            {$set: {"title": new_note_title, "data": new_note_data}}).then((r) => {
+                result = parseInt(r.modifiedCount);
+        })
+        return result;
     }
 }

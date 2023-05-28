@@ -50,12 +50,25 @@ app.post('/note', (req, res) => {
 
 // actualize note by id
 app.put('/note/:id', (req, res) => {
-
+    db_controller.update_note(req.params.id, req.body.title, req.body.data).then((r) => {
+        if(r === 0) {
+            res.sendStatus(400);
+        } else {
+            res.sendStatus(200);
+        }
+    })
 })
 
 // delete note by id
 app.delete('/note/:id', (req, res) => {
     res.end();
+    db_controller.delete_note(req.params.id).then((r) => {
+        if(r === 0) {
+            res.sendStatus(400);
+        } else {
+            res.sendStatus(200);
+        }
+    })
 })
 
 // add router for web app interface

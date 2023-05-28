@@ -6,7 +6,7 @@ html
         body
             nav
                 a(onclick="history.back()") Return to all notes
-            main
+            main.new_note_main
                 form(method="post" action="/note" name="note_form")
                     label Input note title
                         input(name="title" type="text" placeholder="Note title" required="true")

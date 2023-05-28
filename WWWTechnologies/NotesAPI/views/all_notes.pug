@@ -1,5 +1,6 @@
 html
     head
+        meta(name="viewport" content="width=device-width, initial-scale=1")
         link(rel="stylesheet" type="text/css" href="/css/style.css")
         link(rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0")
         title Notes
@@ -21,13 +22,18 @@ html
                     each note in notes
                         li
                             div.header
-                                button
-                                    span(class="material-symbols-outlined") update
+                                button(onclick=`show_form('${note.title}')`)
+                                    span(class="material-symbols-outlined" id=`${note.title}_update_icon`) update
+                                    span.hidden_icon(class="material-symbols-outlined" id=`${note.title}_confirm_icon`) check
                                 form(method="POST" action=`/web_app/delete_note/${note.title}`)
                                     button.delete(type="submit")
                                         span(class="material-symbols-outlined") delete
-                            div.note_data
+                            div.note_data(id=`${note.title}_data`)
                                 h3.note_title #{note.title}
                                 div.note_text #{note.data}
+                            form.hidden_form(action="/web_app/note/update_note" method="post" id=`${note.title}_form`)
+                                input(type="hidden" name="prev_title" value=`${note.title}`)
+                                input.title_input(type="text" placeholder="Title" name="note_title" value=`${note.title}`)
+                                textarea.data_input(placeholder="Data" type="text" name="note_data") #{note.data}
 
         script(src="/js/all_notes_controller.js")
