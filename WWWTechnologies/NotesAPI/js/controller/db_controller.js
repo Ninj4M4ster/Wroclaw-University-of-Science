@@ -57,5 +57,34 @@ module.exports = {
                 result = parseInt(r.modifiedCount);
         })
         return result;
+    },
+
+    register_user: async function(user_login, user_password) {
+        const database = client.db("notes");
+        const users = database.collection("users");
+        await users.findOne({"login": user_login}).then((r) => {
+            if(r) {
+                throw Error("This user name is taken.");
+            }
+        }).catch((err) => {
+            throw Error(err);
+        });
+
+        await users.insertOne({"login": user_login, "password": user_password});
+    },
+
+    login_user: async function(user_login) {
+        const database = client.db("notes");
+        const users = database.collection("users");
+        let result = {};
+        await users.findOne({"login": user_login}).then((r) => {
+            if(!r)
+                throw Error();
+            result["login"] = r.login;
+            result["password"] = r.password;
+        }).catch((err) => {
+            throw Error(err);
+        });
+        return result;
     }
 }

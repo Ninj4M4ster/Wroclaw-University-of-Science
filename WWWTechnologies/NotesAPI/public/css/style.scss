@@ -275,4 +275,11 @@ main {
   input[type="submit"]:hover {
     border: 2px solid blue;
   }
+
+  .login_input {
+    width: 20em;
+    height: 3em;
+    border-radius: 0.2em;
+  }
+
 }

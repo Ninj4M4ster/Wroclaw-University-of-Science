@@ -1,5 +1,6 @@
 html
     head
+        meta(name="viewport" content="width=device-width, initial-scale=1")
         link(rel="stylesheet" type="text/css" href="/css/style.css")
         script(src="/js/new_note_controller.js")
         title Notes
@@ -7,7 +8,7 @@ html
             nav
                 a(onclick="history.back()") Return to all notes
             main.new_note_main
-                form(method="post" action="/note" name="note_form")
+                form(method="post" action="/web_app/new_note" name="note_form")
                     label Input note title
                         input(name="title" type="text" placeholder="Note title" required="true")
                     label Input note data

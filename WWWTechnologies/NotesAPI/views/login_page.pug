@@ -1,0 +1,18 @@
+html
+    head
+        meta(name="viewport" content="width=device-width, initial-scale=1")
+        link(rel="stylesheet" type="text/css" href="/css/style.css")
+        link(rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0")
+        title Login
+        body
+            nav
+                a(href="/web_app/register" methods="get") Register
+            main
+                h1 Login to your account!
+                br
+                form(action="/web_app/login" method="post")
+                    label Login
+                        input.login_input(type="text" name="login" required)
+                    label Password
+                        input.login_input(type="password" name="password" minlength="8" required)
+                    input(type="submit")

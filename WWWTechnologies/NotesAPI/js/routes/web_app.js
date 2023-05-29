@@ -5,9 +5,72 @@ const bodyParser = require('body-parser');
 const https = require('https');
 
 const db_controller = require("./../controller/db_controller");
+const authorization = require("./../middleware/authorization");
+const bcrypt = require("bcryptjs");
+const jsonwt = require('jsonwebtoken');
+require("dotenv").config();
+
+const cookieParser = require('cookie-parser');
 
 // web app endpoints
-router.use(express.static(__dirname + "/public"))
+router.use(express.static(__dirname + "/public"));
+router.use(cookieParser());
+
+const auth_err_handler = (err, req, res, next) => {
+    if(err) {
+        return res.redirect("/web_app/login");
+    }
+    return next();
+}
+
+router.get('/login', (req, res) => {
+    res.render("login_page");
+})
+
+router.post("/login", (req, res) => {
+    if(!req.body.login || !req.body.password) {
+        res.redirect("/web_app/login");
+    }
+    const user = req.body;
+    db_controller.login_user(user.login).then((result) => {
+        bcrypt.compare(
+            user.password,
+            result.password
+        ).then(() => {
+            const token = jsonwt.sign({ user }, process.env.JWT_SECRET, {
+                expiresIn: "1h",
+            });
+            res.cookie("jwt", token);
+            res.redirect("/web_app/note");
+        }).catch(() => {
+            res.redirect("/web_app/login");
+        })
+    }).catch((err) => {
+        res.redirect("/web_app/login");
+    })
+})
+
+router.get('/register', (req, res) => {
+    res.render("register_page");
+})
+
+router.post("/register", async (req, res) => {
+    if(!req.body.login || !req.body.password) {
+        res.redirect("/web_app/register");
+    }
+    const hash = await bcrypt.hash(req.body.password, 10);
+    const user = req.body;
+    user.password = hash;
+    db_controller.register_user(user.login, user.password).then(() => {
+        const token = jsonwt.sign({ user }, process.env.JWT_SECRET, {
+            expiresIn: "1h"
+        });
+        res.cookie("jwt", token);
+        res.redirect("/web_app/note");
+    }).catch((error) => {
+        res.redirect("/web_app/register");
+    })
+})
 
 // get all notes
 router.get('/note', (req, res) => {
@@ -19,8 +82,25 @@ router.get('/note', (req, res) => {
 });
 
 // add new note
-router.get('/note/add_new_note', (req, res) => {
+router.get('/add_new_note',
+    authorization.authorize,
+    auth_err_handler,
+    (req, res) => {
     res.render('add_new_note');
+});
+
+router.post("/new_note",
+    authorization.authorize,
+    auth_err_handler,
+    (req, res) => {
+    let title = req.body.title;
+    let data = req.body.data;
+    const object_data = {
+        "title": title,
+        "data": data
+    }
+    db_controller.add_note(object_data);
+    res.redirect("/web_app/note");
 });
 
 // get note by id
@@ -42,31 +122,34 @@ router.post("/note/find_note", (req, res) => {
     res.redirect(`/web_app/note/${title}`);
 })
 
-router.post("/delete_note/:id", (req, res) => {
+router.post("/delete_note/:id",
+    authorization.authorize,
+    auth_err_handler,
+    (req, res) => {
     db_controller.delete_note(req.params.id).then((deletedCount) => {
         let status;
         if(deletedCount === 0) {
-            console.log("got 0");
             status = "Could not delete a note.";
         } else {
             status = "Successfully deleted a note.";
-            console.log("deleted succ");
         }
         res.redirect('/web_app/note');
     });
 })
 
-router.post("/note/update_note", (req, res) => {
+router.post("/note/update_note",
+    authorization.authorize,
+    auth_err_handler,
+    (req,
+     res) => {
     db_controller.update_note(req.body.prev_title,
         req.body.note_title,
         req.body.note_data).then((modified_count) => {
             let status;
             if(modified_count === 0) {
-                console.log("not modified");
                 status = "Not modified.";
             } else {
                 status = "Successfully updated note.";
-                console.log("succ");
             }
 
             res.redirect(`/web_app/note`);

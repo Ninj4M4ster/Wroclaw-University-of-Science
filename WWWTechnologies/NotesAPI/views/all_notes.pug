@@ -7,16 +7,16 @@ html
         body
             nav
                 a#findNoteButton Find a note
-                a(href="/web_app/note/add_new_note", methods="get") Add new note
+                a(href="/web_app/add_new_note", methods="get") Add new note
             #hide_body_div.hidden
             div#find_note_menu.hidden
                 form(action="/web_app/note/find_note" method="post")
                     label Input note title to search
                         input(placeholder="Title" name="searched_title")
                     button(type="submit") Search
-            if notes.length === 0
+            if Object.keys(notes).length === 0
                 main
-                    p There are no notes to be displayed. Add a new one!
+                    h1 There are no notes to be displayed. Add a new one!
             else
                 ul
                     each note in notes
@@ -33,7 +33,7 @@ html
                                 div.note_text #{note.data}
                             form.hidden_form(action="/web_app/note/update_note" method="post" id=`${note.title}_form`)
                                 input(type="hidden" name="prev_title" value=`${note.title}`)
-                                input.title_input(type="text" placeholder="Title" name="note_title" value=`${note.title}`)
-                                textarea.data_input(placeholder="Data" type="text" name="note_data") #{note.data}
+                                input.title_input(type="text" placeholder="Title" name="note_title" value=`${note.title}` required)
+                                textarea.data_input(placeholder="Data" type="text" name="note_data" required) #{note.data}
 
         script(src="/js/all_notes_controller.js")

@@ -1,21 +1,27 @@
 html
     head
+        meta(name="viewport" content="width=device-width, initial-scale=1")
         link(rel="stylesheet" type="text/css" href="/css/style.css")
         link(rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0")
-        script(src="/js/all_notes_controller.js")
         title Notes
         body
             nav
                 a(onclick="history.back()") Back to all notes
-                a(href="/web_app/note/add_new_note", methods="get") Add new note
+                a(href="/web_app/add_new_note", methods="get") Add new note
             ul
                 li
                     div.header
-                        button
-                            span(class="material-symbols-outlined") update
+                        button(onclick=`show_form('${note.title}')`)
+                            span(class="material-symbols-outlined" id=`${note.title}_update_icon`) update
+                            span.hidden_icon(class="material-symbols-outlined" id=`${note.title}_confirm_icon`) check
                         form(method="POST" action=`/web_app/delete_note/${note.title}`)
                             button.delete(type="submit")
                                 span(class="material-symbols-outlined") delete
                     div.note_data
                         h3.note_title #{note.title}
                         div.note_text #{note.data}
+                    form.hidden_form(action="/web_app/note/update_note" method="post" id=`${note.title}_form`)
+                        input(type="hidden" name="prev_title" value=`${note.title}`)
+                        input.title_input(type="text" placeholder="Title" name="note_title" value=`${note.title}` required)
+                        textarea.data_input(placeholder="Data" type="text" name="note_data" required) #{note.data}
+            script(src="/js/single_note_controller.js")
