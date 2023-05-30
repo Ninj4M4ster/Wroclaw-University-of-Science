@@ -18,6 +18,9 @@ app.set('views','./views');
 
 const web_app_router = require("./js/routes/web_app");
 const db_controller = require("./js/controller/db_controller");
+const authorization = require("./js/middleware/authorization");
+const jsonwt = require('jsonwebtoken');
+const bcrypt = require("bcryptjs");
 
 // REST endpoints
 
@@ -37,7 +40,9 @@ app.get('/note/:id', (req, res) => {
 })
 
 // create new note
-app.post('/note', (req, res) => {
+app.post('/note',
+    authorization.authorize_header,
+    (req, res) => {
     let title = req.body.title;
     let data = req.body.data;
     const object_data = {
@@ -49,7 +54,9 @@ app.post('/note', (req, res) => {
 })
 
 // actualize note by id
-app.put('/note/:id', (req, res) => {
+app.put('/note/:id',
+    authorization.authorize_header,
+    (req, res) => {
     db_controller.update_note(req.params.id, req.body.title, req.body.data).then((r) => {
         if(r === 0) {
             res.sendStatus(400);
@@ -60,14 +67,57 @@ app.put('/note/:id', (req, res) => {
 })
 
 // delete note by id
-app.delete('/note/:id', (req, res) => {
-    res.end();
+app.delete('/note/:id',
+    authorization.authorize_header,
+    (req, res) => {
     db_controller.delete_note(req.params.id).then((r) => {
         if(r === 0) {
             res.sendStatus(400);
         } else {
             res.sendStatus(200);
         }
+    })
+})
+
+// login to get token
+app.post("/login",
+    (req, res) => {
+        const user = req.body;
+        if(!user.login || !user.password) {
+            return res.sendStatus(401);
+        }
+        db_controller.login_user(user.login).then((result) => {
+            bcrypt.compare(
+                user.password,
+                result.password
+            ).then(() => {
+                const token = jsonwt.sign({ user }, process.env.JWT_SECRET, {
+                    expiresIn: "1h"
+                });
+                res.json({ token });
+            }).catch(() => {
+                return res.sendStatus(401);
+            })
+        }).catch((err) => {
+            return res.send(err);
+        })
+    });
+
+// register to database
+app.post("/register", async (req, res) => {
+    if(!req.body.login || !req.body.password) {
+        return res.sendStatus(401);
+    }
+    const hash = await bcrypt.hash(req.body.password, 10);
+    const user = req.body;
+    user.password = hash;
+    db_controller.register_user(user.login, user.password).then(() => {
+        const token = jsonwt.sign({ user }, process.env.JWT_SECRET, {
+            expiresIn: "1h"
+        });
+        return res.json({ token });
+    }).catch((error) => {
+        res.send(error);
     })
 })
 

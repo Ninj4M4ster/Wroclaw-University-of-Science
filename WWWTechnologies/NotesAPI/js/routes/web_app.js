@@ -2,7 +2,6 @@ const express = require('express')
 const router = express.Router();
 
 const bodyParser = require('body-parser');
-const https = require('https');
 
 const db_controller = require("./../controller/db_controller");
 const authorization = require("./../middleware/authorization");
@@ -23,10 +22,12 @@ const auth_err_handler = (err, req, res, next) => {
     return next();
 }
 
+// login page
 router.get('/login', (req, res) => {
     res.render("login_page");
 })
 
+// login to database
 router.post("/login", (req, res) => {
     if(!req.body.login || !req.body.password) {
         res.redirect("/web_app/login");
@@ -50,10 +51,12 @@ router.post("/login", (req, res) => {
     })
 })
 
+// get register page
 router.get('/register', (req, res) => {
     res.render("register_page");
 })
 
+// register to API
 router.post("/register", async (req, res) => {
     if(!req.body.login || !req.body.password) {
         res.redirect("/web_app/register");
@@ -81,7 +84,7 @@ router.get('/note', (req, res) => {
     }));
 });
 
-// add new note
+// get add new note page
 router.get('/add_new_note',
     authorization.authorize,
     auth_err_handler,
@@ -89,6 +92,7 @@ router.get('/add_new_note',
     res.render('add_new_note');
 });
 
+// add new note
 router.post("/new_note",
     authorization.authorize,
     auth_err_handler,
@@ -117,11 +121,13 @@ router.get('/note/:id', (req, res) => {
     });
 });
 
+// send data to search for a note
 router.post("/note/find_note", (req, res) => {
     let title = req.body.searched_title;
     res.redirect(`/web_app/note/${title}`);
 })
 
+// delete given note by title
 router.post("/delete_note/:id",
     authorization.authorize,
     auth_err_handler,
@@ -137,6 +143,7 @@ router.post("/delete_note/:id",
     });
 })
 
+// update given note
 router.post("/note/update_note",
     authorization.authorize,
     auth_err_handler,

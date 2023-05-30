@@ -18,10 +18,27 @@ module.exports = {
         }
 
         try {
-            const decoded = jsonwt.verify(token, process.env.JWT_SECRET);
+            jsonwt.verify(token, process.env.JWT_SECRET);
             next();
         } catch(err) {
             return next(err);
+        }
+    },
+
+    authorize_header: function(req, res, next) {
+        if(!req.header.authorization) {
+            return res.sendStatus(401);
+        }
+        const token = req.header["authorization"].split(" ")[1];
+        if(!token) {
+            return res.sendStatus(401);
+        }
+
+        try {
+            jsonwt.verify(token, process.env.JWT_SECRET);
+            next();
+        } catch(err) {
+            return res.sendStatus(401);
         }
     }
 }
