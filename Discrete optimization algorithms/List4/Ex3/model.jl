@@ -28,13 +28,13 @@ using JuMP
 using GLPK
 
 model = Model(GLPK.Optimizer)
-
+# Macierz zmiennych decyzyjnych
 @variable(model, X[1:n, 1:n] >= 0)
-
+# Ograniczenie przepływu między wierzchołkami
 @constraint(model, [i = 1:n, j = 1:n], X[i,j] <= graph[i,j])
-
+# Wszystkie wierzchołki prócz ujścia i źródła muszą mieć balans = 0
 @constraint(model, [i = 1:n; i != 1 && i != n], sum(X[i, :]) == sum(X[:,i]))
-
+# Maksymalizacja przepływu wypływającego ze źródła
 @objective(model, Max, sum(X[1, :]))
 
 optimize!(model)
