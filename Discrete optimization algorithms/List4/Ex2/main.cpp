@@ -23,7 +23,7 @@ int main(int argc, char* argv[]) {
   bool test = false;
 
   if(!test) {
-    Graph graph = genGraph(5, 2);
+    Graph graph = genGraph(4, 2);
 
     if (save_graph) {
       saveGraph("bipartite_graph.txt", graph);
@@ -39,11 +39,11 @@ int main(int argc, char* argv[]) {
     if (graph.size() < (std::size_t) std::pow(2, 10)) {
       int i = 0;
       for (auto &row : flow) {
-        std::cout << "Vertex " << i << ": ";
         for (auto val : row) {
-          std::cout << val.second << " ";
+          if(val.second > 0) {
+            std::cout << i << " " << val.first << " " << val.second << "\n";
+          }
         }
-        std::cout << "\n";
         i++;
       }
     }

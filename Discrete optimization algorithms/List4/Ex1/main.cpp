@@ -22,7 +22,7 @@ int main(int argc, char* argv[]) {
   bool test = false;
 
   if(!test) {
-    Cube cube = genCube(5);
+    Cube cube = genCube(6);
 
     if (save_graph) {
       saveGraph("cube_graph.txt", cube);
@@ -35,17 +35,17 @@ int main(int argc, char* argv[]) {
 
     std::cerr << "Czas: " << (end - start) / std::chrono::nanoseconds(1) << std::endl;
 
-    if (cube.size() < (std::size_t) std::pow(2, 10)) {
-      int i = 0;
-      for (auto &row : flow) {
-        std::cout << "Vertex " << i << ": ";
-        for (auto val : row) {
-          std::cout << val.second << " ";
-        }
-        std::cout << "\n";
-        i++;
-      }
-    }
+//    if (cube.size() < (std::size_t) std::pow(2, 10)) {
+//      int i = 0;
+//      for (auto &row : flow) {
+//        std::cout << "Vertex " << i << ": ";
+//        for (auto val : row) {
+//          std::cout << val.second << " ";
+//        }
+//        std::cout << "\n";
+//        i++;
+//      }
+//    }
 
     std::size_t max_flow = 0;
     for (auto &pair : flow.at(cube.size() - 1)) {

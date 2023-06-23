@@ -50,10 +50,8 @@ std::vector<unsigned int> BFS(
     unsigned int source,
     unsigned int target) {
   std::queue<unsigned int> Q;
-  std::vector<unsigned int> prev(cube.size());
-  std::vector<unsigned int> dist(cube.size(), std::numeric_limits<unsigned int>::max());
+  std::vector<unsigned int> prev(cube.size(), std::numeric_limits<unsigned int>::max());
   Q.push(source);
-  dist.at(source) = 0;
 
   bool path_found = false;
 
@@ -62,22 +60,23 @@ std::vector<unsigned int> BFS(
     Q.pop();
 
     for(auto & pair : cube.at(curr_vert)) {
-      if(dist.at(pair.first) > dist.at(curr_vert) + 1 &&
-          pair.second - flow.at(curr_vert)[pair.first] > 0) {
-        dist.at(pair.first) = dist.at(curr_vert) + 1;
+      if(prev.at(pair.first) == std::numeric_limits<unsigned int>::max() &&
+          (long long)pair.second - flow.at(curr_vert)[pair.first] > 0) {
         prev.at(pair.first) = curr_vert;
 
-        Q.push(pair.first);
         if(pair.first == target) {
           path_found = true;
           break;
         }
+
+        Q.push(pair.first);
       }
     }
     if(path_found)
       break;
   }
-  if(!path_found)
+
+  if(prev.at(target) == std::numeric_limits<unsigned int>::max())
     return {};
 
   std::vector<unsigned int> path;
@@ -110,21 +109,25 @@ edmondsKarp(Cube & cube, unsigned int source, unsigned int target) {
       cube.size(),
       std::unordered_map<unsigned int, long long>());
 
+  Cube residual_graph(cube.size());
+
   for(int i = 0; i < cube.size(); i++) {
     for(auto & pair : cube.at(i)) {
       flow.at(i)[pair.first] = 0;
       flow.at(pair.first)[i] = 0;
+      residual_graph.at(i)[pair.first] = pair.second;
+      residual_graph.at(pair.first)[i] = 0;
     }
   }
 
   bool path_exists = true;
   while(path_exists) {
-    std::vector<unsigned int> path = BFS(cube, flow, source, target);
+    std::vector<unsigned int> path = BFS(residual_graph, flow, source, target);
     if(path.empty()) {
       path_exists = false;
     } else {
       // find min flow at the path
-      long long min_flow = findMinFlow(path, cube, flow);
+      long long min_flow = findMinFlow(path, residual_graph, flow);
       for(int i = 0; i < path.size() - 1; i++) {  // update flows and residual graph
         flow.at(path.at(i))[path.at(i+1)] += min_flow;
         flow.at(path.at(i+1))[path.at(i)] -= min_flow;

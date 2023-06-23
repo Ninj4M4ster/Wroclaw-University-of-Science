@@ -106,11 +106,14 @@ Flow dinic(
     unsigned int source,
     unsigned int target) {
   Flow flow(cube.size(), std::unordered_map<unsigned int, long long>());
+  Cube residual_graph(cube.size());
 
   for(int i = 0; i < cube.size(); i++) {
     for(auto & pair : cube.at(i)) {
       flow.at(i)[pair.first] = 0;
       flow.at(pair.first)[i] = 0;
+      residual_graph.at(i)[pair.first] = pair.second;
+      residual_graph.at(pair.first)[i] = 0;
     }
   }
 
