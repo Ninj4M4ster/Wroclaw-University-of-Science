@@ -30,7 +30,6 @@ Graph genGraph(unsigned int size, unsigned int neighbours_count) {
       }
     }
   }
-  std::cout << graph.size() << std::endl;
 
   for(unsigned int i = (size / 2) + 1; i < size + 1; i++) {
     graph.at(i)[size + 1] = 1;
