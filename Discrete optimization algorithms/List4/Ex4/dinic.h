@@ -50,7 +50,9 @@ typedef std::vector<std::vector<unsigned int>> Graph;
 
 Graph BFS(Cube & cube,
          Flow & flow,
-         unsigned int source) {
+         unsigned int source,
+         unsigned int target,
+         long long & paths_count) {
   std::queue<unsigned int> Q;
   Graph back_track(cube.size());
   Q.push(source);
@@ -66,6 +68,9 @@ Graph BFS(Cube & cube,
         dist.at(nei.first) = dist.at(curr_ver) + 1;
         back_track.at(nei.first).push_back(curr_ver);
         Q.push(nei.first);
+
+        if(nei.first == target)
+          paths_count++;
       }
     }
   }
@@ -104,7 +109,8 @@ long long DFS(Cube & cube,
 Flow dinic(
     Cube & cube,
     unsigned int source,
-    unsigned int target) {
+    unsigned int target,
+    long long & paths_count) {
   Flow flow(cube.size(), std::unordered_map<unsigned int, long long>());
   Cube residual_graph(cube.size());
 
@@ -118,11 +124,11 @@ Flow dinic(
   }
 
   while(true) {
-    Graph back_paths = BFS(cube, flow, source);
+    Graph back_paths = BFS(residual_graph, flow, source, target, paths_count);
     if(back_paths.at(target).empty()) {
       break;
     }
-    DFS(cube, flow, back_paths, target, source, std::numeric_limits<long long>::max());
+    DFS(residual_graph, flow, back_paths, target, source, std::numeric_limits<long long>::max());
   }
 
   return flow;

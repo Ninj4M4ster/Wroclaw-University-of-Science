@@ -104,7 +104,7 @@ inline long long findMinFlow(std::vector<unsigned int> & path,
 }
 
 std::vector<std::unordered_map<unsigned int, long long>>
-edmondsKarp(Cube & cube, unsigned int source, unsigned int target) {
+edmondsKarp(Cube & cube, unsigned int source, unsigned int target, long long & paths_count) {
   std::vector<std::unordered_map<unsigned int, long long>> flow(
       cube.size(),
       std::unordered_map<unsigned int, long long>());
@@ -126,6 +126,8 @@ edmondsKarp(Cube & cube, unsigned int source, unsigned int target) {
     if(path.empty()) {
       path_exists = false;
     } else {
+      paths_count++;
+      std::cerr << "Aktualna ilosc sciezek powiekszajacych: " << paths_count << std::endl;
       // find min flow at the path
       long long min_flow = findMinFlow(path, residual_graph, flow);
       for(int i = 0; i < path.size() - 1; i++) {  // update flows and residual graph
