@@ -16,10 +16,16 @@ def saveGraph(graph_name,
               file_name,
               x_ax,
               y_ax,
-              y_ax_2):
+              y_ax_2,
+              upper_right):
     plt.title(graph_name)
     plt.plot(x_ax, y_ax, label="dynic")
     plt.plot(x_ax, y_ax_2, label="edmonds-karp", color="orange")
+
+    if upper_right:
+        plt.figlegend(loc="upper right")
+    else:
+        plt.figlegend(loc="upper left")
 
     plt.savefig(file_name)
     plt.clf()
@@ -73,9 +79,9 @@ def main():
         print(f'Finished {i}')
 
     K = [k + 1 for k in range(16)]
-    saveGraph("Max flows", "max_flow", K, final_flows_dynic, final_flows_edm)
-    saveGraph("Time", "time", K, final_times_dynic, final_times_edm)
-    saveGraph("Paths count", "paths_count", K, final_paths_count_dynic, final_paths_count_edm)
+    saveGraph("Max flows", "max_flow", K, final_flows_dynic, final_flows_edm, True)
+    saveGraph("Time", "time", K, final_times_dynic, final_times_edm, False)
+    saveGraph("Paths count", "paths_count", K, final_paths_count_dynic, final_paths_count_edm, False)
 
 
 if __name__ == '__main__':
