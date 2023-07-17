@@ -1,0 +1,33 @@
+#Dane osobowe:
+Imie i nazwisko: Jakub Drzewiecki
+Numer indeksu: 268418
+
+#Opis programu:
+Zaimplementowany został algorytm alfa-beta-cięcie.
+Program można uruchomić poleceniem "./main [adres ip] [port] [numer gracza] [glebokosc przeszukiwan]".
+Program dla głębokości 8 znajduje kolejny ruch w czasie 30-60 sekund w początkowej fazie gry.
+
+#Kompilacja
+Program został napisany w języku C++.
+Wszystkie użyte biblioteki zawarte są w standardzie tego języka.
+Do jego kompilacji potrzebne są programy G++ oraz Make.
+Do kompilacji wystaczy polecenie "make" uruchomione w terminalu.
+
+#Opis heurystyki:
+Heurystykę można znaleźć w pliku "Bot.cpp", od linii 269.
+Przeszukuje ona cały stan gry oraz zlicza dla obu graczy takie statystyki, jak:
+ - ilość dwóch takich znaków obok siebie,
+ - ilość linii, w których brakuje jednego znaku do wygranej,
+ - ilość dalej możliwych do postawienia czwórek na planszy (dla każdego gracza osobno),
+ - największą ilość znaków obok siebie.
+
+Na podstawie największej ilości znaków obok siebie określane jest, czy któryś z graczy wygrywa.
+Gracz wygrywający otrzymuje 10000 punktów.
+
+Wszystkie linie, w których brakuje jednego znaku do wygranej, dodają do wyniku 100 punktów.
+
+Dwa znaki obok siebie dają 5 punktów.
+
+Ilość możliwych do postawienia czwórek na planszy mnożona jest przez 10 i dodawana do wyniku.
+
+Końcowa heurystyka to różnica wyniku bota i przeciwnika.
