@@ -31,10 +31,9 @@ int main(int argc, char* argv[]) {
 
   std::unordered_map<unsigned char, long int> sign_count;
   std::unordered_map<unsigned char, std::unordered_map<unsigned char, long int>> prev_sign_count;
-  unsigned char curr_char;
+  unsigned char curr_char = f.get();
   unsigned char prev_char = '0';
   while(!f.eof()) {
-    curr_char = f.get();
     // fill normal count
     if(sign_count.find(curr_char) != sign_count.end()) {
       sign_count.at(curr_char) += 1;
@@ -54,6 +53,7 @@ int main(int argc, char* argv[]) {
       prev_sign_count.at(curr_char)[prev_char] = 1;
     }
     prev_char = curr_char;
+    curr_char = f.get();
   }
 
   auto iter = sign_count.begin();
