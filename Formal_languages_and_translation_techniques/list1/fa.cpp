@@ -76,7 +76,7 @@ void calculate_transition_function(std::string pattern,
  * @param pattern Pattern string.
  * @return First index at which pattern starts matching given input string, or -1 if no matches were found.
  */
-long long int fa(std::string input_text, std::string pattern) {
+void fa(std::string input_text, std::string pattern) {
   std::size_t n = input_text.length();
   std::size_t pattern_len = pattern.length();
   std::vector<std::unordered_map<char, int>> transition_function(
@@ -88,12 +88,11 @@ long long int fa(std::string input_text, std::string pattern) {
   for(std::size_t i = 0; i < n; i++) {
     current_state = transition_function.at(current_state)[input_text.at(i)];
     if(current_state == pattern_len) {
-      return (long long int)(i - pattern_len + 1);
+      std::cout << "Pattern occurs at index " << i - pattern_len + 1 << std::endl;
     }
   }
-  return -1;
 }
 
 int main(int argc, char* argv[]) {
-  std::cout << fa("ababa", "aabab") << std::endl;
+  fa("aababsaababaababa", "aabab");
 }
