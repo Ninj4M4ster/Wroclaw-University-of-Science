@@ -8,9 +8,10 @@
  * @param input Input string.
  * @param alphabet Unordered map for storing single characters as keys.
  */
-void create_alphabet(std::string input, std::unordered_map<char, bool>& alphabet) {
-  for(char c : input)
+void create_alphabet(std::u32string input, std::unordered_map<char32_t, bool>& alphabet) {
+  for(char32_t c : input) {
     alphabet[c] = true;
+  }
 }
 
 /**
@@ -21,8 +22,8 @@ void create_alphabet(std::string input, std::unordered_map<char, bool>& alphabet
  * @param checked_string String to check if pattern is it's suffix.
  * @return True, if given pattern is a suffix of given string.
  */
-bool isSuffix(std::string pattern, int pattern_last_index, std::string checked_string) {
-  int checked_string_len = checked_string.length() - 1;
+bool isSuffix(std::u32string pattern, long long int pattern_last_index, std::u32string checked_string) {
+  long long int checked_string_len = (long long int)checked_string.length() - 1;
   while(pattern_last_index >= 0 && checked_string_len >= 0) {
     if(pattern.at(pattern_last_index) != checked_string.at(checked_string_len))
       return false;
@@ -44,20 +45,20 @@ bool isSuffix(std::string pattern, int pattern_last_index, std::string checked_s
  * @param transition_function Vector of unordered maps pointing from char to int,
  *                            representing empty transition function.
  */
-void calculate_transition_function(std::string pattern,
-                                   std::string input,
-                                   std::vector<std::unordered_map<char, int>> & transition_function) {
-  int m = pattern.length();
-  std::unordered_map<char, bool> alphabet;
+void calculate_transition_function(std::u32string pattern,
+                                   std::u32string input,
+                                   std::vector<std::unordered_map<char32_t, int>> & transition_function) {
+  long long int m = (long long int)pattern.length();
+  std::unordered_map<char32_t, bool> alphabet;
   create_alphabet(input, alphabet);
 
-  std::string current_pattern_slice = "";
-  for(int q = 0; q <= m; q++) {
+  std::u32string current_pattern_slice;
+  for(long long int q = 0; q <= m; q++) {
     if(q > 0) {  // strings indexed from 0, but we need an empty pattern at start
       current_pattern_slice += pattern[q - 1];
     }
     for(auto & iter : alphabet) {
-      int k = std::min(m + 1, q + 2);
+      long long int k = std::min(m + 1, q + 2);
       do {
         k--;
       } while(k > 0 && !isSuffix(pattern, k - 1, current_pattern_slice + iter.first));
@@ -76,12 +77,12 @@ void calculate_transition_function(std::string pattern,
  * @param pattern Pattern string.
  * @return First index at which pattern starts matching given input string, or -1 if no matches were found.
  */
-void fa(std::string input_text, std::string pattern) {
+void fa(std::u32string input_text, std::u32string pattern) {
   std::size_t n = input_text.length();
   std::size_t pattern_len = pattern.length();
-  std::vector<std::unordered_map<char, int>> transition_function(
+  std::vector<std::unordered_map<char32_t, int>> transition_function(
       pattern_len + 1,
-      std::unordered_map<char, int>()
+      std::unordered_map<char32_t, int>()
           );
   calculate_transition_function(pattern, input_text, transition_function);
   int current_state = 0;
@@ -94,5 +95,7 @@ void fa(std::string input_text, std::string pattern) {
 }
 
 int main(int argc, char* argv[]) {
-  fa("aababsaababaababa", "aabab");
+  std::u32string string1{U"aabłabsaabłabaababa"};
+  std::u32string pattern{U"aabłab"};
+  fa(string1, pattern);
 }

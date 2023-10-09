@@ -9,7 +9,7 @@
  * @param pattern Pattern string.
  * @return Prefix function array pointing to unsigned long long int type value.
  */
-std::vector<std::size_t> compute_prefix_function(std::string pattern) {
+std::vector<std::size_t> compute_prefix_function(std::u32string pattern) {
   std::size_t m = pattern.length();
   std::vector<std::size_t> prefix_function(m);
   prefix_function.at(0) = 0;
@@ -32,7 +32,7 @@ std::vector<std::size_t> compute_prefix_function(std::string pattern) {
  * @param pattern Pattern string.
  * @param input Input string.
  */
-void kmp(std::string pattern, std::string input) {
+void kmp(std::u32string input, std::u32string pattern) {
   std::size_t n = input.length();
   std::size_t m = pattern.length();
   std::vector<std::size_t> prefix_function = compute_prefix_function(pattern);
@@ -51,5 +51,7 @@ void kmp(std::string pattern, std::string input) {
 }
 
 int main(int argc, char* argv[]) {
-  kmp("aasd", "aasdaabbdfbdfaabbaaaasdaab");
+  std::u32string input = U"aasłdaabbdfbdfaabbaaaasłdaab";
+  std::u32string pattern = U"aasłd";
+  kmp(input, pattern);
 }
