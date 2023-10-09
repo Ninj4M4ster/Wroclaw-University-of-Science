@@ -1,6 +1,11 @@
 #include <iostream>
 #include <unordered_map>
 #include <vector>
+#include <fstream>
+#include <codecvt>
+#include <locale>
+#include <sstream>
+#include <filesystem>
 
 /**
  * Filter out signs that occur more than once in given input.
@@ -8,8 +13,8 @@
  * @param input Input string.
  * @param alphabet Unordered map for storing single characters as keys.
  */
-void create_alphabet(std::u32string input, std::unordered_map<char32_t, bool>& alphabet) {
-  for(char32_t c : input) {
+void create_alphabet(std::wstring input, std::unordered_map<wchar_t, bool>& alphabet) {
+  for(wchar_t c : input) {
     alphabet[c] = true;
   }
 }
@@ -22,7 +27,7 @@ void create_alphabet(std::u32string input, std::unordered_map<char32_t, bool>& a
  * @param checked_string String to check if pattern is it's suffix.
  * @return True, if given pattern is a suffix of given string.
  */
-bool isSuffix(std::u32string pattern, long long int pattern_last_index, std::u32string checked_string) {
+bool isSuffix(std::wstring pattern, long long int pattern_last_index, std::wstring checked_string) {
   long long int checked_string_len = (long long int)checked_string.length() - 1;
   while(pattern_last_index >= 0 && checked_string_len >= 0) {
     if(pattern.at(pattern_last_index) != checked_string.at(checked_string_len))
@@ -45,14 +50,14 @@ bool isSuffix(std::u32string pattern, long long int pattern_last_index, std::u32
  * @param transition_function Vector of unordered maps pointing from char to int,
  *                            representing empty transition function.
  */
-void calculate_transition_function(std::u32string pattern,
-                                   std::u32string input,
-                                   std::vector<std::unordered_map<char32_t, int>> & transition_function) {
-  long long int m = (long long int)pattern.length();
-  std::unordered_map<char32_t, bool> alphabet;
+void calculate_transition_function(std::wstring pattern,
+                                   std::wstring input,
+                                   std::vector<std::unordered_map<wchar_t, int>> & transition_function) {
+  auto m = (long long int)pattern.length();
+  std::unordered_map<wchar_t, bool> alphabet;
   create_alphabet(input, alphabet);
 
-  std::u32string current_pattern_slice;
+  std::wstring current_pattern_slice;
   for(long long int q = 0; q <= m; q++) {
     if(q > 0) {  // strings indexed from 0, but we need an empty pattern at start
       current_pattern_slice += pattern[q - 1];
@@ -77,12 +82,12 @@ void calculate_transition_function(std::u32string pattern,
  * @param pattern Pattern string.
  * @return First index at which pattern starts matching given input string, or -1 if no matches were found.
  */
-void fa(std::u32string input_text, std::u32string pattern) {
+void fa(std::wstring input_text, std::wstring pattern) {
   std::size_t n = input_text.length();
   std::size_t pattern_len = pattern.length();
-  std::vector<std::unordered_map<char32_t, int>> transition_function(
+  std::vector<std::unordered_map<wchar_t, int>> transition_function(
       pattern_len + 1,
-      std::unordered_map<char32_t, int>()
+      std::unordered_map<wchar_t, int>()
           );
   calculate_transition_function(pattern, input_text, transition_function);
   int current_state = 0;
@@ -94,8 +99,31 @@ void fa(std::u32string input_text, std::u32string pattern) {
   }
 }
 
-int main(int argc, char* argv[]) {
-  std::u32string string1{U"aabłabsaabłabaababa"};
-  std::u32string pattern{U"aabłab"};
-  fa(string1, pattern);
+int wmain(int argc, wchar_t** argv) {
+  if(argc != 3) {
+    std::cerr << "Bad numer of arguments\n";
+    return -1;
+  }
+
+  // read pattern;
+  std::wstring pattern = argv[1];
+
+  // open file
+  std::wifstream f;
+  f.open(argv[2], std::ifstream::in);
+  if(f.bad()) {
+    std::cerr << "Could not open file\n";
+    f.close();
+    return -1;
+  }
+  f.imbue(std::locale(std::locale(), new std::codecvt_utf8<wchar_t>));
+  std::wstringstream wss;
+  wss << f.rdbuf();
+  f.close();
+
+  std::wstring input = wss.str();
+
+  fa(input, pattern);
+
+  return 0;
 }

@@ -1,5 +1,9 @@
 #include <iostream>
 #include <vector>
+#include <fstream>
+#include <codecvt>
+#include <locale>
+#include <sstream>
 
 /**
  * Calculate prefix function.
@@ -9,7 +13,7 @@
  * @param pattern Pattern string.
  * @return Prefix function array pointing to unsigned long long int type value.
  */
-std::vector<std::size_t> compute_prefix_function(std::u32string pattern) {
+std::vector<std::size_t> compute_prefix_function(std::wstring pattern) {
   std::size_t m = pattern.length();
   std::vector<std::size_t> prefix_function(m);
   prefix_function.at(0) = 0;
@@ -32,7 +36,7 @@ std::vector<std::size_t> compute_prefix_function(std::u32string pattern) {
  * @param pattern Pattern string.
  * @param input Input string.
  */
-void kmp(std::u32string input, std::u32string pattern) {
+void kmp(std::wstring input, std::wstring pattern) {
   std::size_t n = input.length();
   std::size_t m = pattern.length();
   std::vector<std::size_t> prefix_function = compute_prefix_function(pattern);
@@ -44,14 +48,35 @@ void kmp(std::u32string input, std::u32string pattern) {
     if(pattern.at(q) == input.at(i))
       q++;
     if(q == m) {
-      std::cout << "Wzorzec wystepuje z przesunieciem " << i - m + 1 << std::endl;
+      std::cout << "Pattern occurs at index " << i - m + 1 << std::endl;
       q = prefix_function.at(q - 1);
     }
   }
 }
 
-int main(int argc, char* argv[]) {
-  std::u32string input = U"aasłdaabbdfbdfaabbaaaasłdaab";
-  std::u32string pattern = U"aasłd";
+int wmain(int argc, wchar_t** argv) {
+  if(argc != 3) {
+    std::cerr << "Bad numer of arguments\n";
+    return -1;
+  }
+
+  // read pattern
+  std::wstring pattern = argv[1];
+
+  // open file
+  std::wifstream f;
+  f.open(argv[2], std::ifstream::in);
+  if(f.bad()) {
+    std::cerr << "Could not open file\n";
+    f.close();
+    return -1;
+  }
+  f.imbue(std::locale(std::locale(), new std::codecvt_utf8<wchar_t>));
+  std::wstringstream wss;
+  wss << f.rdbuf();
+  f.close();
+
+  std::wstring input = wss.str();
+
   kmp(input, pattern);
 }
