@@ -82,7 +82,7 @@ void calculate_transition_function(std::wstring pattern,
  * @param pattern Pattern string.
  * @return First index at which pattern starts matching given input string, or -1 if no matches were found.
  */
-void fa(std::wstring input_text, std::wstring pattern) {
+std::vector<std::size_t> fa(std::wstring input_text, std::wstring pattern) {
   std::size_t n = input_text.length();
   std::size_t pattern_len = pattern.length();
   std::vector<std::unordered_map<wchar_t, int>> transition_function(
@@ -90,13 +90,15 @@ void fa(std::wstring input_text, std::wstring pattern) {
       std::unordered_map<wchar_t, int>()
           );
   calculate_transition_function(pattern, input_text, transition_function);
+  std::vector<std::size_t> pattern_indexes;
   int current_state = 0;
   for(std::size_t i = 0; i < n; i++) {
     current_state = transition_function.at(current_state)[input_text.at(i)];
     if(current_state == pattern_len) {
-      std::cout << "Pattern occurs at index " << i - pattern_len + 1 << std::endl;
+      pattern_indexes.push_back(i - pattern_len + 1);
     }
   }
+  return pattern_indexes;
 }
 
 int wmain(int argc, wchar_t** argv) {
@@ -123,7 +125,17 @@ int wmain(int argc, wchar_t** argv) {
 
   std::wstring input = wss.str();
 
-  fa(input, pattern);
+  std::vector<std::size_t> results = fa(input, pattern);
+
+  std::cout << "[";
+  for(std::size_t i = 0; i < results.size(); i++) {
+    if(i == results.size() - 1) {
+      std::cout << results.at(i);
+    } else {
+      std::cout << results.at(i) << ", ";
+    }
+  }
+  std::cout << "]\n";
 
   return 0;
 }

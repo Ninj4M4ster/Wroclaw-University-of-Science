@@ -36,11 +36,12 @@ std::vector<std::size_t> compute_prefix_function(std::wstring pattern) {
  * @param pattern Pattern string.
  * @param input Input string.
  */
-void kmp(std::wstring input, std::wstring pattern) {
+std::vector<std::size_t> kmp(std::wstring input, std::wstring pattern) {
   std::size_t n = input.length();
   std::size_t m = pattern.length();
   std::vector<std::size_t> prefix_function = compute_prefix_function(pattern);
   std::size_t q = 0;
+  std::vector<std::size_t> pattern_indexes;
   for(std::size_t i = 0; i < n; i++) {
     while(q > 0 && pattern.at(q) != input.at(i)) {
       q = prefix_function.at(q - 1);
@@ -48,10 +49,11 @@ void kmp(std::wstring input, std::wstring pattern) {
     if(pattern.at(q) == input.at(i))
       q++;
     if(q == m) {
-      std::cout << "Pattern occurs at index " << i - m + 1 << std::endl;
+      pattern_indexes.push_back(i - m + 1);
       q = prefix_function.at(q - 1);
     }
   }
+  return pattern_indexes;
 }
 
 int wmain(int argc, wchar_t** argv) {
@@ -78,5 +80,16 @@ int wmain(int argc, wchar_t** argv) {
 
   std::wstring input = wss.str();
 
-  kmp(input, pattern);
+  std::vector<std::size_t> results = kmp(input, pattern);
+
+  std::cout << "[";
+  for(std::size_t i = 0; i < results.size(); i++) {
+    if(i == results.size() - 1) {
+      std::cout << results.at(i);
+    } else {
+      std::cout << results.at(i) << ", ";
+    }
+  }
+  std::cout << "]\n";
+  return 0;
 }
