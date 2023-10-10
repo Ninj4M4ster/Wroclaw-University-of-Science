@@ -56,8 +56,9 @@ int main(int argc, char* argv[]) {
     curr_char = f.get();
   }
 
+  // calculate simple entropy
   auto iter = sign_count.begin();
-  long double first_entropy = 0;
+  long double first_entropy = 0.0;
   long int all_signs_sum = sumAllValues(sign_count);
   while(iter != sign_count.end()) {
     double probability = (double)iter->second / (double) all_signs_sum;
@@ -67,6 +68,21 @@ int main(int argc, char* argv[]) {
   first_entropy *= -1.0;
 
   std::cout << first_entropy << std::endl;
+
+  // calculate conditional entropy
+  long double conditional_entropy = 0.0;
+  for(auto & set : prev_sign_count) {
+    double prev_sign_probability = (double)sign_count.at(set.first) / (double) all_signs_sum;
+    long double inner_sum = 0.0;
+    for(auto & prev_sign_set : set.second) {
+      long double conditional_probability = (double)prev_sign_set.second / (double)sign_count.at(set.first);
+      inner_sum += conditional_probability * std::log2(conditional_probability);
+    }
+    inner_sum *= -1.0;
+    conditional_entropy += prev_sign_probability * inner_sum;
+  }
+
+  std::cout << conditional_entropy << std::endl;
 
   f.close();
 }
