@@ -3,7 +3,7 @@
 #include <unordered_map>
 #include <math.h>
 
-long int sumAllValues(std::unordered_map<unsigned char, long int> & map) {
+long int sumAllValues(std::unordered_map<wchar_t, long int> & map) {
   long int result = 0;
   auto iter = map.begin();
   while(iter != map.end()) {
@@ -22,17 +22,17 @@ int main(int argc, char* argv[]) {
     std::cerr << "Podano za dżo argumentów.\n";
     return -1;
   }
-  std::fstream f;
+  std::wifstream f;
   f.open(argv[1], std::fstream::in);
   if(!f.is_open()) {
     std::cerr << "Nie udalo sie otworzyc podanego pliku.\n";
     return -1;
   }
 
-  std::unordered_map<unsigned char, long int> sign_count;
-  std::unordered_map<unsigned char, std::unordered_map<unsigned char, long int>> prev_sign_count;
-  unsigned char curr_char = f.get();
-  unsigned char prev_char = '0';
+  std::unordered_map<wchar_t , long int> sign_count;
+  std::unordered_map<wchar_t , std::unordered_map<wchar_t, long int>> prev_sign_count;
+  wchar_t curr_char = f.get();
+  wchar_t prev_char = 0;
   while(!f.eof()) {
     // fill normal count
     if(sign_count.find(curr_char) != sign_count.end()) {
@@ -49,7 +49,7 @@ int main(int argc, char* argv[]) {
         prev_sign_count.at(curr_char)[prev_char] = 1;
       }
     } else {
-      prev_sign_count[curr_char] = std::unordered_map<unsigned char, long int>{};
+      prev_sign_count[curr_char] = std::unordered_map<wchar_t, long int>{};
       prev_sign_count.at(curr_char)[prev_char] = 1;
     }
     prev_char = curr_char;
@@ -61,28 +61,32 @@ int main(int argc, char* argv[]) {
   long double first_entropy = 0.0;
   long int all_signs_sum = sumAllValues(sign_count);
   while(iter != sign_count.end()) {
-    double probability = (double)iter->second / (double) all_signs_sum;
-    first_entropy += probability * std::log2(probability);
+    long double probability = (long double)iter->second / (long double) all_signs_sum;
+    first_entropy -= probability * std::log2(probability);
     iter++;
   }
-  first_entropy *= -1.0;
 
-  std::cout << first_entropy << std::endl;
+  std::cout << "Zwykla entropia: " << first_entropy << std::endl;
 
   // calculate conditional entropy
   long double conditional_entropy = 0.0;
   for(auto & set : prev_sign_count) {
-    double prev_sign_probability = (double)sign_count.at(set.first) / (double) all_signs_sum;
+    long double prev_sign_probability = (long double)sign_count.at(set.first) / (long double) all_signs_sum;
     long double inner_sum = 0.0;
     for(auto & prev_sign_set : set.second) {
-      long double conditional_probability = (double)prev_sign_set.second / (double)sign_count.at(set.first);
-      inner_sum += conditional_probability * std::log2(conditional_probability);
+      long double conditional_probability = (long double)prev_sign_set.second / (long double)sign_count.at(set.first);
+      inner_sum -= conditional_probability * std::log2(conditional_probability);
     }
-    inner_sum *= -1.0;
     conditional_entropy += prev_sign_probability * inner_sum;
   }
 
-  std::cout << conditional_entropy << std::endl;
+  std::cout << "Entropia warunkowa: " << conditional_entropy << std::endl;
+
+  if(first_entropy > conditional_entropy) {
+    std::cout << "Roznica: " << first_entropy - conditional_entropy << std::endl;
+  } else {
+    std::cout << "Roznica: " << conditional_entropy - first_entropy << std::endl;
+  }
 
   f.close();
 }
