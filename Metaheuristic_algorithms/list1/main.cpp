@@ -5,8 +5,13 @@
 #include <queue>
 #include <vector>
 #include <limits>
+#include <cmath>
 
 typedef std::unordered_map<int, std::unordered_map<int, int>> Graph;
+
+int euc_2d(const std::pair<int, int>& l, const std::pair<int, int>& r) {
+  return (int)std::round(std::sqrt(std::pow(l.first - r.first, 2) + std::pow(l.second - r.second, 2)));
+}
 
 void readFile(std::string file_name, Graph& empty_graph) {
   std::fstream f;
@@ -21,6 +26,8 @@ void readFile(std::string file_name, Graph& empty_graph) {
     std::getline(f, buff);
   }
 
+  // read all coordinates to unordered map
+  std::unordered_map<int, std::pair<int, int>> coords;
   std::string single_num;
   std::getline(f, buff);
   while(buff != "EOF") {
@@ -34,9 +41,19 @@ void readFile(std::string file_name, Graph& empty_graph) {
     std::getline(ss, single_num, ' ');
     c = std::stoi(single_num);
 
-    empty_graph[a][b] = c;
-    empty_graph[b][a] = c;
+    coords[a] = {b, c};
     std::getline(f, buff);
+  }
+
+  // create graph by calculating distance for each pair of coords
+  for(auto iter = coords.begin(); iter != coords.end(); iter++) {
+    auto inner_iter = iter;
+    inner_iter++;
+    for(; inner_iter != coords.end(); inner_iter++) {
+      int dist = euc_2d(iter->second, inner_iter->second);
+      empty_graph[iter->first - 1][inner_iter->first - 1] = dist;
+      empty_graph[inner_iter->first - 1][iter->first - 1] = dist;
+    }
   }
 
   f.close();
@@ -52,6 +69,7 @@ Graph primMst(int source, Graph graph) {
   std::vector<bool> visited(graph.size(), false);
 
   std::priority_queue<std::pair<int, int>, std::vector<std::pair<int, int>>, decltype(compare)> pq(compare);
+  C.at(source) = 0;
   pq.emplace(source, 0);
   while(!pq.empty()) {
     auto curr = pq.top();
