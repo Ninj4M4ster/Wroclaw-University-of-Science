@@ -3,8 +3,8 @@
 #include <unordered_map>
 #include <math.h>
 
-long int sumAllValues(std::unordered_map<wchar_t, long int> & map) {
-  long int result = 0;
+long long int sumAllValues(std::unordered_map<char, long long int> & map) {
+  long long int result = 0;
   auto iter = map.begin();
   while(iter != map.end()) {
     result += iter->second;
@@ -22,17 +22,18 @@ int main(int argc, char* argv[]) {
     std::cerr << "Podano za dżo argumentów.\n";
     return -1;
   }
-  std::wifstream f;
-  f.open(argv[1], std::fstream::in);
+  std::ifstream f;
+  f.open(argv[1], std::ios::binary);
   if(!f.is_open()) {
     std::cerr << "Nie udalo sie otworzyc podanego pliku.\n";
     return -1;
   }
 
-  std::unordered_map<wchar_t , long int> sign_count;
-  std::unordered_map<wchar_t , std::unordered_map<wchar_t, long int>> prev_sign_count;
-  wchar_t curr_char = f.get();
-  wchar_t prev_char = 0;
+  std::unordered_map<char , long long int> sign_count;
+  std::unordered_map<char , std::unordered_map<char, long long int>> prev_sign_count;
+  char curr_char;
+  f.read(&curr_char, 1);
+  char prev_char = '\x00';
   while(!f.eof()) {
     // fill normal count
     if(sign_count.find(curr_char) != sign_count.end()) {
@@ -49,17 +50,17 @@ int main(int argc, char* argv[]) {
         prev_sign_count.at(curr_char)[prev_char] = 1;
       }
     } else {
-      prev_sign_count[curr_char] = std::unordered_map<wchar_t, long int>{};
-      prev_sign_count.at(curr_char)[prev_char] = 1;
+      prev_sign_count[curr_char] = std::unordered_map<char, long long int>{};
+      prev_sign_count[curr_char][prev_char] = 1;
     }
     prev_char = curr_char;
-    curr_char = f.get();
+    f.read(&curr_char, 1);
   }
 
   // calculate simple entropy
   auto iter = sign_count.begin();
   long double first_entropy = 0.0;
-  long int all_signs_sum = sumAllValues(sign_count);
+  long long int all_signs_sum = sumAllValues(sign_count);
   while(iter != sign_count.end()) {
     long double probability = (long double)iter->second / (long double) all_signs_sum;
     first_entropy -= probability * std::log2(probability);

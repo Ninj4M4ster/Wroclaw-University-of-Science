@@ -1,13 +1,18 @@
 # author: Jakub Drzewiecki 268418
 
+# F function
+# x - number, either integer or float
 function f(x)
     return sin(x) + cos(Float64(3.0) * x)
 end
 
+# Derivative of F function
+# x - number, either integer or float
 function f_prim(x)
     return cos(x) - Float64(3) * sin(Float64(3) * x)
 end
 
+# Main function, tests the results of approximation of the derivative
 function main() 
     x = Float64(1)
     result = f_prim(x)
