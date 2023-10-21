@@ -35,6 +35,7 @@
         "type_traits": "cpp",
         "typeinfo": "cpp",
         "sstream": "cpp",
-        "ctime": "cpp"
+        "ctime": "cpp",
+        "unordered_map": "cpp"
     }
 }
