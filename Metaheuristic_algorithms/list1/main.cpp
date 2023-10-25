@@ -80,7 +80,7 @@ void readFile(std::string file_name, Graph& empty_graph) {
 /**
  * Find MST in given graph. This function implements Prim's algorithm.
  *
- * @param source Source vert
+ * @param source Source vertex
  * @param graph Graph to find mst
  * @return Cost of the mst.
  */
@@ -122,11 +122,11 @@ std::size_t primMst(int source, Graph graph) {
 
 /**
  * Find MST in given graph using Prim's algorithm.
- * Based on order of visited vertex, cycle is created.
+ * Based on order of visited vertices, cycle is created.
  *
  * @param source Source vert
  * @param graph Graph to find mst
- * @return Vector with vertex in order of the cycle.
+ * @return Vector with vertices in order of the cycle.
  */
 std::vector<int> primMstCycle(int source, Graph graph) {
   std::vector<int> C(graph.size(), std::numeric_limits<int>::max());
@@ -164,7 +164,7 @@ std::vector<int> primMstCycle(int source, Graph graph) {
 /**
  * Calculate the cost to travel given cycle.
  *
- * @param cycle Vector with vertex in order of the cycle
+ * @param cycle Vector with vertices in order of the cycle
  * @param graph Graph in which cycle was created
  * @return Cost of travelling given cycle.
  */
@@ -241,6 +241,11 @@ int main() {
 
   std::cout << "Koszt MST: " << primMst(0, graph) << std::endl;
   std::vector<int> cycle = primMstCycle(0, graph);
+  std::cout << "Cykl: " << std::endl << "[";
+  for(auto v : cycle) {
+    std::cout << v << ", ";
+  }
+  std::cout << "]" << std::endl;
   std::cout << "Koszt cyklu: " << calculateCycleCost(cycle, graph) << std::endl;
   generateCycles(graph);
 }
