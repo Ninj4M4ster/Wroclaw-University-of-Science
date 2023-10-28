@@ -2,7 +2,6 @@
 #include <stdio.h>
 int yywrap();
 int yylex();
-int yybegin(int state);
 %}
 %x COMMENT_STATE
 
