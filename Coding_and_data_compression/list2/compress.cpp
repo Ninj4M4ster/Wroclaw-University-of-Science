@@ -15,8 +15,9 @@ int main(int argc, char* argv[]) {
   encoder.compress_data(file_name);
   encoder.save_compressed_data("compressed.txt");
 
-  long double entropy = encoder.calculate_entropy();
-  std::cout << "Entropia: " << entropy << std::endl;
+  std::cout << "Entropy: " << encoder.calculate_entropy() << std::endl;
+  std::cout << "Mean code length: " << encoder.mean_code_length() << std::endl;
+  std::cout << "Compression factor: " << encoder.compression_factor() << std::endl;
 
   return 0;
 }

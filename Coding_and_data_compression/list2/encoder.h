@@ -14,6 +14,8 @@ class Encoder {
   void update_cdf(unsigned int c);
   long double calculate_entropy();
   void save_compressed_data(std::string file_name);
+  long double mean_code_length();
+  long double compression_factor();
  private:
   std::vector<unsigned int> symbols_indexes = std::vector<unsigned int>(256);
   std::vector<int> index_to_char = std::vector<int>(257);

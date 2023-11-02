@@ -37,10 +37,27 @@ void Encoder::compress_data(std::string & file_name) {
     f.read(&c, 1);
   }
   f.close();
+  encode_sign(257, L, R);
+  counter++;
+  // encode remaining bits
+  if(L < kQuarter) {
+    buffer.push_back(false);
+    while(counter > 0) {
+      buffer.push_back(true);
+      counter--;
+    }
+  } else {
+    buffer.push_back(true);
+    while(counter > 0) {
+      buffer.push_back(false);
+      counter--;
+    }
+  }
 
-  // write L to buffer
-  std::cout << buffer.size() / 8 << std::endl;
-  std::cout << cdf.at(0) << std::endl;
+  std::bitset<32> L_bits(L);
+  for(int i = 0; i < 32; i++) {
+    buffer.push_back((bool)L_bits[i]);
+  }
 }
 
 /**
@@ -51,8 +68,8 @@ void Encoder::compress_data(std::string & file_name) {
  * @param R Right end of the current range.
  */
 void Encoder::encode_sign(unsigned int sign,
-                 unsigned int & L,
-                 unsigned int & R) {
+                          unsigned int & L,
+                          unsigned int & R) {
   size_t Range = (size_t)R - (size_t)L  + 1;
   R = L + (Range * cdf.at(sign - 1)) / cdf.at(0) - 1;
   L = L + (Range * cdf.at(sign)) / cdf.at(0);
@@ -118,14 +135,32 @@ void Encoder::update_cdf(unsigned int c) {
  */
 long double Encoder::calculate_entropy() {
   long double sum = 0.0;
-  for(auto val : frequencies) {
-    long double prob = (long double)(val) / (long double)(cdf.at(0) - 257);
-    if(prob == 0.0)
+  for(int i = 1; i < frequencies.size(); i++) {
+    unsigned long long freq = frequencies.at(i);
+    if(freq == 1)
       continue;
-//    std::cout << prob << std::endl;
+    long double prob = (long double)(freq - 1) / (long double)(cdf.at(0) - 257);
     sum -= prob * std::log2(prob);
   }
   return sum;
+}
+
+/**
+ * Calculate mean code length.
+ *
+ * @return Mean code length.
+ */
+long double Encoder::mean_code_length() {
+  return (long double)buffer.size() / (long double)(cdf.at(0) - 257);
+}
+
+/**
+ * Calculate compression factor.
+ *
+ * @return Compression factor.
+ */
+long double Encoder::compression_factor() {
+  return (long double)buffer.size() / (long double)8 / (long double)(cdf.at(0) - 257);
 }
 
 /**
@@ -147,9 +182,11 @@ void Encoder::save_compressed_data(std::string file_name) {
       f.write(&c, 1);
     }
   }
-
-  for(int i = 0; i < 32; i++) {
-
+  // output remaining bits, that do not fill full byte
+  if(index != 0) {
+    bit_buf.operator >>= (8 - index);
+    char c = bit_buf.to_ulong();
+    f.write(&c, 1);
   }
 
   f.close();
