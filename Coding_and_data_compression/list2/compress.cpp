@@ -1,7 +1,4 @@
 #include <iostream>
-#include <fstream>
-#include <cmath>
-#include <bitset>
 #include "encoder.cpp"
 
 int main(int argc, char* argv[]) {

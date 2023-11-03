@@ -31,12 +31,15 @@ void Encoder::compress_data(std::string & file_name) {
   char c;
   f.read(&c, 1);
   while(!f.eof()) {
+    full_frequencies.at((int)c + kCharToIntOffset)++;
+    full_bits_counter++;
     unsigned int sym_index = symbols_indexes.at((int)c + kCharToIntOffset);
     encode_sign(sym_index, L, R);
     update_cdf(sym_index);
     f.read(&c, 1);
   }
   f.close();
+  // encode special sign for decoding to be possible
   encode_sign(257, L, R);
   counter++;
   // encode remaining bits
@@ -73,7 +76,7 @@ void Encoder::encode_sign(unsigned int sign,
   size_t Range = (size_t)R - (size_t)L  + 1;
   R = L + (Range * cdf.at(sign - 1)) / cdf.at(0) - 1;
   L = L + (Range * cdf.at(sign)) / cdf.at(0);
-  for(;;) {
+  while(true) {
     if(R < kHalf) {
       buffer.push_back(false);
       while(counter > 0) {
@@ -108,6 +111,14 @@ void Encoder::encode_sign(unsigned int sign,
  * @param c
  */
 void Encoder::update_cdf(unsigned int c) {
+  if(cdf.at(0) == 1073741823) {
+    int cumulative_freq = 0;
+    for(int i = 257; i >= 0; i--) {
+      frequencies.at(i) = (frequencies.at(i) + 1) / 2;
+      cdf.at(i) = cumulative_freq;
+      cumulative_freq += frequencies.at(i);
+    }
+  }
   // find new index for given char
   unsigned int i;
   for(i = c; frequencies.at(i) == frequencies.at(i-1); i--) {}
@@ -135,11 +146,11 @@ void Encoder::update_cdf(unsigned int c) {
  */
 long double Encoder::calculate_entropy() {
   long double sum = 0.0;
-  for(int i = 1; i < frequencies.size(); i++) {
-    unsigned long long freq = frequencies.at(i);
-    if(freq == 1)
+  for(int i = 1; i < full_frequencies.size(); i++) {
+    unsigned long long freq = full_frequencies.at(i);
+    if(freq == 0)
       continue;
-    long double prob = (long double)(freq - 1) / (long double)(cdf.at(0) - 257);
+    long double prob = (long double)(freq) / (long double)(full_bits_counter);
     sum -= prob * std::log2(prob);
   }
   return sum;
@@ -151,7 +162,7 @@ long double Encoder::calculate_entropy() {
  * @return Mean code length.
  */
 long double Encoder::mean_code_length() {
-  return (long double)buffer.size() / (long double)(cdf.at(0) - 257);
+  return (long double)buffer.size() / (long double)(full_bits_counter);
 }
 
 /**
@@ -160,7 +171,7 @@ long double Encoder::mean_code_length() {
  * @return Compression factor.
  */
 long double Encoder::compression_factor() {
-  return (long double)buffer.size() / (long double)8 / (long double)(cdf.at(0) - 257);
+  return (long double)buffer.size() / (long double)8 / (long double)(full_bits_counter);
 }
 
 /**
