@@ -17,50 +17,49 @@ Encoder::Encoder() {
 /**
  * Main data compression flow.
  * This method opens given file and compresses it's data using adaptive arithmetic coding.
+ * Compressed data will be written to output file with given name.
  *
  * @param file_name Name of the file to be compressed.
+ * @param output_file_name Name of the output file.
  */
-void Encoder::compress_data(std::string & file_name) {
-  unsigned int L = 0, R = 0xFFFFFFFFU;
-  std::fstream f;
+void Encoder::compress_data(std::string & file_name, std::string output_file_name) {
+  int L = 0, R = 0xFFFF;
+  std::fstream f, f_out;
   f.open(file_name, std::ios::binary | std::ios::in);
+  f_out.open(output_file_name, std::ios::binary | std::ios::out);
   if(!f.is_open()) {
     std::cerr << "Nie udalo sie otworzyc pliku\n";
     throw std::exception();
   }
-  char c;
-  f.read(&c, 1);
+  int c;
+  c = f.get();
   while(!f.eof()) {
-    full_frequencies.at((int)c + kCharToIntOffset)++;
+    full_frequencies.at(c)++;
     full_bits_counter++;
-    unsigned int sym_index = symbols_indexes.at((int)c + kCharToIntOffset);
-    encode_sign(sym_index, L, R);
+    int sym_index = symbols_indexes.at(c);
+    encode_sign(c, L, R, f_out);
     update_cdf(sym_index);
-    f.read(&c, 1);
+    c = f.get();
   }
   f.close();
   // encode special sign for decoding to be possible
-  encode_sign(257, L, R);
+  encode_sign(257, L, R, f_out);
   counter++;
   // encode remaining bits
   if(L < kQuarter) {
-    buffer.push_back(false);
+    output_bit(0, f_out);
     while(counter > 0) {
-      buffer.push_back(true);
+      output_bit(1, f_out);
       counter--;
     }
   } else {
-    buffer.push_back(true);
+    output_bit(1, f_out);
     while(counter > 0) {
-      buffer.push_back(false);
+      output_bit(0, f_out);
       counter--;
     }
   }
-
-  std::bitset<32> L_bits(L);
-  for(int i = 0; i < 32; i++) {
-    buffer.push_back((bool)L_bits[i]);
-  }
+  f_out.close();
 }
 
 /**
@@ -69,24 +68,26 @@ void Encoder::compress_data(std::string & file_name) {
  * @param sign Sign to be encoded.
  * @param L Left end of the current range.
  * @param R Right end of the current range.
+ * @param f_out Output file.
  */
-void Encoder::encode_sign(unsigned int sign,
-                          unsigned int & L,
-                          unsigned int & R) {
-  size_t Range = (size_t)R - (size_t)L  + 1;
-  R = L + (Range * cdf.at(sign - 1)) / cdf.at(0) - 1;
+void Encoder::encode_sign(int sign,
+                          int & L,
+                          int & R,
+                          std::fstream & f_out) {
+  int Range = R - L;
+  R = L + (Range * cdf.at(sign - 1)) / cdf.at(0);
   L = L + (Range * cdf.at(sign)) / cdf.at(0);
   while(true) {
     if(R < kHalf) {
-      buffer.push_back(false);
+      output_bit(0, f_out);
       while(counter > 0) {
-        buffer.push_back(true);
+        output_bit(1, f_out);
         counter--;
       }
     } else if(kHalf <= L) {
-      buffer.push_back(true);
+      output_bit(1, f_out);
       while(counter > 0) {
-        buffer.push_back(false);
+        output_bit(0, f_out);
         counter--;
       }
       L = L - kHalf;
@@ -98,9 +99,8 @@ void Encoder::encode_sign(unsigned int sign,
     } else {
       break;
     }
-    L <<= 1;
-    R <<= 1;
-    R += 1;
+    L = 2 * L;
+    R = 2 * R;
   }
 }
 
@@ -110,8 +110,8 @@ void Encoder::encode_sign(unsigned int sign,
  * so that cumulative distribution function stays non-descending.
  * @param c
  */
-void Encoder::update_cdf(unsigned int c) {
-  if(cdf.at(0) == 1073741823) {
+void Encoder::update_cdf(int c) {
+  if(cdf.at(0) == 16383) {
     int cumulative_freq = 0;
     for(int i = 257; i >= 0; i--) {
       frequencies.at(i) = (frequencies.at(i) + 1) / 2;
@@ -120,22 +120,40 @@ void Encoder::update_cdf(unsigned int c) {
     }
   }
   // find new index for given char
-  unsigned int i;
+  int i;
   for(i = c; frequencies.at(i) == frequencies.at(i-1); i--) {}
   // update helper arrays
   if(i < c) {
-    int ch_i, ch_symbol;
-    ch_i = index_to_char.at(i);
-    ch_symbol = index_to_char.at(c);
-    index_to_char.at(i) = ch_symbol;
-    index_to_char.at(c) = ch_i;
-    symbols_indexes.at(ch_i) = c;
-    symbols_indexes.at(ch_symbol) = i;
+    int char_at_i = index_to_char.at(i);
+    int char_at_symbol = index_to_char.at(c);
+    index_to_char.at(i) = char_at_symbol;
+    index_to_char.at(c) = char_at_i;
+    symbols_indexes.at(char_at_i) = c;
+    symbols_indexes.at(char_at_symbol) = i;
   }
   frequencies.at(i) += 1;
   while(i > 0) {
     i--;
     cdf.at(i) += 1;
+  }
+}
+
+/**
+ * Put given bit to buffer and output buffer if it is full.
+ *
+ * @param bit Bit to be written.
+ * @param f_out Output file.
+ */
+void Encoder::output_bit(int bit, std::fstream& f_out) {
+  outputted_bits++;
+  buffer >>= 1;
+  if (bit)
+    buffer |= 0x80;
+  bits_in_buffer++;
+  if (bits_in_buffer == 8)
+  {
+    f_out.put(buffer);
+    bits_in_buffer = 0;
   }
 }
 
@@ -162,7 +180,7 @@ long double Encoder::calculate_entropy() {
  * @return Mean code length.
  */
 long double Encoder::mean_code_length() {
-  return (long double)buffer.size() / (long double)(full_bits_counter);
+  return (long double)outputted_bits / (long double)(full_bits_counter);
 }
 
 /**
@@ -171,34 +189,5 @@ long double Encoder::mean_code_length() {
  * @return Compression factor.
  */
 long double Encoder::compression_factor() {
-  return (long double)buffer.size() / (long double)8 / (long double)(full_bits_counter);
-}
-
-/**
- * Save compressed data to given file name.
- * Firstly frequency table is written and then the compressed data.
- *
- * @param file_name Name of the output file.
- */
-void Encoder::save_compressed_data(std::string file_name) {
-  std::bitset<8> bit_buf;
-  int index = 0;
-  std::fstream f;
-  f.open(file_name, std::ios::out);
-  for(auto val : buffer) {
-    bit_buf.set(index, val);
-    index = (index + 1) % 8;
-    if(index == 0) {
-      char c = bit_buf.to_ulong();
-      f.write(&c, 1);
-    }
-  }
-  // output remaining bits, that do not fill full byte
-  if(index != 0) {
-    bit_buf.operator >>= (8 - index);
-    char c = bit_buf.to_ulong();
-    f.write(&c, 1);
-  }
-
-  f.close();
+  return (long double)outputted_bits / (long double)8 / (long double)(full_bits_counter);
 }

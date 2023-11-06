@@ -9,8 +9,7 @@ int main(int argc, char* argv[]) {
   std::string file_name = argv[1];
 
   Encoder encoder;
-  encoder.compress_data(file_name);
-  encoder.save_compressed_data("compressed.txt");
+  encoder.compress_data(file_name, "compressed.txt");
 
   std::cout << "Entropy: " << encoder.calculate_entropy() << std::endl;
   std::cout << "Mean code length: " << encoder.mean_code_length() << std::endl;

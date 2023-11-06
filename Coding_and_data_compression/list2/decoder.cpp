@@ -15,7 +15,7 @@ Decoder::Decoder() {
 }
 
 void Decoder::decompress_data(std::string& file_name, std::string output_file) {
-  unsigned int L = 0, R = 0xFFFFFFFFU;
+  int L = 0, R = 0xFFFF;
   std::fstream f, f_out;
   f.open(file_name, std::ios::binary | std::ios::in);
   f_out.open(output_file, std::ios::out);
@@ -25,12 +25,11 @@ void Decoder::decompress_data(std::string& file_name, std::string output_file) {
   }
   init_V(f);
   while(true) {
-    unsigned int sym_index = decode_sign(f, L, R);
+    int sym_index = decode_sign(f, L, R);
     if(sym_index == 257)
       break;
-    char character = index_to_char.at(sym_index) - kCharToIntOffset;
-//    std::cout << character << std::endl;
-    f_out.write(&character, 1);
+    int character = index_to_char.at(sym_index);
+    f_out.put(character);
     update_cdf(sym_index);
   }
   f.close();
@@ -38,16 +37,14 @@ void Decoder::decompress_data(std::string& file_name, std::string output_file) {
 }
 
 void Decoder::init_V(std::fstream & f) {
-  for(int i = 0; i < 32; i++) {
+  for(int i = 0; i < 16; i++) {
     V = 2 * V + get_bit(f);
   }
 }
 
 int Decoder::get_bit(std::fstream &f) {
-  char c;
   if(bits_in_buffer == 0) {
-    f.read(&c, 1);
-    buffer = (int)(c);
+    buffer = f.get();
     bits_in_buffer = 8;
   }
   int bit = buffer & 1;
@@ -56,12 +53,12 @@ int Decoder::get_bit(std::fstream &f) {
   return bit;
 }
 
-unsigned int Decoder::decode_sign(std::fstream &f, unsigned int &L, unsigned int &R) {
-  int sign = 1;
-  size_t Range = (size_t)R - (size_t)L  + 1;
-  unsigned int cumulative_freq = ((V - L + 1) * cdf.at(0) - 1) / Range;
-  for(; cdf.at(sign) > cumulative_freq; sign++);
-  R = L + (Range * cdf.at(sign - 1)) / cdf.at(0) - 1;
+int Decoder::decode_sign(std::fstream &f, int &L, int &R) {
+  int sign;
+  int Range = R - L;
+  int cumulative_freq = ((((V - L) + 1) * cdf.at(0) - 1) / Range);
+  for(sign = 1; cdf.at(sign) > cumulative_freq; sign++);
+  R = L + (Range * cdf.at(sign - 1)) / cdf.at(0);
   L = L + (Range * cdf.at(sign)) / cdf.at(0);
   while(true) {
     if (R < kHalf) {
@@ -77,11 +74,9 @@ unsigned int Decoder::decode_sign(std::fstream &f, unsigned int &L, unsigned int
     } else {
       break;
     }
-    L <<= 1;
-    R <<= 1;
-    R++;
-    V <<= 1;
-    V += get_bit(f);
+    L = L * 2;
+    R = R * 2;
+    V = V * 2 + get_bit(f);
   }
   return sign;
 }
@@ -93,8 +88,8 @@ unsigned int Decoder::decode_sign(std::fstream &f, unsigned int &L, unsigned int
  * so that cumulative distribution function stays non-descending.
  * @param c
  */
-void Decoder::update_cdf(unsigned int c) {
-  if(cdf.at(0) == 1073741823) {
+void Decoder::update_cdf(int c) {
+  if(cdf.at(0) == 16383) {
     int cumulative_freq = 0;
     for(int i = 257; i >= 0; i--) {
       frequencies.at(i) = (frequencies.at(i) + 1) / 2;
@@ -103,7 +98,7 @@ void Decoder::update_cdf(unsigned int c) {
     }
   }
   // find new index for given char
-  unsigned int i;
+  int i;
   for(i = c; frequencies.at(i) == frequencies.at(i-1); i--) {}
   // update helper arrays
   if(i < c) {

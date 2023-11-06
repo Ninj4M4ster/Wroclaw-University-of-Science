@@ -13,23 +13,22 @@ class Decoder {
   void decompress_data(std::string& file_name, std::string output_file);
   void init_V(std::fstream & f);
   int get_bit(std::fstream & f);
-  unsigned int decode_sign(std::fstream & f,
-                  unsigned int & L,
-                  unsigned int & R);
-  void update_cdf(unsigned int c);
+  int decode_sign(std::fstream & f,
+                  int & L,
+                  int & R);
+  void update_cdf(int c);
  private:
-  std::vector<unsigned int> symbols_indexes = std::vector<unsigned int>(256);
-  std::vector<int> index_to_char = std::vector<int>(258);
-  std::vector<size_t> cdf = std::vector<size_t>(258, 0);
-  std::vector<size_t> frequencies = std::vector<size_t>(258, 1);
-  unsigned int V;
-  unsigned int buffer;
+  std::vector<int> symbols_indexes = std::vector<int>(256);
+  std::vector<unsigned char> index_to_char = std::vector<unsigned char>(257);
+  std::vector<int> cdf = std::vector<int>(258, 0);
+  std::vector<int> frequencies = std::vector<int>(258, 1);
+  int V;
+  int buffer;
   int bits_in_buffer = 0;
 
-  static constexpr auto kCharToIntOffset = 128;
-  static constexpr auto kHalf = 0x80000000U;
-  static constexpr auto kQuarter = 0x40000000U;
-  static constexpr auto k3Quarters = 0xC0000000U;
+  static constexpr int kHalf = 0x8000;
+  static constexpr int kQuarter = 0x4000;
+  static constexpr int k3Quarters = 0xC000;
 };
 
 #endif //WROCLAW_UNIVERSITY_OF_SCIENCE_CODING_AND_DATA_COMPRESSION_LIST2_DECODER_H_
