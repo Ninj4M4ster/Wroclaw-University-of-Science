@@ -37,7 +37,7 @@ void Encoder::compress_data(std::string & file_name, std::string output_file_nam
     full_frequencies.at(c)++;
     full_bits_counter++;
     int sym_index = symbols_indexes.at(c);
-    encode_sign(c, L, R, f_out);
+    encode_sign(sym_index, L, R, f_out);
     update_cdf(sym_index);
     c = f.get();
   }
