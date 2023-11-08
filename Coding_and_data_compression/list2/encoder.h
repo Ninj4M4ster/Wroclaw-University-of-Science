@@ -7,6 +7,9 @@
 #include <bitset>
 #include <cmath>
 
+/**
+ * Encoder class responsible for encoding files using adaptive arithmetic coding.
+ */
 class Encoder {
  public:
   Encoder();

@@ -14,6 +14,12 @@ Decoder::Decoder() {
   frequencies.at(0) = 0;
 }
 
+/**
+ * Decompress data from given file and print output in given output file.
+ *
+ * @param file_name Name of file to be decompressed.
+ * @param output_file Name of output file.
+ */
 void Decoder::decompress_data(std::string& file_name, std::string output_file) {
   int L = 0, R = 0xFFFF;
   std::fstream f, f_out;
@@ -24,27 +30,43 @@ void Decoder::decompress_data(std::string& file_name, std::string output_file) {
     throw std::exception();
   }
   init_V(f);
-  while(true) {
+  while(last_8_iterations_counter > 0) {
     int sym_index = decode_sign(f, L, R);
     if(sym_index == 257)
       break;
     int character = index_to_char.at(sym_index);
     f_out.put(character);
     update_cdf(sym_index);
+    if(last_8_iterations)
+      last_8_iterations_counter--;
   }
   f.close();
   f_out.close();
 }
 
+/**
+ * Initialize V value used later for decoding.
+ *
+ * @param f Input file.
+ */
 void Decoder::init_V(std::fstream & f) {
   for(int i = 0; i < 16; i++) {
     V = 2 * V + get_bit(f);
   }
 }
 
+/**
+ * Get single bit from given file.
+ *
+ * @param f Input file.
+ * @return Single bit, either 0 or 1.
+ */
 int Decoder::get_bit(std::fstream &f) {
   if(bits_in_buffer == 0) {
     buffer = f.get();
+    if(f.eof()) {  // decode last 8 bits
+      last_8_iterations = true;
+    }
     bits_in_buffer = 8;
   }
   int bit = buffer & 1;
@@ -53,6 +75,14 @@ int Decoder::get_bit(std::fstream &f) {
   return bit;
 }
 
+/**
+ * Decode single sign from input file and return it (index of the sign is returned).
+ *
+ * @param f Input file.
+ * @param L Left end of the current range.
+ * @param R Right end of the current range.
+ * @return Index of the range of the decoded symbol.
+ */
 int Decoder::decode_sign(std::fstream &f, int &L, int &R) {
   int sign;
   int Range = R - L;

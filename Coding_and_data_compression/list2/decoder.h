@@ -7,6 +7,9 @@
 #include <bitset>
 #include <cmath>
 
+/**
+ * Decoder class responsible for decoding files using adaptive arithmetic coding.
+ */
 class Decoder {
  public:
   Decoder();
@@ -25,6 +28,8 @@ class Decoder {
   int V;
   int buffer;
   int bits_in_buffer = 0;
+  bool last_8_iterations = false;
+  int last_8_iterations_counter = 8;
 
   static constexpr int kHalf = 0x8000;
   static constexpr int kQuarter = 0x4000;
