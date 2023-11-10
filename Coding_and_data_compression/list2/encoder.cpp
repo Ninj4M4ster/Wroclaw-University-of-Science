@@ -164,7 +164,7 @@ void Encoder::output_bit(int bit, std::fstream& f_out) {
  */
 long double Encoder::calculate_entropy() {
   long double sum = 0.0;
-  for(int i = 1; i < full_frequencies.size(); i++) {
+  for(int i = 0; i < full_frequencies.size(); i++) {
     unsigned long long freq = full_frequencies.at(i);
     if(freq == 0)
       continue;
