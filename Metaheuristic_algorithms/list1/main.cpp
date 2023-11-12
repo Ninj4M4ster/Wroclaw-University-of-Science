@@ -84,7 +84,7 @@ void readFile(std::string file_name, Graph& empty_graph) {
  * @param graph Graph to find mst
  * @return Cost of the mst.
  */
-std::size_t primMst(int source, Graph graph) {
+Graph primMst(int source, Graph & graph) {
   std::vector<int> C(graph.size(), std::numeric_limits<int>::max());
   std::vector<int> parent(graph.size(), -1);
   auto compare =
@@ -110,55 +110,76 @@ std::size_t primMst(int source, Graph graph) {
       }
     }
   }
-
-  std::size_t result = 0;
+  // push mst to graph structure
+  Graph mst;
   for(int i = 0; i < parent.size(); i++) {
     if(parent.at(i) != -1) {
-      result += graph[parent.at(i)][i];
+      mst[i][parent.at(i)] = graph[i][parent.at(i)];
+      mst[parent.at(i)][i] = graph[parent.at(i)][i];
     }
   }
-  return result;
+  return mst;
 }
 
 /**
- * Find MST in given graph using Prim's algorithm.
- * Based on order of visited vertices, cycle is created.
+ * Calculate cost of given MST tree by travelling it using BFS algorithm.
  *
- * @param source Source vert
- * @param graph Graph to find mst
- * @return Vector with vertices in order of the cycle.
+ * @param mst MST which cost will be calculated.
+ * @return Cost of given MST.
  */
-std::vector<int> primMstCycle(int source, Graph graph) {
-  std::vector<int> C(graph.size(), std::numeric_limits<int>::max());
-  std::vector<int> parent(graph.size(), -1);
-  auto compare =
-      [](std::pair<int, int> l, std::pair<int, int> r) {return l.second > r.second;};
-  std::vector<bool> visited(graph.size(), false);
-
-  std::vector<int> vertex_history;
-
-  std::priority_queue<std::pair<int, int>, std::vector<std::pair<int, int>>, decltype(compare)> pq(compare);
-  C.at(source) = 0;
-  pq.emplace(source, 0);
-  while(!pq.empty()) {
-    auto curr = pq.top();
-    pq.pop();
-
-    if(visited.at(curr.first)) {
-      continue;
-    }
-    visited.at(curr.first) = true;
-    vertex_history.push_back(curr.first);
-    for(auto neighbours : graph[curr.first]) {
-      if(!visited.at(neighbours.first) && C.at(neighbours.first) > neighbours.second) {
-        C.at(neighbours.first) = neighbours.second;
-        pq.emplace(neighbours.first, C.at(neighbours.first));
-        parent.at(neighbours.first) = curr.first;
+std::size_t calculateMstCost(Graph & mst) {
+  std::vector<bool> visited(mst.size(), false);
+  size_t final_cost = 0;
+  std::queue<int> Q;
+  Q.push(0);
+  visited.at(0) = true;
+  while(!Q.empty()) {
+    int curr_vert = Q.front();
+    Q.pop();
+    for(auto pair : mst.at(curr_vert)) {
+      if(!visited.at(pair.first)) {
+        final_cost += pair.second;
+        Q.push(pair.first);
+        visited.at(pair.first) = true;
       }
     }
   }
+  return final_cost;
+}
 
-  return vertex_history;
+/**
+ * Find MST in given graph using dfs algorithm.
+ * This is main dfs pipeline.
+ * Based on order of visited vertices, cycle is created.
+ *
+ * @param source Source vertex
+ * @param graph Mst to find cycle
+ * @param cycle Array in which cycle is created
+ * @param visited Array indicating if given vertex has been already visited.
+ */
+void createCycle(int curr_vert, Graph & mst, std::vector<int> & cycle, std::vector<bool> & visited) {
+  visited.at(curr_vert) = true;
+  cycle.push_back(curr_vert);
+  for(auto & pair : mst.at(curr_vert)) {
+    if(!visited.at(pair.first)) {
+      createCycle(pair.first, mst, cycle, visited);
+    }
+  }
+}
+
+/**
+ * Create cycle based on given MST by travelling it using DFS algorithm.
+ * Cycle is created by pushing vertices to an array when they are visited for the first time.
+ *
+ * @param source Starting vertex.
+ * @param mst MST to create cycle based on.
+ * @return Array that indicates a cycle.
+ */
+std::vector<int> createCycle(int source, Graph & mst) {
+  std::vector<bool> visited(mst.size(), false);
+  std::vector<int> cycle;
+  createCycle(source, mst, cycle, visited);
+  return cycle;
 }
 
 /**
@@ -237,10 +258,15 @@ void generateCycles(Graph & graph) {
 
 int main() {
   Graph graph;
-  readFile("data/xqf131.tsp", graph);
+  readFile("data/xql662.tsp", graph);
 
-  std::cout << "Koszt MST: " << primMst(0, graph) << std::endl;
-  std::vector<int> cycle = primMstCycle(0, graph);
+  Graph mst = primMst(0, graph);
+  for(auto pair : mst.at(0)) {
+    std::cout << "0 - " << pair.first << std::endl;
+  }
+
+  std::cout << "Koszt MST: " << calculateMstCost(mst) << std::endl;
+  std::vector<int> cycle = createCycle(0, mst);
   std::cout << "Cykl: " << std::endl << "[";
   for(auto v : cycle) {
     std::cout << v << ", ";
