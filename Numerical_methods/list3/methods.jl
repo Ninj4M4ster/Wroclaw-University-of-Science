@@ -1,11 +1,23 @@
 # author: Jakub Drzewiecki 268418
 
+"""
+Bisection method to find root of given function.
+
+  f - function, which root will be found
+  a - left side of the range
+  b - right side of the range
+  delta - min distance between left and right range
+  epsilon - result accuracy
+  return (r, f(r), it, err), where r - found root,
+         f(r) - value of function at root, it - iterations iterations counter
+         err - error number, 0 indicates no error, 1 indicates that root cannot be found
+"""
 function mbisekcji(f, a::Float64, b::Float64, delta::Float64, epsilon::Float64)
     iteration_counter = 0
     u = f(a)
     v = f(b)
     e = b - a
-    if(sign(u) == sign(v))
+    if(sign(u) == sign(v))  # same sign for both ends of range
         return 0, 0, 0, 1
     end
     while true
@@ -25,6 +37,20 @@ function mbisekcji(f, a::Float64, b::Float64, delta::Float64, epsilon::Float64)
     end
 end
 
+"""
+Newton's method to find root of given function
+  
+  f - function, which root will be found
+  p_f - derivative of given function
+  x_0 - start value
+  delta - min distance between pervious and current x
+  epsilon - accuracy of the result
+  maxit - max number of iterations
+  return (r, f(r), it, err), where r - found root,
+         f(r) - value of function at root, it - iterations iterations counter,
+         err - error number, 0 indicates no error, 1 indicates that max iterations count has been exceeded,
+         2 - derivative value is too close to zero
+"""
 function mstycznych(f, pf, x0::Float64, delta::Float64, epsilon::Float64, maxit::Int)
     iteration_counter = 0
     v = f(x0)
@@ -32,7 +58,7 @@ function mstycznych(f, pf, x0::Float64, delta::Float64, epsilon::Float64, maxit:
         return x0, v, iteration_counter, 0
     end
     while true
-        if(abs(pf(x0)) < 0.000000001)  # find better way to check if pf is close to 0 
+        if(abs(pf(x0)) < epsilon) 
             return x0, v, iteration_counter, 2
         end
         iteration_counter += 1
@@ -48,6 +74,19 @@ function mstycznych(f, pf, x0::Float64, delta::Float64, epsilon::Float64, maxit:
     end
 end
 
+"""
+Secand method to find root of given function.
+
+  f - function, which root will be found
+  x_0 - left start of the secand
+  x_1 - right start of the secand
+  delta - min distance between x_0 and x_1
+  epsilon - accuracy of the result
+  maxit - max number of iterations
+  return (r, f(r), it, err), where r - found root,
+         f(r) - value of function at root, it - iterations iterations counter
+         err - error number, 0 indicates no error, 1 indicates that max iterations count has been exceeded
+"""
 function msiecznych(f, x0::Float64, x1::Float64, delta::Float64, epsilon::Float64, maxit::Int)
     iteration_counter = 0
     fx0 = f(x0)
@@ -71,13 +110,3 @@ function msiecznych(f, x0::Float64, x1::Float64, delta::Float64, epsilon::Float6
         end
     end
 end
-
-function main()
-    a = -0.5
-    b = 1.0
-    f = x -> sin(x)
-    fp = x -> cos(x)
-    mbisekcji(f, -0.5, 0.25, 0.01, 0.01)
-end
-
-main()

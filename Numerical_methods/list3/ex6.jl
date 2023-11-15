@@ -1,4 +1,4 @@
-# author: Jakub Drzewiecki
+# author: Jakub Drzewiecki 268418
 
 include("methods.jl")
 
@@ -11,7 +11,7 @@ function main()
     results_f1_1 = mbisekcji(f1, -5.0, 5.0, acc, acc)
     results_f1_2 = mstycznych(f1, pf1, 0.0, acc, acc, 100)
     results_f1_3 = msiecznych(f1, -1.0, 0.0, acc, acc, 100)
-    results_f2_1 = mbisekcji(f2, -1.0, 1.5, acc, acc)
+    results_f2_1 = mbisekcji(f2, -0.5, 0.5, acc, acc)
     results_f2_2 = mstycznych(f2, pf2, -1.0, acc, acc, 100)
     results_f2_3 = msiecznych(f2, -3.0, -5.0, acc, acc, 100)
     println("F1:")
