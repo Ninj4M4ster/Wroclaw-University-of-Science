@@ -8,6 +8,7 @@
 #include <vector>
 #include <queue>
 #include <cmath>
+#include <memory>
 
 /**
  * Graph structure
@@ -22,6 +23,9 @@ typedef std::unordered_map<int, std::unordered_map<int, int>> Graph;
 class GraphHandler {
  public:
   GraphHandler(std::string file_name);
+  size_t getMstCost() const;
+  std::shared_ptr<Graph> getMst() const;
+  std::shared_ptr<Graph> getGraph() const;
 
  private:
   int euc_2d(const std::pair<int, int>& l, const std::pair<int, int>& r);
@@ -29,8 +33,8 @@ class GraphHandler {
   void primMst(int source);
   std::size_t calculateMstCost();
 
-  Graph graph_;
-  Graph mst_;
+  std::shared_ptr<Graph> graph_ = std::make_shared<Graph>();
+  std::shared_ptr<Graph> mst_ = std::make_shared<Graph>();
   size_t mst_cost_;
 };
 
