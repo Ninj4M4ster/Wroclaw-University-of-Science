@@ -42,7 +42,7 @@ void CycleCreator::createCycle(int source) {
   std::vector<int> cycle;
   createCycle(source, cycle, visited);
   cycle_ = cycle;
-  cycle_cost_ = calculateCycleCost();
+  cycle_cost_ = calculateCycleCost(cycle_, graph_);
 }
 
 /**
@@ -50,17 +50,29 @@ void CycleCreator::createCycle(int source) {
  *
  * @return Cost of travelling the cycle.
  */
-size_t CycleCreator::calculateCycleCost() {
+size_t CycleCreator::calculateCycleCost(std::vector<int> & cycle, std::shared_ptr<Graph> graph) {
   std::size_t cost = 0;
-  for(std::size_t i = 0; i < cycle_.size() - 1; i++) {
-    cost += graph_->at(cycle_.at(i)).at(cycle_.at(i+1));
+  for(std::size_t i = 0; i < cycle.size() - 1; i++) {
+    cost += graph->at(cycle.at(i)).at(cycle.at(i+1));
   }
-  cost += graph_->at(cycle_.at(cycle_.size() - 1)).at(cycle_.at(0));
+  cost += graph->at(cycle.at(cycle.size() - 1)).at(cycle.at(0));
   return cost;
 }
 
-std::vector<int> CycleCreator::createRandomCycle(int cycle_size, std::mt19937_64 & generator) {
-
+/**
+ * Generate random cycle for given number of vertices.
+ *
+ * @param cycle_size Size of cycle, number of vertices.
+ * @param generator Random numbers generator.
+ * @return Random cycle.
+ */
+std::vector<int> CycleCreator::createRandomCycle(size_t cycle_size, std::mt19937_64 & generator) {
+  std::vector<int> cycle;
+  for(size_t i = 0; i < cycle_size; i++) {
+    cycle.push_back(i);
+  }
+  std::shuffle(cycle.begin(), cycle.end(), generator);
+  return cycle;
 }
 
 /**

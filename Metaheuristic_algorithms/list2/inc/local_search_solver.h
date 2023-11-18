@@ -9,13 +9,15 @@
  */
 class LocalSearchSolver {
  public:
-  LocalSearchSolver(std::shared_ptr<Graph> graph,
+  explicit LocalSearchSolver(std::shared_ptr<Graph> graph,
                     std::vector<int> cycle,
                     size_t cycle_cost);
+  virtual void localSearch();
   size_t getCycleCost() const;
   size_t getStepsCounter() const;
+  std::vector<int> getCycle() const;
 
- private:
+ protected:
   std::shared_ptr<Graph> graph_;
   size_t n_;
   size_t cycle_cost_;
@@ -24,7 +26,6 @@ class LocalSearchSolver {
   size_t steps_counter_ = 0;
 
   // local search functions
-  void localSearch();
   size_t calculateNewCycleCost(int start_ind, int end_ind);
   void invertCycle(int start_vert, int end_vert);
 };

@@ -1,8 +1,9 @@
 #include "inc/local_search_solver.h"
 
 /**
- * Constructor. It runs local search algorithm on given cycle.
+ * Constructor. Initializes all fields.
  *
+ * @TODO(Jakub Drzewiecki): Missing params
  * @param mst
  */
 LocalSearchSolver::LocalSearchSolver(std::shared_ptr<Graph> graph,
@@ -12,15 +13,33 @@ LocalSearchSolver::LocalSearchSolver(std::shared_ptr<Graph> graph,
   n_ = graph_->size();
   cycle_ = cycle;
   cycle_cost_ = cycle_cost;
-  localSearch();
 }
 
+/**
+ * Get result cycle cost.
+ *
+ * @return Result cycle cost.
+ */
 size_t LocalSearchSolver::getCycleCost() const {
   return cycle_cost_;
 }
 
+/**
+ * Get number of iterations done by algorithm.
+ *
+ * @return Number of iterations.
+ */
 size_t LocalSearchSolver::getStepsCounter() const {
   return steps_counter_;
+}
+
+/**
+ * Get result cycle.
+ *
+ * @return Array representing a cycle.
+ */
+std::vector<int> LocalSearchSolver::getCycle() const {
+  return cycle_;
 }
 
 /**
@@ -51,6 +70,9 @@ void LocalSearchSolver::localSearch() {
       steps_counter_++;
       found_better_solution = true;
     }
+    // for large graphs, stop after 100 iterations
+    if(n_ > 1000 && steps_counter_ >= 100)
+      found_better_solution = false;
   }
 }
 
@@ -83,6 +105,12 @@ size_t LocalSearchSolver::calculateNewCycleCost(int start_ind, int end_ind) {
   return new_cost;
 }
 
+/**
+ * Invert all elements in cycle between given indexes.
+ *
+ * @param start_vert Start index.
+ * @param end_vert End index.
+ */
 void LocalSearchSolver::invertCycle(int start_vert, int end_vert) {
   while(start_vert < end_vert) {
     std::swap(cycle_.at(start_vert), cycle_.at(end_vert));

@@ -2,6 +2,7 @@
 #define WROCLAW_UNIVERSITY_OF_SCIENCE_METAHEURISTIC_ALGORITHMS_LIST2_CYCLE_CREATOR_H_
 
 #include <algorithm>
+#include <random>
 #include "graph_handler.h"
 
 /**
@@ -16,7 +17,8 @@ class CycleCreator {
   std::vector<int> getCycle() const;
   size_t getCycleCost() const;
 
-  static std::vector<int> createRandomCycle(int cycle_size, std::mt19937_64 & generator);
+  static std::vector<int> createRandomCycle(size_t cycle_size, std::mt19937_64 & generator);
+  static size_t calculateCycleCost(std::vector<int> & cycle, std::shared_ptr<Graph> graph);
 
  private:
   std::shared_ptr<Graph> mst_;
@@ -24,7 +26,6 @@ class CycleCreator {
   std::vector<int> cycle_;
   size_t cycle_cost_;
 
-  size_t calculateCycleCost();
   void createCycle(int curr_vert, std::vector<int> & cycle, std::vector<bool> & visited);
 };
 
