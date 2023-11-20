@@ -13,8 +13,7 @@ class ModifiedLocalSearchSolver : public LocalSearchSolver {
   void localSearch() override;
  private:
   std::mt19937_64 rand_gen_;
-  static bool possible_neighbours_initialized_;
-  static std::vector<std::pair<int, int>> possible_neighbours_;
+  std::vector<std::pair<int, int>> possible_neighbours_;
 };
 
 #endif //WROCLAW_UNIVERSITY_OF_SCIENCE_METAHEURISTIC_ALGORITHMS_LIST2_MODIFIED_LOCAL_SEARCH_SOLVER_H_

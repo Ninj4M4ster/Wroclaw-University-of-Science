@@ -52,6 +52,7 @@ int main() {
   std::mt19937_64 rand_gen{std::random_device{}()};
 
   std::string data_dir_path = "data/";
+  std::fstream out_f;
   for(const auto & entry : std::filesystem::directory_iterator(data_dir_path)) {
     std::string file_name = entry.path().string();
     std::string graph_name = strip(file_name);
@@ -72,8 +73,10 @@ int main() {
     std::vector<size_t> steps_array_;
     size_t best_cost = std::numeric_limits<size_t>::max();
     std::vector<int> best_cycle;
+    std::cout << "Ex1" << std::endl;
     // create cycle starting from random vertex and apply local search using LocalSearchSolver
     for(int i = 0; i < std::sqrt(static_cast<double>(graph->size())); i++) {
+      std::cout << i << "/" << static_cast<int>(std::sqrt(static_cast<double>(graph->size()))) << std::endl;
       int rand_vertex = dist(rand_gen);
       cycle_creator.createCycle(rand_vertex);
 
@@ -98,13 +101,24 @@ int main() {
     // pass results to file
     // filename: graph_name
     // results to pass: mst cost, mean result cost, mean steps, best result cost, best cycle
+    out_f.open(graph_name + "_ex1.txt", std::ios::out);
+    out_f << graph_handler.getMstCost() << ";"
+          << calculateMean(cycle_costs_) << ";"
+          << calculateMean(steps_array_) << ";"
+          << findMin(cycle_costs_) << "\n";
+    for(auto val : best_cycle) {
+      out_f << val << ", ";
+    }
+    out_f.close();
 
     // pipeline for local search for random cycles, exercise 2
     cycle_costs_.clear();
     steps_array_.clear();
     best_cost = std::numeric_limits<size_t>::max();
     best_cycle.clear();
+    std::cout << "ex2" << std::endl;
     for(int i = 0; i < graph->size(); i++) {
+      std::cout << i << "/" << graph->size() << std::endl;
       std::vector<int> random_cycle = CycleCreator::createRandomCycle(graph->size(), rand_gen);
       auto cycle_cost = CycleCreator::calculateCycleCost(random_cycle, graph);
 
@@ -122,7 +136,6 @@ int main() {
     }
     // print results
     std::cout << "Results for random cycles" << std::endl;
-    std::cout << "Results for mst cycle" << std::endl;
     std::cout << "Mst cost: " << graph_handler.getMstCost() << std::endl;
     std::cout << "Mean result cost: " << calculateMean(cycle_costs_) << std::endl;
     std::cout << "Mean steps: " << calculateMean(steps_array_) << std::endl;
@@ -130,13 +143,24 @@ int main() {
     // pass results to file
     // filename: graph_name
     // results to pass: mst cost, mean result cost, mean steps, best result cost, best cycle
+    out_f.open(graph_name + "_ex2.txt", std::ios::out);
+    out_f << graph_handler.getMstCost() << ";"
+          << calculateMean(cycle_costs_) << ";"
+          << calculateMean(steps_array_) << ";"
+          << findMin(cycle_costs_) << "\n";
+    for(auto val : best_cycle) {
+      out_f << val << ", ";
+    }
+    out_f.close();
 
     // pipeline for modified local search for random cycles, exercise 3
     cycle_costs_.clear();
     steps_array_.clear();
     best_cost = std::numeric_limits<size_t>::max();
     best_cycle.clear();
+    std::cout << "Ex3" << std::endl;
     for(int i = 0; i < graph->size(); i++) {
+      std::cout << i << "/" << graph->size() << std::endl;
       std::vector<int> random_cycle = CycleCreator::createRandomCycle(graph->size(), rand_gen);
       auto cycle_cost = CycleCreator::calculateCycleCost(random_cycle, graph);
 
@@ -154,7 +178,6 @@ int main() {
       }
       // print results
       std::cout << "Results for modified local search for random cycles" << std::endl;
-      std::cout << "Results for mst cycle" << std::endl;
       std::cout << "Mst cost: " << graph_handler.getMstCost() << std::endl;
       std::cout << "Mean result cost: " << calculateMean(cycle_costs_) << std::endl;
       std::cout << "Mean steps: " << calculateMean(steps_array_) << std::endl;
@@ -162,6 +185,15 @@ int main() {
       // pass results to file
       // filename: graph_name
       // results to pass: mst cost, mean result cost, mean steps, best result cost, best cycle
+      out_f.open(graph_name + "_ex3.txt", std::ios::out);
+      out_f << graph_handler.getMstCost() << ";"
+            << calculateMean(cycle_costs_) << ";"
+            << calculateMean(steps_array_) << ";"
+            << findMin(cycle_costs_) << "\n";
+      for(auto val : best_cycle) {
+        out_f << val << ", ";
+      }
+      out_f.close();
     }
   }
 }

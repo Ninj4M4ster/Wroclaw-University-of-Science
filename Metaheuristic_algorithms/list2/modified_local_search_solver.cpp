@@ -1,7 +1,5 @@
 #include "inc/modified_local_search_solver.h"
 
-bool ModifiedLocalSearchSolver::possible_neighbours_initialized_ = false;
-
 /**
  * Constructor, initializes base class.
  *
@@ -17,13 +15,11 @@ ModifiedLocalSearchSolver::ModifiedLocalSearchSolver(std::shared_ptr<Graph> grap
                                                      : LocalSearchSolver(graph, cycle, cycle_cost) {
   rand_gen_ = rand_gen;
   // create array of all possibilities
-  if(!possible_neighbours_initialized_) {
-    for (int i = 0; i < n_ - 1; i++) {
-      for (int j = i + 1; j < n_; j++) {
-        if (i == 0 && j == n_ - 1)
-          continue;
-        possible_neighbours_.push_back({i, j});
-      }
+  for (int i = 0; i < n_ - 1; i++) {
+    for (int j = i + 1; j < n_; j++) {
+      if (i == 0 && j == n_ - 1)
+        continue;
+      possible_neighbours_.push_back({i, j});
     }
   }
 }
