@@ -38,7 +38,7 @@ void CycleCreator::createCycle(int curr_vert, std::vector<int> & cycle, std::vec
  * @return Array that indicates a cycle.
  */
 void CycleCreator::createCycle(int source) {
-  std::vector<bool> visited(mst_->size(), false);
+  std::vector<bool> visited(graph_->size(), false);
   std::vector<int> cycle;
   createCycle(source, cycle, visited);
   cycle_ = cycle;

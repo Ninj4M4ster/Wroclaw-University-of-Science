@@ -50,8 +50,5 @@ void ModifiedLocalSearchSolver::localSearch() {
       steps_counter_++;
       found_better_solution = true;
     }
-    // for large graphs, stop after 100 iterations
-    if(n_ > 1000 && steps_counter_ >= 100)
-      found_better_solution = false;
   }
 }
