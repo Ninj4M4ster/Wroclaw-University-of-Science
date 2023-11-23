@@ -1,7 +1,31 @@
 #include "inc/Decoder.h"
 
 void Decoder::decompress(std::string in_file, std::string out_file) {
+  createDefaultDict();
+  f_in_.open(in_file, std::ios_base::binary | std::ios_base::in);
+  f_out_.open(out_file, std::ios_base::out);
 
+  size_t prev = decodeSign();
+  std::string S, C;
+  f_out_ << dict_[prev];
+  while(!f_in_.eof()) {
+    size_t next = decodeSign();
+    if(next == dict_.size() + 1) {
+      break;
+    }
+    if(dict_.find(next) == dict_.end()) {
+      S = dict_[prev];
+      S = S + C;
+    } else {
+      S = dict_[next];
+    }
+    f_out_ << S;
+    C = S[0];
+    addToDict(dict_[prev] + C);
+    prev = next;
+  }
+  f_in_.close();
+  f_out_.close();
 }
 
 void Decoder::addToDict(std::string sign) {
@@ -9,51 +33,66 @@ void Decoder::addToDict(std::string sign) {
 }
 
 void Decoder::createDefaultDict() {
-
+  dict_.clear();
+  for(int i = 0; i < 256; i++) {
+    std::string s = std::string(1, i);
+    dict_[i] = s;
+  }
 }
 
-void Decoder::writeBit(int bit) {
-  outputted_bits_++;
-  bits_in_buffer_++;
+int Decoder::getBit() {
+  if(bits_in_buffer_ == 0) {
+    buffer_ = f_in_.get();
+    if(f_in_.eof()) {
+      finish_reading_ = true;
+    }
+    bits_in_buffer_ = 8;
+  }
+  bits_in_buffer_--;
+  int val = buffer_ & 1;
   buffer_ >>= 1;
-  if(bit)
-    buffer_ |= 0x80;
-  if(bits_in_buffer_ == 8) {
-    f_out_.put(buffer_);
-    bits_in_buffer_ = 0;
-  }
+  return val;
 }
 
-void Decoder::writeNumber(size_t number) {
-  if(number == 0)
-    writeBit(0);
-  while(number > 0) {
-    writeBit(number & 0b1);
-    number >>= 1;
-  }
-}
-
-std::string Decoder::decodeSign(size_t sign) {
+size_t Decoder::decodeSign() {
   switch (coding_type_) {
-    case CodingType::OMEGA:return decodeOmega(sign);
-    case CodingType::DELTA:return decodeDelta(sign);
-    case CodingType::GAMMA:return decodeGamma(sign);
-    case CodingType::FIBONACCI:return decodeFibonacci(sign);
+    case CodingType::OMEGA: {
+      return decodeOmega();
+    }
+    case CodingType::DELTA: {
+      return decodeDelta();
+    }
+    case CodingType::GAMMA: {
+      return decodeGamma();
+    }
+    case CodingType::FIBONACCI: {
+      return decodeFibonacci();
+    }
   }
 }
 
-std::string Decoder::decodeGamma(size_t val) {
-
+size_t Decoder::decodeGamma() {
+  return 0;
 }
 
-std::string Decoder::decodeDelta(size_t val) {
-
+size_t Decoder::decodeDelta() {
+  return 0;
 }
 
-std::string Decoder::decodeOmega(size_t val) {
-
+size_t Decoder::decodeOmega() {
+  size_t n = 1;
+  size_t val = getBit();
+  while(val > 0) {
+    for(int i = 0; i < n; i++) {
+      val <<= 1;
+      val |= getBit();
+    }
+    n = val;
+    val = getBit();
+  }
+  return n;
 }
 
-std::string Decoder::decodeFibonacci(size_t val) {
-
+size_t Decoder::decodeFibonacci() {
+  return 0;
 }

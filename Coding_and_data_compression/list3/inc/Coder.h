@@ -1,6 +1,7 @@
 #ifndef WROCLAW_UNIVERSITY_OF_SCIENCE_CODING_AND_DATA_COMPRESSION_LIST3_CODER_H_
 #define WROCLAW_UNIVERSITY_OF_SCIENCE_CODING_AND_DATA_COMPRESSION_LIST3_CODER_H_
 
+#include <vector>
 #include "CodingType.h"
 
 class Coder {
@@ -11,7 +12,8 @@ class Coder {
  private:
   std::unordered_map<std::string, size_t> dict_;
   CodingType coding_type_ = CodingType::OMEGA;
-  int buffer_ = 0b0;
+  std::vector<int> tmp_buffer_;
+  int buffer_ = 0;
   int bits_in_buffer_ = 0;
   std::fstream f_in_;
   std::fstream f_out_;
@@ -21,7 +23,9 @@ class Coder {
   void createDefaultDict();
   void writeBit(int bit);
   void writeNumber(size_t number);
+  void outputTempBuffer();
   void encodeSign(std::string sign);
+  void endEncoding();
 
   void encodeGamma(size_t val);
   void encodeDelta(size_t val);

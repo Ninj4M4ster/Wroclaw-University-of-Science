@@ -11,22 +11,22 @@ class Decoder {
  private:
   std::unordered_map<size_t, std::string> dict_;
   CodingType coding_type_ = CodingType::OMEGA;
-  int buffer_ = 0b0;
-  int bits_in_buffer_ = 0;
   std::fstream f_in_;
   std::fstream f_out_;
-  size_t outputted_bits_ = 0;
+
+  int buffer_ = 0b0;
+  int bits_in_buffer_ = 0;
+  bool finish_reading_ = false;
 
   void addToDict(std::string sign);
   void createDefaultDict();
-  void writeBit(int bit);
-  void writeNumber(size_t number);
-  std::string decodeSign(size_t sign);
+  int getBit();
+  size_t decodeSign();
 
-  std::string decodeGamma(size_t val);
-  std::string decodeDelta(size_t val);
-  std::string decodeOmega(size_t val);
-  std::string decodeFibonacci(size_t val);
+  size_t decodeGamma();
+  size_t decodeDelta();
+  size_t decodeOmega();
+  size_t decodeFibonacci();
 };
 
 #endif //WROCLAW_UNIVERSITY_OF_SCIENCE_CODING_AND_DATA_COMPRESSION_LIST3_DECODER_H_

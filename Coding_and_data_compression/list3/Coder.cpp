@@ -2,6 +2,7 @@
 // Created by kubad on 21.11.2023.
 //
 
+#include <bitset>
 #include "inc/Coder.h"
 
 
@@ -23,6 +24,8 @@ void Coder::compress(std::string in_file, std::string out_file) {
       prev_sign = next_sign;
     }
   }
+  endEncoding();
+  f_out_.put(buffer_ >> (8 - bits_in_buffer_));
   f_in_.close();
   f_out_.close();
 }
@@ -45,15 +48,26 @@ void Coder::createDefaultDict() {
 }
 
 void Coder::writeBit(int bit) {
+  tmp_buffer_.push_back(bit);
   outputted_bits_++;
-  bits_in_buffer_++;
-  buffer_ >>= 1;
-  if(bit)
-    buffer_ |= 0x80;
-  if(bits_in_buffer_ == 8) {
-    f_out_.put(buffer_);
-    bits_in_buffer_ = 0;
+}
+
+void Coder::outputTempBuffer() {
+  int index = tmp_buffer_.size() - 1;
+  while(index >= 0) {
+    bits_in_buffer_++;
+    buffer_ >>= 1;
+    if (tmp_buffer_.at(index)) {
+      buffer_ |= 0x80;
+    }
+    if (bits_in_buffer_ == 8) {
+      f_out_.put(buffer_);
+      bits_in_buffer_ = 0;
+      buffer_ = 0;
+    }
+    index--;
   }
+  tmp_buffer_.clear();
 }
 
 void Coder::writeNumber(size_t number) {
@@ -68,11 +82,39 @@ void Coder::writeNumber(size_t number) {
 void Coder::encodeSign(std::string sign) {
   size_t sign_val = dict_[sign];
   switch (coding_type_) {
-    case CodingType::OMEGA:encodeOmega(sign_val);
-    case CodingType::DELTA:encodeDelta(sign_val);
-    case CodingType::GAMMA:encodeGamma(sign_val);
-    case CodingType::FIBONACCI:encodeFibonacci(sign_val);
+    case CodingType::OMEGA: {
+      encodeOmega(sign_val);
+      break;};
+    case CodingType::DELTA: {
+      encodeDelta(sign_val);
+      break;};
+    case CodingType::GAMMA: {
+      encodeGamma(sign_val);
+      break;};
+    case CodingType::FIBONACCI: {
+      encodeFibonacci(sign_val);
+      break;}
   }
+  outputTempBuffer();
+}
+
+void Coder::endEncoding() {
+  size_t sign_val = dict_.size();
+  switch (coding_type_) {
+    case CodingType::OMEGA: {
+      encodeOmega(sign_val);
+      break;};
+    case CodingType::DELTA: {
+      encodeDelta(sign_val);
+      break;};
+    case CodingType::GAMMA: {
+      encodeGamma(sign_val);
+      break;};
+    case CodingType::FIBONACCI: {
+      encodeFibonacci(sign_val);
+      break;}
+  }
+  outputTempBuffer();
 }
 
 void Coder::encodeGamma(size_t val) {
@@ -109,8 +151,8 @@ void Coder::encodeDelta(size_t val) {
 void Coder::encodeOmega(size_t val) {
   writeBit(0);
   while(val > 1) {
-    val = 64 - __builtin_clzll(val);
     writeNumber(val);
+    val = 64 - __builtin_clzll(val);
     val--;
   }
 }
