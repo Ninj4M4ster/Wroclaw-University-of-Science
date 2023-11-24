@@ -18,6 +18,8 @@ class Decoder {
   int bits_in_buffer_ = 0;
   bool finish_reading_ = false;
 
+  std::vector<size_t> fibonacci_sequence_{1, 2};
+
   void addToDict(std::string sign);
   void createDefaultDict();
   int getBit();

@@ -19,6 +19,8 @@ class Coder {
   std::fstream f_out_;
   size_t outputted_bits_ = 0;
 
+  std::vector<size_t> fibonacci_sequence_{1, 2};
+
   void addToDict(std::string sign);
   void createDefaultDict();
   void writeBit(int bit);
@@ -31,6 +33,7 @@ class Coder {
   void encodeDelta(size_t val);
   void encodeOmega(size_t val);
   void encodeFibonacci(size_t val);
+  int getFirstLowerEqualFib(size_t number);
 };
 
 #endif //WROCLAW_UNIVERSITY_OF_SCIENCE_CODING_AND_DATA_COMPRESSION_LIST3_CODER_H_

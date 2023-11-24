@@ -10,6 +10,7 @@ void Coder::compress(std::string in_file, std::string out_file) {
   createDefaultDict();
   f_in_.open(in_file, std::ios::binary | std::ios::in);
   f_out_.open(out_file, std::ios::binary | std::ios::out);
+  encodeFibonacci(143);
   int val = f_in_.get();
   std::string prev_sign = std::string(1, val);
   while(!f_in_.eof()) {
@@ -53,6 +54,9 @@ void Coder::writeBit(int bit) {
 }
 
 void Coder::outputTempBuffer() {
+  for(auto val : tmp_buffer_) {
+    std::cout << val;
+  }
   int index = tmp_buffer_.size() - 1;
   while(index >= 0) {
     bits_in_buffer_++;
@@ -158,8 +162,33 @@ void Coder::encodeOmega(size_t val) {
 }
 
 void Coder::encodeFibonacci(size_t val) {
-
+  writeBit(1);
+  int index = getFirstLowerEqualFib(val);
+  while(val > 0) {
+    writeBit(1);
+    val -= fibonacci_sequence_.at(index);
+    index--;
+    while(index >= 0 && fibonacci_sequence_.at(index) > val) {
+      writeBit(0);
+      index--;
+    }
+  }
 }
 
+int Coder::getFirstLowerEqualFib(size_t number) {
+  int index = 0;
+  while(index < fibonacci_sequence_.size() && fibonacci_sequence_.at(index) <= number) {
+    index++;
+  }
+  if(index == fibonacci_sequence_.size()) {
+    for(; fibonacci_sequence_.at(index - 1) <= number; index++) {
+      fibonacci_sequence_.push_back(fibonacci_sequence_.at(index - 1) + fibonacci_sequence_.at(index - 2));
+    }
+    index -= 2;
+  } else if(index != 0){
+    index--;
+  }
+  return index;
+}
 
 
