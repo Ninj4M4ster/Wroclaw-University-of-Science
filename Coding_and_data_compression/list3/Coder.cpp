@@ -116,9 +116,6 @@ void Coder::endEncoding() {
 
 void Coder::encodeGamma(size_t val) {
   size_t n = 64 - __builtin_clzll(val);
-  for(int i = 0; i < n - 1; i++) {
-    writeBit(0);
-  }
   if(val == 0) {
     writeBit(0);
     return;
@@ -127,21 +124,24 @@ void Coder::encodeGamma(size_t val) {
     writeBit(val & 0b1);
     val >>= 1;
   }
+  for(int i = 0; i < n - 1; i++) {
+    writeBit(0);
+  }
 }
 
 void Coder::encodeDelta(size_t val) {
   size_t n = 64 - __builtin_clzll(val);
   size_t k = 64 - __builtin_clzll(n);
-  for(int i = 0; i < k - 1; i++) {
-    writeBit(0);
+  while(val > 1) {
+    writeBit(val & 0b1);
+    val >>= 1;
   }
   while(n > 0) {
     writeBit(n & 0b1);
     n >>= 1;
   }
-  while(val > 1) {
-    writeBit(val & 0b1);
-    val >>= 1;
+  for(int i = 0; i < k - 1; i++) {
+    writeBit(0);
   }
 }
 

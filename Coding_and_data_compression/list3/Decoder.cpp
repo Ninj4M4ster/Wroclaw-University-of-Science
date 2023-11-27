@@ -76,11 +76,41 @@ size_t Decoder::decodeSign() {
 }
 
 size_t Decoder::decodeGamma() {
-  return 0;
+  int val = getBit();
+  int zeros_count = 0;
+  while(val == 0) {
+    zeros_count++;
+    val = getBit();
+  }
+  size_t result_number = 1;
+  for(int i = 0; i < zeros_count; i++) {
+    result_number <<= 1;
+    if(getBit())
+      result_number |= 1;
+  }
+  return result_number;
 }
 
 size_t Decoder::decodeDelta() {
-  return 0;
+  int val = getBit();
+  int zeros_count = 0;
+  while(val == 0) {
+    zeros_count++;
+    val = getBit();
+  }
+  size_t bits_count = 1;
+  for(int i = 0; i < zeros_count; i++) {
+    bits_count <<= 1;
+    if(getBit())
+      bits_count |= 1;
+  }
+  size_t result_number = 1;
+  for(int i = 0; i < bits_count - 1; i++) {
+    result_number <<= 1;
+    if(getBit())
+      result_number |= 1;
+  }
+  return result_number;
 }
 
 size_t Decoder::decodeOmega() {
