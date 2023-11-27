@@ -1,5 +1,6 @@
 #include <bitset>
 #include <algorithm>
+#include <cmath>
 #include "inc/Coder.h"
 
 
@@ -11,6 +12,7 @@ void Coder::compress(std::string in_file, std::string out_file) {
   std::string prev_sign = std::string(1, val);
   while(!f_in_.eof()) {
     val = f_in_.get();
+    updateInputFreq(val);
     std::string next_sign = std::string(1, val);
     std::string sequence = prev_sign + next_sign;
     if(dict_.find(sequence) != dict_.end()) {
@@ -24,6 +26,9 @@ void Coder::compress(std::string in_file, std::string out_file) {
   endEncoding();
   f_out_.put(buffer_ >> (8 - bits_in_buffer_));
   f_in_.close();
+  f_out_.close();
+  f_out_.open(out_file, std::ios::binary | std::ios::in);
+  calculateStatistics();
   f_out_.close();
 }
 
@@ -81,13 +86,13 @@ void Coder::encodeSign(std::string sign) {
   switch (coding_type_) {
     case CodingType::OMEGA: {
       encodeOmega(sign_val);
-      break;};
+      break;}
     case CodingType::DELTA: {
       encodeDelta(sign_val);
-      break;};
+      break;}
     case CodingType::GAMMA: {
       encodeGamma(sign_val);
-      break;};
+      break;}
     case CodingType::FIBONACCI: {
       encodeFibonacci(sign_val);
       break;}
@@ -100,13 +105,13 @@ void Coder::endEncoding() {
   switch (coding_type_) {
     case CodingType::OMEGA: {
       encodeOmega(sign_val);
-      break;};
+      break;}
     case CodingType::DELTA: {
       encodeDelta(sign_val);
-      break;};
+      break;}
     case CodingType::GAMMA: {
       encodeGamma(sign_val);
-      break;};
+      break;}
     case CodingType::FIBONACCI: {
       encodeFibonacci(sign_val);
       break;}
@@ -184,4 +189,49 @@ int Coder::getFirstLowerEqualFib(size_t number) {
   return index;
 }
 
+void Coder::calculateStatistics() {
+  int val = f_out_.get();
+  while(!f_out_.eof()) {
+    updateOutputFreq(val);
+    val = f_out_.get();
+  }
+  long double sum = 0.0;
+  size_t input_size = 0;
+  for(auto pair : input_counter_) {
+    input_size += pair.second;
+  }
+  std::cout << "Dlugosc kodowanego pliku: " << input_size << std::endl;
+  size_t output_size = 0;
+  for(auto pair : output_counter_) {
+    output_size += pair.second;
+  }
+  std::cout << "Dlugosc kodu wynikowego: " << output_size << std::endl;
+  for(auto pair : input_counter_) {
+    long double prob = (long double)pair.second / (long double)input_size;
+    sum -= prob * std::log2(prob);
+  }
+  std::cout << "Stopien kompresji: " << output_size / (double) input_size << std::endl;
+  std::cout << "Entropia pliku wejsciowego: " << sum << std::endl;
+  sum = 0.0;
+  for(auto pair : output_counter_) {
+    long double prob = (long double)pair.second / (long double)output_size;
+    sum -= prob * std::log2(prob);
+  }
+  std::cout << "Entropia pliku wyjsciowego: " << sum << std::endl;
+}
 
+void Coder::updateOutputFreq(int val) {
+  if(output_counter_.find(val) == output_counter_.end()) {
+    output_counter_[val] = 1;
+  } else {
+    output_counter_[val]++;
+  }
+}
+
+void Coder::updateInputFreq(int val) {
+  if(input_counter_.find(val) == input_counter_.end()) {
+    input_counter_[val] = 1;
+  } else {
+    input_counter_[val]++;
+  }
+}

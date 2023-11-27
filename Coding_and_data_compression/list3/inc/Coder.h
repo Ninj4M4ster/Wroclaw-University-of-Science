@@ -21,6 +21,9 @@ class Coder {
 
   std::vector<size_t> fibonacci_sequence_{1, 2};
 
+  std::unordered_map<int, size_t> input_counter_;
+  std::unordered_map<size_t, size_t> output_counter_;
+
   void addToDict(std::string sign);
   void createDefaultDict();
   void writeBit(int bit);
@@ -34,6 +37,10 @@ class Coder {
   void encodeOmega(size_t val);
   void encodeFibonacci(size_t val);
   int getFirstLowerEqualFib(size_t number);
+
+  void calculateStatistics();
+  void updateInputFreq(int val);
+  void updateOutputFreq(int val);
 };
 
 #endif //WROCLAW_UNIVERSITY_OF_SCIENCE_CODING_AND_DATA_COMPRESSION_LIST3_CODER_H_
