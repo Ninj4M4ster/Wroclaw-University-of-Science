@@ -28,6 +28,10 @@ void Decoder::decompress(std::string in_file, std::string out_file) {
   f_out_.close();
 }
 
+void Decoder::setCodingType(CodingType coding_type) {
+  coding_type_ = coding_type;
+}
+
 void Decoder::addToDict(std::string sign) {
   dict_[dict_.size()] = sign;
 }
@@ -94,5 +98,28 @@ size_t Decoder::decodeOmega() {
 }
 
 size_t Decoder::decodeFibonacci() {
-  return 0;
+  std::vector<int> bits;
+  bits.push_back(getBit());
+  int val = getBit();
+  while(bits.at(bits.size() - 1) != 1 || val != 1) {
+    bits.push_back(val);
+    val = getBit();
+  }
+  size_t return_val = 0;
+  int index = 0;
+  for(auto bit : bits) {
+    if(bit)
+      return_val += getFibonacciByIndex(index);
+    index++;
+  }
+  return return_val;
+}
+
+size_t Decoder::getFibonacciByIndex(int index) {
+  while(index >= fibonacci_sequence_.size()) {
+    fibonacci_sequence_.push_back(
+        fibonacci_sequence_.at(fibonacci_sequence_.size() - 1) +
+        fibonacci_sequence_.at(fibonacci_sequence_.size() - 2));
+  }
+  return fibonacci_sequence_.at(index);
 }

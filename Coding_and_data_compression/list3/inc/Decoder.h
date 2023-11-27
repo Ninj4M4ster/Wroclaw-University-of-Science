@@ -29,6 +29,8 @@ class Decoder {
   size_t decodeDelta();
   size_t decodeOmega();
   size_t decodeFibonacci();
+
+  size_t getFibonacciByIndex(int index);
 };
 
 #endif //WROCLAW_UNIVERSITY_OF_SCIENCE_CODING_AND_DATA_COMPRESSION_LIST3_DECODER_H_

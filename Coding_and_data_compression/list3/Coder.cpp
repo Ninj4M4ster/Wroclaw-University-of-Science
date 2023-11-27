@@ -1,8 +1,5 @@
-//
-// Created by kubad on 21.11.2023.
-//
-
 #include <bitset>
+#include <algorithm>
 #include "inc/Coder.h"
 
 
@@ -10,7 +7,6 @@ void Coder::compress(std::string in_file, std::string out_file) {
   createDefaultDict();
   f_in_.open(in_file, std::ios::binary | std::ios::in);
   f_out_.open(out_file, std::ios::binary | std::ios::out);
-  encodeFibonacci(143);
   int val = f_in_.get();
   std::string prev_sign = std::string(1, val);
   while(!f_in_.eof()) {
@@ -54,9 +50,6 @@ void Coder::writeBit(int bit) {
 }
 
 void Coder::outputTempBuffer() {
-  for(auto val : tmp_buffer_) {
-    std::cout << val;
-  }
   int index = tmp_buffer_.size() - 1;
   while(index >= 0) {
     bits_in_buffer_++;
