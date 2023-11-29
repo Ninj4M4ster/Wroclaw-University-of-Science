@@ -8,10 +8,10 @@ void Coder::compress(std::string in_file, std::string out_file) {
   createDefaultDict();
   f_in_.open(in_file, std::ios::binary | std::ios::in);
   f_out_.open(out_file, std::ios::binary | std::ios::out);
-  int val = f_in_.get();
+  int val = f_in_.get() + 1;
   std::string prev_sign = std::string(1, val);
   while(!f_in_.eof()) {
-    val = f_in_.get();
+    val = f_in_.get() + 1;
     updateInputFreq(val);
     std::string next_sign = std::string(1, val);
     std::string sequence = prev_sign + next_sign;
@@ -38,12 +38,12 @@ void Coder::setCodingType(CodingType coding_type) {
 
 
 void Coder::addToDict(std::string sign) {
-  dict_[sign] = dict_.size();
+  dict_[sign] = dict_.size() + 1;
 }
 
 void Coder::createDefaultDict() {
   dict_.clear();
-  for(int i = 0; i < 256; i++) {
+  for(int i = 1; i <= 256; i++) {
     std::string s = std::string(1, i);
     dict_[s] = i;
   }
@@ -101,7 +101,7 @@ void Coder::encodeSign(std::string sign) {
 }
 
 void Coder::endEncoding() {
-  size_t sign_val = dict_.size();
+  size_t sign_val = dict_.size() + 1;
   switch (coding_type_) {
     case CodingType::OMEGA: {
       encodeOmega(sign_val);

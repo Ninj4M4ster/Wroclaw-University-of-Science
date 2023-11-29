@@ -3,7 +3,7 @@
 void Decoder::decompress(std::string in_file, std::string out_file) {
   createDefaultDict();
   f_in_.open(in_file, std::ios_base::binary | std::ios_base::in);
-  f_out_.open(out_file, std::ios_base::out);
+  f_out_.open(out_file, std::ios_base::binary | std::ios_base::out);
 
   size_t prev = decodeSign();
   std::string S, C;
@@ -88,12 +88,12 @@ size_t Decoder::decodeGamma() {
     if(getBit())
       result_number |= 1;
   }
-  return result_number;
+  return result_number - 1;
 }
 
 size_t Decoder::decodeDelta() {
   int val = getBit();
-  int zeros_count = 0;
+  size_t zeros_count = 0;
   while(val == 0) {
     zeros_count++;
     val = getBit();
@@ -110,7 +110,7 @@ size_t Decoder::decodeDelta() {
     if(getBit())
       result_number |= 1;
   }
-  return result_number;
+  return result_number - 1;
 }
 
 size_t Decoder::decodeOmega() {
@@ -124,7 +124,7 @@ size_t Decoder::decodeOmega() {
     n = val;
     val = getBit();
   }
-  return n;
+  return n - 1;
 }
 
 size_t Decoder::decodeFibonacci() {
@@ -142,7 +142,7 @@ size_t Decoder::decodeFibonacci() {
       return_val += getFibonacciByIndex(index);
     index++;
   }
-  return return_val;
+  return return_val - 1;
 }
 
 size_t Decoder::getFibonacciByIndex(int index) {
