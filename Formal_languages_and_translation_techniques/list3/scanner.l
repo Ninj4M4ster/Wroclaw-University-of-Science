@@ -8,9 +8,9 @@ int yywrap();
 %%
 
 [ \t]+      ;
-[0-9]+      { yylval = atoi(yytext); return INTEGER;} 
+[0-9]+      { yylval.llival = atoll(yytext); return INTEGER;} 
 [-+*/()^\n\\#]   { return *yytext;} 
-.           { yyerror("Nieprawidlowy znak");}
+.           { yyerror();}
 
 
 %%
