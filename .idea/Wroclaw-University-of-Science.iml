@@ -11,7 +11,7 @@
       <excludeFolder url="file://$MODULE_DIR$/venv" />
       <excludeFolder url="file://$MODULE_DIR$/.vscode" />
     </content>
-    <orderEntry type="jdk" jdkName="Python 3.10 (Wroclaw-University-of-Science)" jdkType="Python SDK" />
+    <orderEntry type="jdk" jdkName="Wroclaw-University-of-Science" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="C:\Users\kubad\anaconda3 interpreter library" level="application" />
   </component>

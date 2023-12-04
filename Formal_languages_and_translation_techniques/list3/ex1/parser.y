@@ -116,6 +116,7 @@ void handleMinus() {
     } else {
         operator_occured = 1;
         input_start = 1;
+        unary_operator = 0;
     }
     if(operator_stack == NULL) {
         operator_stack = put_char(operator_stack, '-');
@@ -177,7 +178,7 @@ void handleOpen() {
 
 void handleClose() {
     input_start = 1;
-    operator_occured = 1;
+    operator_occured = 0;
     unary_operator = 0;
     if(operator_stack == NULL) {
         error_code = 1;

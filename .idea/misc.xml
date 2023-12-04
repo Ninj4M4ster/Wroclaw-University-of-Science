@@ -23,5 +23,5 @@
   <component name="PDMPlugin">
     <option name="skipTestSources" value="false" />
   </component>
-  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.10 (Wroclaw-University-of-Science)" project-jdk-type="Python SDK" />
+  <component name="ProjectRootManager" version="2" project-jdk-name="Wroclaw-University-of-Science" project-jdk-type="Python SDK" />
 </project>
