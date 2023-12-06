@@ -1,0 +1,107 @@
+%{
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <string.h>
+#include <sstream>
+#include <iostream>
+#define YYDEBUG 1
+#define BODY 1234577
+#define P_BODY 1234576
+int yylex();
+void yyerror(const char* err);
+long long int find_reverse(long long int divider, long long int mod);
+long long int power(long long int base, long long int power);
+int yyerrorstatus=0;
+std::stringstream reverse_notation;
+%}
+
+%union {
+    long long int llival;
+    }
+%token<llival> INTEGER
+
+%type<llival> expr expr_in pow term p_expr p_expr_in p_term
+
+%%
+
+
+program 
+: line program 
+| line
+;
+
+line
+: expr '\n' {std::cout << reverse_notation.str() << "\n" << "Wynik: " << $1 << std::endl; reverse_notation.clear(); reverse_notation.str(std::string());}
+| error '\n'
+;
+
+expr
+: expr '+' expr_in  {$$ = ($1 + $3) % BODY; reverse_notation << "+ ";}
+| expr '-' expr_in  {$$ = $1 - $3; while($$ < 0) $$ += BODY; reverse_notation << "- ";}
+| expr_in {$$ = $1;}
+;
+
+expr_in
+: expr_in '*' pow  {$$ = ($1 * $3) % BODY; reverse_notation << "* ";}
+| expr_in '/' pow  {long long int rev = find_reverse($3, BODY); $$ = ($1 * rev) % BODY; reverse_notation << "/ ";}
+| pow  {$$ = $1;}
+;
+
+pow
+: pow '^' p_term {$$ = power($1, $3); reverse_notation << "^ ";}
+| term {$$ = $1;}
+;
+
+term
+: '(' expr ')' {$$ = $2;}
+| INTEGER {long long int val = $1 % BODY; while(val < 0) val += BODY; $$ = val; reverse_notation << val << " ";}
+| '-' INTEGER {long long int val = -1 * $2 % BODY; while(val < 0) val += BODY; $$ = val; reverse_notation << val << " ";}
+;
+
+p_expr
+: p_expr '+' p_expr_in {$$ = ($1 + $3) % P_BODY; reverse_notation << "+ ";}
+| p_expr '-' p_expr_in {$$ = ($1 - $3); while($$ < 0) $$ += P_BODY; reverse_notation << "- ";}
+| p_expr_in {$$ = $1;}
+;
+
+p_expr_in
+: p_expr_in '*' p_term {$$ = ($1 * $3) % P_BODY; reverse_notation << "* ";}
+| p_expr_in '/' p_term {long long int rev = find_reverse($3, P_BODY); $$ = ($1 * rev) % P_BODY; reverse_notation << "/ ";}
+| p_term {$$ = $1;}
+;
+
+p_term
+: '(' p_expr ')' {$$ = $2;}
+| INTEGER {long long int val = $1 % P_BODY; while(val < 0) val += P_BODY; $$ = val; reverse_notation << val << " "; }
+| '-' INTEGER {long long int val = -1 * $2 % P_BODY; while(val < 0) val += P_BODY; $$ = val; reverse_notation << val << " ";}
+;
+
+%%
+
+long long int find_reverse(long long int divider, long long int mod) {
+    long long int rev = 1;
+    for(rev; (rev * divider) % BODY != 1; rev++);
+    if((rev * divider) % mod != 1) {
+        yyerror(divider + " nie posiada odwrotnosci");
+    }
+    return rev;
+}
+
+long long int power(long long int base, long long int power) {
+    long long int multiplier = base;
+    for(int i = 0; i < power - 1; i++) {
+        base *= multiplier;
+        base %= BODY;
+    }
+    if(power == 0)
+        base = 1;
+    return base;
+}
+
+void yyerror(const char* err) {
+    printf("Blad: %s\n", err);
+    reverse_notation.clear();
+    reverse_notation.str(std::string());
+    return;
+}
