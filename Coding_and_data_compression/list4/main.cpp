@@ -165,7 +165,7 @@ std::vector<double> calculateEntropies(Image & im) {
   for(int i = 0; i < 256; i++) {
     for(int j = 0; j < 256; j++) {
       for(int k = 0; k < 256; k++) {
-        double p = static_cast<double>(joint_freq.at(i).at(j).at(k)) / static_cast<double>(joint_freq_sum);
+        double p = static_cast<double>(joint_freq.at(i).at(j).at(k)) / static_cast<double>(joint_freq_sum/3);
         if(p != 0.0) {
           entropy -= p * std::log2(p);
         }
@@ -183,18 +183,53 @@ int main() {
                                        "data/example2.tga",
                                        "data/example3.tga"};
   std::vector<std::string> methods{"W", "N", "NW", "N+W-NW", "N+(W-NW)/2", "W+(N-NW)/2", "(N+W)/2", "New standard"};
+  std::vector<std::string> entropy_orders{"image", "red", "green", "blue"};
   for(auto f_name : image_names) {
     Image im = readPhoto(f_name);
     std::vector<Image> compressed_images = generateJpegLs(im);
     std::vector<double> entropies = calculateEntropies(im);
-    std::cout << "Entry image entropies: " << entropies.at(0) << " " << entropies.at(1) << " " << entropies.at(2) << " " << entropies.at(3) << "\n";
-    for(auto img : compressed_images) {
-      entropies = calculateEntropies(img);
-      for(auto val : entropies) {
-        std::cout << val << " ";
+    std::cout << "Image name: " << f_name << std::endl;
+    for(int i = 0; i < entropies.size(); i++) {
+      std::cout << entropy_orders.at(i) << " entropy: " << entropies.at(i) << std::endl;
+    }
+    std::cout << std::endl;
+    double min_red = std::numeric_limits<double>::max();
+    double min_blue = std::numeric_limits<double>::max();
+    double min_green = std::numeric_limits<double>::max();
+    double min_full = std::numeric_limits<double>::max();
+    int min_red_id = 0;
+    int min_blue_id = 0;
+    int min_green_id = 0;
+    int min_full_id = 0;
+    for(int i = 0; i < compressed_images.size(); i++) {
+      entropies = calculateEntropies(compressed_images.at(i));
+      std::cout << methods.at(i) << std::endl;
+      for(int j = 0; j < entropies.size(); j++) {
+        std::cout << entropy_orders.at(j) << " entropy: " << entropies.at(j) << std::endl;
+      }
+      if(entropies.at(0) < min_full) {
+        min_full = entropies.at(0);
+        min_full_id = i;
+      }
+      if(entropies.at(1) < min_red) {
+        min_red = entropies.at(1);
+        min_red_id = i;
+      }
+      if(entropies.at(2) < min_green) {
+        min_green = entropies.at(2);
+        min_green_id = i;
+      }
+      if(entropies.at(3) < min_blue) {
+        min_blue = entropies.at(3);
+        min_blue_id = i;
       }
       std::cout << "\n";
     }
-    std::cout << "\n";
+    std::cout << "Best results\n";
+    std::cout << "Image: " << methods.at(min_full_id) << ", " << min_full << std::endl;
+    std::cout << "Red: " << methods.at(min_red_id) << ", " << min_red << std::endl;
+    std::cout << "Green: " << methods.at(min_green_id) << ", " << min_green << std::endl;
+    std::cout << "Blue: " << methods.at(min_blue_id) << ", " << min_blue << std::endl;
+    std::cout << "\n\n";
   }
 }
