@@ -37,4 +37,9 @@ int main() {
   int q_level = 8;
   Image image = readPhoto(input_photo_name);
   Quantitizer quantitizer(image, q_level);
+  quantitizer.quantify(0.001);
+  quantitizer.outputImage(input_photo_name, output_photo_name);
+
+  std::cout << "Result image distortion: " << quantitizer.getResultDistortion() << "\n";
+  std::cout << "Signal to noise ratio: " << quantitizer.signalNoiseRatio() << "\n";
 }
