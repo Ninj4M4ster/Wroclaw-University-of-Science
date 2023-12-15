@@ -32,6 +32,9 @@ void SimulatedAnnealing::simulate() {
   size_t prev_result = std::numeric_limits<size_t>::max();
   size_t no_result_change_counter = 0;
 
+  size_t all_time_best_result = std::numeric_limits<size_t>::max();
+  std::vector<int> all_time_best_cycle;
+
   cycle_creator_->createCycle(vertices_dist(rand_gen_));
   std::vector<int> curr_cycle = cycle_creator_->getCycle();
   size_t curr_result = cycle_creator_->getCycleCost();
@@ -43,6 +46,10 @@ void SimulatedAnnealing::simulate() {
                                               random_neighbour.second,
                                               curr_result,
                                               curr_cycle);
+      if(new_cost < all_time_best_result) {
+        all_time_best_result = new_cost;
+        all_time_best_cycle = curr_cycle;
+      }
       if(new_cost < curr_result) {
         curr_result = new_cost;
         invertCycle(random_neighbour.first, random_neighbour.second, curr_cycle);
@@ -69,8 +76,8 @@ void SimulatedAnnealing::simulate() {
       break;
     }
   }
-  best_cycle_ = curr_cycle;
-  best_result_ = curr_result;
+  best_cycle_ = all_time_best_cycle;
+  best_result_ = all_time_best_result;
 }
 
 size_t SimulatedAnnealing::result() const {

@@ -1,13 +1,7 @@
 #include <iostream>
 #include "graph_handler.cpp"
 #include "cycle_creator.cpp"
-#include "simulated_annealing.cpp"
-
-static constexpr int temperature = 10000;
-static constexpr double temperature_scale = 0.8;
-static constexpr int epoch_size = 150000;
-static constexpr int max_epoch_count = 5000;
-static constexpr size_t max_no_result_change_count = 50000;
+#include "taboo_search.cpp"
 
 int main() {
   std::vector<std::string> graph_names{"data/xqf131.tsp", "data/xqg237.tsp",
@@ -25,16 +19,6 @@ int main() {
     std::shared_ptr<CycleCreator> cc =
         std::make_shared<CycleCreator>(gh.getMst(), gh.getGraph());
 
-    SimulatedAnnealing sa(temperature,
-                          temperature_scale,
-                          epoch_size,
-                          max_epoch_count,
-                          max_no_result_change_count,
-                          gh.getGraph(),
-                          cc);
-    std::cout << "Starting sim\n";
-    sa.simulate();
-    std::cout << "Mst cost: " << gh.getMstCost() << std::endl;
-    std::cout << "Result: " << sa.result() << std::endl;
+
   }
 }
