@@ -3,6 +3,8 @@
 #include "cycle_creator.cpp"
 #include "taboo_search.cpp"
 
+static constexpr size_t taboo_list_max_length_multiplier = 5;
+
 int main() {
   std::vector<std::string> graph_names{"data/xqf131.tsp", "data/xqg237.tsp",
                                        "data/pma343.tsp", "data/pka379.tsp",
@@ -18,7 +20,9 @@ int main() {
     std::cout << "Graph read\n";
     std::shared_ptr<CycleCreator> cc =
         std::make_shared<CycleCreator>(gh.getMst(), gh.getGraph());
+    TabooSearch ts(gh.getGraph(), cc, taboo_list_max_length_multiplier);
+    ts.simulate();
 
-
+    std::cout << "Result: " << ts.getResult() << std::endl;
   }
 }
