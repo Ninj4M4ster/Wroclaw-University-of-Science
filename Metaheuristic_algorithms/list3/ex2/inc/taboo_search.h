@@ -15,7 +15,7 @@ class TabooSearch {
   std::shared_ptr<CycleCreator> cycle_creator_;
   std::vector<std::pair<int, int>> neighbourhood_;
 
-  std::unordered_map<std::string, int> taboo_list_;
+  std::unordered_map<size_t, int> taboo_list_;
   size_t taboo_list_max_length_;
 
   size_t result_;

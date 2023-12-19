@@ -1,4 +1,5 @@
 #include "inc/taboo_search.h"
+#include <algorithm>
 
 TabooSearch::TabooSearch(std::shared_ptr<Graph> graph,
                          std::shared_ptr<CycleCreator> cycle_creator,
@@ -26,29 +27,25 @@ void TabooSearch::simulate() {
   std::vector<int> all_time_best_cycle;
   size_t all_time_best_cost = current_cost;
   while(taboo_list_.size() < taboo_list_max_length_) {
-    std::cout << taboo_list_.size() << std::endl;
+    std::shuffle(neighbourhood_.begin(), neighbourhood_.end(), rand_gen_);
     size_t best_cost = std::numeric_limits<size_t>::max();
-    std::vector<int> best_cycle;
-    std::string best_cycle_string;
-    for(auto &pair : neighbourhood_) {
-      std::vector<int> new_cycle = invertCycle(pair.first, pair.second, current_cycle);
-      std::string cycle_string = stringifyCycle(new_cycle);
+    std::pair<int, int> best_pair;
+    for(int i = 0; i < neighbourhood_.size() / 4; i++) {
+      auto pair = neighbourhood_.at(i);
       size_t new_cost = calculateNewCycleCost(pair.first,
                                               pair.second,
                                               current_cost,
                                               current_cycle);
-      if(new_cost < best_cost && taboo_list_.find(cycle_string) == taboo_list_.end()) {
+      if(new_cost < best_cost && taboo_list_.find(new_cost) == taboo_list_.end()) {
         best_cost = new_cost;
-        best_cycle = new_cycle;
-        best_cycle_string = cycle_string;
+        best_pair = pair;
       }
     }
     current_cost = best_cost;
-    current_cycle = best_cycle;
-    taboo_list_[best_cycle_string] = true;
+    current_cycle = invertCycle(best_pair.first, best_pair.second, current_cycle);
+    taboo_list_[current_cost] = true;
     if(current_cost < all_time_best_cost) {
       all_time_best_cost = current_cost;
-      all_time_best_cycle = current_cycle;
     }
   }
   result_ = all_time_best_cost;

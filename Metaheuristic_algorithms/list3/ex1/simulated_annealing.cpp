@@ -36,10 +36,12 @@ void SimulatedAnnealing::simulate() {
   std::vector<int> all_time_best_cycle;
 
   cycle_creator_->createCycle(vertices_dist(rand_gen_));
-  std::vector<int> curr_cycle = cycle_creator_->getCycle();
-  size_t curr_result = cycle_creator_->getCycleCost();
-  std::cout << "start result: " << curr_result << std::endl;
+  std::vector<int> start_cycle = cycle_creator_->getCycle();
+  size_t start_result = cycle_creator_->getCycleCost();
+//  std::cout << "start result: " << start_result << std::endl;
   for(int i = 0; i < max_epoch_count_; i++) {
+    std::vector<int> curr_cycle = start_cycle;
+    size_t curr_result = start_result;
     for(int j = 0; j < epoch_size_; j++) {
       std::pair<int, int> random_neighbour = neighbourhood_.at(neighbourhood_dist(rand_gen_));
       size_t new_cost = calculateNewCycleCost(random_neighbour.first,
