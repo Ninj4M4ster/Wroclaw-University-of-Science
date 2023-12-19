@@ -7,7 +7,8 @@ class TabooSearch {
  public:
   explicit TabooSearch(std::shared_ptr<Graph> graph,
                        std::shared_ptr<CycleCreator> cycle_creator,
-                       size_t taboo_list_max_length_multiplier);
+                       size_t taboo_list_max_length_multiplier,
+                       double max_no_better_result_count_multiplier);
   void simulate();
   size_t getResult() const;
  private:
@@ -17,6 +18,7 @@ class TabooSearch {
 
   std::unordered_map<size_t, int> taboo_list_;
   size_t taboo_list_max_length_;
+  size_t max_no_better_result_count_;
 
   size_t result_;
 

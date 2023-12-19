@@ -5,7 +5,8 @@
 #include "cycle_creator.cpp"
 #include "taboo_search.cpp"
 
-static constexpr size_t taboo_list_max_length_multiplier = 5;
+static constexpr size_t taboo_list_max_length_multiplier = 15;
+static constexpr double max_no_better_result_count_multiplier = 0.2;
 
 size_t findMin(std::vector<size_t> & arr) {
   size_t res = std::numeric_limits<size_t>::max();
@@ -44,7 +45,10 @@ int main() {
         processes.push_back(std::async(std::launch::async, [gh]{
           std::shared_ptr<CycleCreator> cc =
               std::make_shared<CycleCreator>(gh.getMst(), gh.getGraph());
-          TabooSearch ts(gh.getGraph(), cc, taboo_list_max_length_multiplier);
+          TabooSearch ts(gh.getGraph(),
+                         cc,
+                         taboo_list_max_length_multiplier,
+                         max_no_better_result_count_multiplier);
           ts.simulate();
           return ts.getResult();
         }));

@@ -3,10 +3,12 @@
 
 TabooSearch::TabooSearch(std::shared_ptr<Graph> graph,
                          std::shared_ptr<CycleCreator> cycle_creator,
-                         size_t taboo_list_max_length_multiplier) {
+                         size_t taboo_list_max_length_multiplier,
+                         double max_no_better_result_count_multiplier) {
   graph_ = graph;
   cycle_creator_ = cycle_creator;
   taboo_list_max_length_ = taboo_list_max_length_multiplier * graph_->size();
+  max_no_better_result_count_ = graph_->size() * max_no_better_result_count_multiplier;
 
   // create neighbourhood
   for (int i = 0; i < graph_->size() - 1; i++) {
@@ -23,6 +25,8 @@ void TabooSearch::simulate() {
   cycle_creator_->createCycle(vertices_dist(rand_gen_));
   std::vector<int> current_cycle = cycle_creator_->getCycle();
   size_t current_cost = cycle_creator_->getCycleCost();
+
+  size_t no_better_result_counter = 0;
 
   std::vector<int> all_time_best_cycle;
   size_t all_time_best_cost = current_cost;
@@ -46,6 +50,12 @@ void TabooSearch::simulate() {
     taboo_list_[current_cost] = true;
     if(current_cost < all_time_best_cost) {
       all_time_best_cost = current_cost;
+      no_better_result_counter = 0;
+    } else {
+      no_better_result_counter++;
+      if(no_better_result_counter >= max_no_better_result_count_) {
+        break;
+      }
     }
   }
   result_ = all_time_best_cost;
