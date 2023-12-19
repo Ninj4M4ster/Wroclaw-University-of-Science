@@ -7,7 +7,7 @@ static constexpr int temperature = 10000;
 static constexpr double temperature_scale = 0.8;
 static constexpr int epoch_size = 150000;
 static constexpr int max_epoch_count = 5000;
-static constexpr size_t max_no_result_change_count = 50000;
+static constexpr size_t max_no_result_change_count = 1000;
 
 size_t findMin(std::vector<size_t> & arr) {
   size_t res = std::numeric_limits<size_t>::max();
