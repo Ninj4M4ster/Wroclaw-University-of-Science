@@ -36,7 +36,7 @@ end
 function readRightSideVectorFromFile(file_name::String)
     f = open(file_name, "r")
     b = Vector{Float64}()
-    size = readline(f)
+    size = parse(Int64, readline(f))
     for i = 1:size
         line = readline(f)
         append!(b, parse(Float64, line))
