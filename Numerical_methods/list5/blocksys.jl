@@ -6,6 +6,14 @@ module blocksys
 
 export gaussElimination, gaussEliminationPartialChoice, luDistribution, luDistributionPartialChoice, solveWithLU, solveWithPivotedLU
 
+"""
+Funkcja obliczająca rozwiązanie x układu równań Ax=b za pomocą metody eliminacji gaussa bez wyboru elementu głównego.
+
+@param A - macierz współczynników rozmiarów n x n w reprezentacji macierzy rzadkiej.
+@param b - wektor prawych stron.
+
+@result rozwiązanie x układu równań Ax = b.
+"""
 function gaussElimination(A::Main.SMatrix, b::Vector{Float64})
     # Sprowadzenie do macierzy trójkątnej z uwzględnieniem granicznych wartości niezerowych w danej kolumnie/rzędzie
     for k = 1:A.matrix_dim - 1
@@ -16,7 +24,7 @@ function gaussElimination(A::Main.SMatrix, b::Vector{Float64})
             I = A.matrix[row][k] / A.matrix[k][k]
             A.matrix[row][k] = 0.0
 
-            for column = k+1:maximum(collect(keys(A.matrix[row])))
+            for column = k+1:maximum(collect(keys(A.matrix[k])))
                 if(!haskey(A.matrix[k], column))
                     continue
                 end
@@ -35,6 +43,9 @@ function gaussElimination(A::Main.SMatrix, b::Vector{Float64})
     for k = A.matrix_dim - 1:-1:1
         sum = 0.0
         for j = k+1:maximum(collect(keys(A.matrix[k])))
+            if(!haskey(A.matrix[k], j))
+                continue
+            end
             sum += A.matrix[k][j] * x[j]
         end
         x[k] = (b[k] - sum) / A.matrix[k][k]
@@ -42,6 +53,14 @@ function gaussElimination(A::Main.SMatrix, b::Vector{Float64})
     return x
 end
 
+"""
+Funkcja obliczająca rozwiązanie x układu równań Ax=b za pomocą metody eliminacji gaussa z częściowym wyborem elementu głównego.
+
+@param A - macierz współczynników rozmiarów n x n w reprezentacji macierzy rzadkiej.
+@param b - wektor prawych stron.
+
+@result rozwiązanie x układu równań Ax = b.
+"""
 function gaussEliminationPartialChoice(A::Main.SMatrix, b::Vector{Float64})
     # Sprowadzenie do macierzy trójkątnej z uwzględnieniem granicznych wartości niezerowych w danej kolumnie/rzędzie
     for k = 1:A.matrix_dim - 1
@@ -83,7 +102,7 @@ function gaussEliminationPartialChoice(A::Main.SMatrix, b::Vector{Float64})
             I = A.matrix[row][k] / A.matrix[k][k]
             A.matrix[row][k] = 0.0
 
-            for column = k+1:maximum(collect(keys(A.matrix[row])))
+            for column = k+1:maximum(collect(keys(A.matrix[k])))
                 if(!haskey(A.matrix[k], column))
                     continue
                 end
@@ -102,6 +121,9 @@ function gaussEliminationPartialChoice(A::Main.SMatrix, b::Vector{Float64})
     for k = A.matrix_dim - 1:-1:1
         sum = 0.0
         for j = k+1:maximum(collect(keys(A.matrix[k])))
+            if(!haskey(A.matrix[k], j))
+                continue
+            end
             sum += A.matrix[k][j] * x[j]
         end
         x[k] = (b[k] - sum) / A.matrix[k][k]
@@ -109,6 +131,13 @@ function gaussEliminationPartialChoice(A::Main.SMatrix, b::Vector{Float64})
     return x
 end
 
+"""
+Funkcja wyznaczająca rozkład LU macierzy A za pomocą eliminacji gaussa bez wyboru elementu głównego.
+
+@param A - macierz współczynników rozmiarów n x n w reprezentacji macierzy rzadkiej.
+
+@result rozkład LU macierzy A w reprezentacji macierzy rzadkiej.
+"""
 function luDistribution(A::Main.SMatrix)
     # Kopia macierzy A zostanie wynikową macierzą LU
     # Sprowadzenie do macierzy trójkątnej z uwzględnieniem granicznych wartości niezerowych w danej kolumnie/rzędzie
@@ -121,7 +150,7 @@ function luDistribution(A::Main.SMatrix)
             # Uzupełnienie zerowanej wartości w macierzy LU
             A.matrix[row][k] = I
 
-            for column = k+1:maximum(collect(keys(A.matrix[row])))
+            for column = k+1:maximum(collect(keys(A.matrix[k])))
                 if(!haskey(A.matrix[k], column))
                     continue
                 end
@@ -136,9 +165,16 @@ function luDistribution(A::Main.SMatrix)
     return A
 end
 
+"""
+Funkcja wyznaczająca rozkład LU macierzy A za pomocą eliminacji gaussa z częściowym wyborem elementu głównego.
+
+@param A - macierz współczynników rozmiarów n x n w reprezentacji macierzy rzadkiej.
+
+@result para zmiennych - rozkład LU macierzy A w reprezentacji macierzy rzadkiej; wektor par indeksów wierszy, które zostały zamienione miejscami.
+"""
 function luDistributionPartialChoice(A::Main.SMatrix)
     # Kopia macierzy A zostanie wynikową macierzą LU
-    pivots = Tuple{Int64, Int64}()
+    pivots = Vector{Int64}[]
     # Sprowadzenie do macierzy trójkątnej z uwzględnieniem granicznych wartości niezerowych w danej kolumnie/rzędzie
     for k = 1:A.matrix_dim - 1
         # Częściowy wybór elementu głównego
@@ -161,7 +197,7 @@ function luDistributionPartialChoice(A::Main.SMatrix)
         end
         if(max_ind != k)
             A.matrix[max_ind], A.matrix[k] = A.matrix[k], A.matrix[max_ind]
-            append!(pivots, (max_ind, k))
+            push!(pivots, [max_ind, k])
             # Aktualizacja indeksu ostatniego rzędu w danej kolumnie z niezerową wartością
             if(zero_val_row)
                 ind = A.max_rows_indexes[k]
@@ -179,7 +215,7 @@ function luDistributionPartialChoice(A::Main.SMatrix)
             # Uzupełnienie zerowanej wartości w macierzy LU
             A.matrix[row][k] = I
 
-            for column = k+1:maximum(collect(keys(A.matrix[row])))
+            for column = k+1:maximum(collect(keys(A.matrix[k])))
                 if(!haskey(A.matrix[k], column))
                     continue
                 end
@@ -194,20 +230,32 @@ function luDistributionPartialChoice(A::Main.SMatrix)
     return A, pivots
 end
 
+"""
+Funkcja rozwiązująca układ równań Ax = b za pomocą wyznaczonego wcześniej 
+metodą eliminacji gaussa bez wyboru elementu głównego rozkładu LU.
+
+@param LU - rozkład LU macierzy A.
+@param b - wektor prawych stron.
+
+@result rozwiązanie x układu równań Ax = b.
+"""
 function solveWithLU(LU::Main.SMatrix, b::Vector{Float64})
-    for k = 1:LU.matrix_dim
+    for k = 1:LU.matrix_dim - 1
         for row = k+1:LU.max_rows_indexes[k]
             if(haskey(LU.matrix[k], row))
-                b[row] -= LU.matrix[k][row] * b[k]
+                b[row] -= LU.matrix[row][k] * b[k]
             end
         end
     end
 
     x = zeros(LU.matrix_dim)
     x[LU.matrix_dim] = b[LU.matrix_dim] / LU.matrix[LU.matrix_dim][LU.matrix_dim]
-    for k = LU.matrix_dim - 1:-1:1
+    for k = LU.matrix_dim:-1:1
         sum = 0.0
         for j = k+1:maximum(collect(keys(LU.matrix[k])))
+            if(!haskey(LU.matrix[k], j))
+                continue
+            end
             sum += LU.matrix[k][j] * x[j]
         end
         x[k] = (b[k] - sum) / LU.matrix[k][k]
@@ -215,7 +263,17 @@ function solveWithLU(LU::Main.SMatrix, b::Vector{Float64})
     return x
 end
 
-function solveWithPivotedLU(LU::Main.SMatrix, b::Vector{Float64}, pivots::Tuple{Int64, Int64})
+"""
+Funkcja rozwiązująca układ równań Ax = b za pomocą wyznaczonego wcześniej 
+metodą eliminacji gaussa z częściowym wyborem elementu głównego rozkładu LU.
+
+@param LU - rozkład LU macierzy A.
+@param b - wektor prawych stron.
+@param pivots - wektor par indeksów wierszy, które zostały zamienione miejscami.
+
+@result rozwiązanie x układu równań Ax = b.
+"""
+function solveWithPivotedLU(LU::Main.SMatrix, b::Vector{Float64}, pivots::Vector{Vector{Int64}})
     for i = eachindex(pivots)
         b[pivots[i][1]], b[pivots[i][2]] = b[pivots[i][2]], b[pivots[i][1]]
     end
