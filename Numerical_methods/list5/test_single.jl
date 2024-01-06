@@ -52,9 +52,9 @@ function test(A_matrix_file_name::String, b_right_side_vector_file_name::String,
 end
 
 function main()
-    A_matrix_file_name = "Numerical_methods/list5/dane/Dane500000_1_1/A.txt"
-    b_right_side_vector_file_name = "Numerical_methods/list5/dane/Dane500000_1_1/b.txt"
-    output_file_name = "Numerical_methods/list5/result.txt"
+    A_matrix_file_name = "dane/Dane500000_1_1/A.txt"
+    b_right_side_vector_file_name = "dane/Dane500000_1_1/b.txt"
+    output_file_name = "result.txt"
     generate_b = false
     pivoting = false
     LU_usage = false

@@ -242,7 +242,7 @@ metodą eliminacji gaussa bez wyboru elementu głównego rozkładu LU.
 function solveWithLU(LU::Main.SMatrix, b::Vector{Float64})
     for k = 1:LU.matrix_dim - 1
         for row = k+1:LU.max_rows_indexes[k]
-            if(haskey(LU.matrix[k], row))
+            if(haskey(LU.matrix[row], k))
                 b[row] -= LU.matrix[row][k] * b[k]
             end
         end
