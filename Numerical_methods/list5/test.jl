@@ -61,9 +61,9 @@ end
 
 function main() 
     functions = [gaussElimination, gaussEliminationPartialChoice, findLuAndSolve, findLuPivotedAndSolve]
-    final_solutions = [Sol(zeros(Float64, 0), zeros(Int, 0), [Vector{Float64}(undef, 100) for _ = 1:6]) for _ = 1:5]
+    final_solutions = [Sol(zeros(Float64, 0), zeros(Int, 0), [Vector{Float64}(undef, 30) for _ = 1:6]) for _ = 1:5]
     iter = 1
-    for i = 1000:1000:100000
+    for i = 1000:1000:30000
         solutions = [Sol(zeros(Float64, 0), zeros(Int, 0),  [Vector{Float64}(undef, 1) for _ = 1:6]) for _ = 1:5]
         c_index = 1
         for c in [1.0, 10.0, 10.0^3, 10.0^7, 10.0^12, 10.0^16]
@@ -102,12 +102,12 @@ function main()
         iter += 1
     end
 
-    x_ax = 1000:1000:100000
+    x_ax = 1000:1000:30000
 
     plot(
         x_ax, 
         [final_solutions[i].times for i in 1:5], 
-        title="Złożoność czasowa algorytmów (sekundy)", 
+        title="Złożoność czasowa (sekundy)", 
         legend=:topleft,
         label=["Metoda tradycyjna" "Gauss" "Gauss z wyborem" "LU" "LU z wyborem"]
     )
@@ -116,7 +116,7 @@ function main()
     plot(
         x_ax, 
         [final_solutions[k].times for k in 2:length(final_solutions)], 
-        title="Złożoność czasowa algorytmów (sekundy)", 
+        title="Złożoność czasowa (sekundy)", 
         legend=:topleft,
         label=["Gauss" "Gauss z wyborem" "LU" "LU z wyborem"]
     )
