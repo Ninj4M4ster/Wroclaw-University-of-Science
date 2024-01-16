@@ -5,8 +5,8 @@
 
 class Quantitizer {
  public:
-  Image encode(Image im, int bits_count);
-  Image decode(Image im, int bits_count);
+  std::pair<Image, Image> encode(Image im, int bits_count);
+  Image decode(Image im);
 
  private:
   std::vector<std::vector<int>> low_pass_filter_matrix_ {
@@ -31,6 +31,10 @@ class Quantitizer {
       std::unordered_map<int, int> channel_distribution,
       long long int lvl);
 
+  void signalNoiseRatio(Image im1, Image im2);
+  double minSquareError(Image im1, Image im2);
+  size_t distance(Pixel a, Pixel b);
+  void minSquareChannelsError(Image im1, Image im2);
 };
 
 #endif //WROCLAW_UNIVERSITY_OF_SCIENCE_CODING_AND_DATA_COMPRESSION_LIST6_INC_QUANTITIZER_H_

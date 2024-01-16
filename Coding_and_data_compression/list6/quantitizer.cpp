@@ -3,12 +3,21 @@
 #include <queue>
 #include "inc/quantitizer.h"
 
-Image Quantitizer::encode(Image im, int bits_count) {
+std::pair<Image, Image> Quantitizer::encode(Image im, int bits_count) {
   Image low_pass_im = lowPassFilterImage(im);
   Image high_pass_im = highPassFilterImage(im);
   Image differentially_encoded_low_pass = encodeDifferentially(low_pass_im);
+  Image quantified_diff_enc_low_pass = quantifyNonuniform(differentially_encoded_low_pass, bits_count);
   Image quantified_high_pass = quantifyNonuniform(high_pass_im, bits_count);
-  return quantified_high_pass;
+  std::cout << "Image after low pass filter, differential encoding and non-uniform quantization\n";
+  signalNoiseRatio(im, quantified_diff_enc_low_pass);
+  std::cout << "\nImage after high pass filter and non-uniform quantization\n";
+  signalNoiseRatio(im, quantified_high_pass);
+  return {quantified_diff_enc_low_pass, quantified_high_pass};
+}
+
+Image Quantitizer::decode(Image im) {
+  return decodeDifferentially(im);
 }
 
 Image Quantitizer::lowPassFilterImage(Image im) {
@@ -132,6 +141,7 @@ Image Quantitizer::decodeDifferentially(Image im) {
 }
 
 Image Quantitizer::quantifyNonuniform(Image im, int k) {
+  Image new_im = im;
   long long int lvl = 1 << (k-1);
   std::unordered_map<int, int> red_bandwidth_dist;
   std::unordered_map<int, int> green_bandwidth_dist;
@@ -157,13 +167,12 @@ Image Quantitizer::quantifyNonuniform(Image im, int k) {
 
   for(int i = 0; i < im.height; i++) {
     for(int j = 0; j < im.width; j++) {
-      im.pixels.at(i).at(j).red = red_vals_mapping[im.pixels.at(i).at(j).red];
-      im.pixels.at(i).at(j).green = red_vals_mapping[im.pixels.at(i).at(j).green];
-      im.pixels.at(i).at(j).blue = red_vals_mapping[im.pixels.at(i).at(j).blue];
+      new_im.pixels.at(i).at(j).red = red_vals_mapping[im.pixels.at(i).at(j).red];
+      new_im.pixels.at(i).at(j).green = red_vals_mapping[im.pixels.at(i).at(j).green];
+      new_im.pixels.at(i).at(j).blue = red_vals_mapping[im.pixels.at(i).at(j).blue];
     }
   }
-
-  return im;
+  return new_im;
 }
 
 std::unordered_map<int, int> Quantitizer::limitIntervalsCount(
@@ -227,4 +236,60 @@ std::unordered_map<int, int> Quantitizer::limitIntervalsCount(
   }
 
   return pixel_val_mapping;
+}
+
+double Quantitizer::minSquareError(Image im1, Image im2) {
+  double sum = 0.0;
+  for(int i = 0; i < im1.pixels.size(); i++) {
+    for(int j = 0; j < im1.pixels.at(i).size(); j++) {
+      size_t dist = distance(im1.pixels.at(i).at(j), im2.pixels.at(i).at(j));
+      sum += (double)(dist * dist) / (double)(im1.width * im1.height);
+    }
+  }
+  return sum;
+}
+
+size_t Quantitizer::distance(Pixel a, Pixel b) {
+  size_t dist = 0;
+  dist += std::abs(a.red - b.red);
+  dist += std::abs(a.green - b.green);
+  dist += std::abs(a.blue - b.blue);
+  return dist;
+}
+
+void Quantitizer::signalNoiseRatio(Image im1, Image im2) {
+  double mse = minSquareError(im1, im2);
+  double res = 0.0;
+  double size = im1.height * im1.width;
+  for (int i = 0; i < im1.height; i++) {
+    for (int j = 0; j < im1.width; j++) {
+      size_t r = im1.pixels.at(i).at(j).red;
+      size_t g = im1.pixels.at(i).at(j).green;
+      size_t b = im1.pixels.at(i).at(j).blue;
+      res += r * r + g * g + b * b;
+      res /= (double) size;
+    }
+  }
+  std::cout << "Signal to noise ratio: " << res / mse << std::endl;
+  std::cout << "Mean square error: " << mse << std::endl;
+  minSquareChannelsError(im1, im2);
+}
+
+void Quantitizer::minSquareChannelsError(Image im1, Image im2) {
+  double sum_r = 0.0;
+  double sum_g = 0.0;
+  double sum_b = 0.0;
+  for(int i = 0; i < im1.pixels.size(); i++) {
+    for(int j = 0; j < im1.pixels.at(i).size(); j++) {
+      size_t dist_r = std::abs(im1.pixels.at(i).at(j).red - im2.pixels.at(i).at(j).red);
+      size_t dist_g = std::abs(im1.pixels.at(i).at(j).green - im2.pixels.at(i).at(j).green);
+      size_t dist_b = std::abs(im1.pixels.at(i).at(j).blue - im2.pixels.at(i).at(j).blue);
+      sum_r += (double)(dist_r * dist_r) / (double)(im1.width * im1.height);
+      sum_g += (double)(dist_g * dist_g) / (double)(im1.width * im1.height);
+      sum_b += (double)(dist_b * dist_b) / (double)(im1.width * im1.height);
+    }
+  }
+  std::cout << "Mean square error - red channel: " << sum_r << std::endl;
+  std::cout << "Mean square error - green channel: " << sum_g << std::endl;
+  std::cout << "Mean square error - blue channel: " << sum_b << std::endl;
 }

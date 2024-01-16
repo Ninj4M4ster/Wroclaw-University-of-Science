@@ -68,6 +68,7 @@ void outputPhoto(std::string output_file_name, std::string input_file_name, Imag
 int main() {
   Image ph = readPhoto("data/example0.tga");
   Quantitizer quantitizer;
-  ph = quantitizer.encode(ph, 7);
-  outputPhoto("res.tga", "data/example0.tga", ph);
+  auto diff_and_quant = quantitizer.encode(ph, 2);
+  outputPhoto("diff_quant_res.tga", "data/example0.tga", diff_and_quant.first);
+  outputPhoto("quant_res.tga", "data/example0.tga", diff_and_quant.second);
 }
