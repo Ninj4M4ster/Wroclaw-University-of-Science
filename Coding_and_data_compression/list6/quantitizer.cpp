@@ -3,239 +3,200 @@
 #include <queue>
 #include "inc/quantitizer.h"
 
-std::pair<Image, Image> Quantitizer::encode(Image im, int bits_count) {
-  Image low_pass_im = lowPassFilterImage(im);
-  Image high_pass_im = highPassFilterImage(im);
-  Image differentially_encoded_low_pass = encodeDifferentially(low_pass_im);
-  Image quantified_diff_enc_low_pass = quantifyNonuniform(differentially_encoded_low_pass, bits_count);
-  Image quantified_high_pass = quantifyNonuniform(high_pass_im, bits_count);
-  std::cout << "Image after low pass filter, differential encoding and non-uniform quantization\n";
-  signalNoiseRatio(im, quantified_diff_enc_low_pass);
-  std::cout << "\nImage after high pass filter and non-uniform quantization\n";
-  signalNoiseRatio(im, quantified_high_pass);
-  return {quantified_diff_enc_low_pass, quantified_high_pass};
+Image Quantitizer::encode(Image im, int bits_count) {
+  std::vector<Pixel> original_im_pixels = putToSingleVector(im.pixels);
+  std::vector<Pixel> high_pass_filtered = highPassFilterImage(im);
+  std::vector<std::pair<int, Pixel>> quant_high_map = quantifyNonuniform(high_pass_filtered, bits_count);
+  std::vector<Pixel> quant_high = reconstructImageFromQuantizationMap(quant_high_map, high_pass_filtered);
+
+  std::vector<Pixel> low_pass_filtered = lowPassFilterImage(im);
+  std::vector<Pixel> diff_encoded_low = encodeDifferentially(low_pass_filtered);
+  std::vector<std::pair<int, Pixel>> quant_diff_map = quantifyNonuniform(diff_encoded_low, bits_count);
+  std::vector<Pixel> quant_diff = reconstructImageFromQuantizationMap(quant_diff_map, diff_encoded_low);
+  std::vector<Pixel> min_error_diff_encoded_low = encodeDifferentiallyMinimizingError(low_pass_filtered, quant_diff_map);
+  quant_diff_map = quantifyNonuniform(min_error_diff_encoded_low, bits_count);
+  quant_diff = reconstructImageFromQuantizationMap(quant_diff_map, min_error_diff_encoded_low);
+
+//  errors.clear();
+//  for(int i = 0; i < quant_diff.size(); i++) {
+//    errors.push_back(diff_encoded_low.at(i) - minimized_error_quant_diff.at(i));
+//    std::cout << errors.at(i).red << " " << errors.at(i).green << " " << errors.at(i).blue << std::endl;
+//  }
+
+//  for(auto pix : quant_high) {
+//    std::cout << pix.red << " " << pix.green << " " << pix.blue << std::endl;
+//  }
+  Image sum = sumImages(quant_diff, quant_high, im);
+  std::cout << "Statistics\n";
+  signalNoiseRatio(im, sum);
+  return sum;
 }
 
-Image Quantitizer::decode(Image im) {
-  return decodeDifferentially(im);
-}
-
-Image Quantitizer::lowPassFilterImage(Image im) {
-  Image low_pass_im = im;
-  int low_pass_filter_sum = 0;
-  for(int i = 0; i < low_pass_filter_matrix_.size(); i++) {
-    for(auto val : low_pass_filter_matrix_.at(i)) {
-      low_pass_filter_sum += val;
-    }
-  }
-
-  for(int i = 0; i < im.height; i++) {
-    for(int j = 0; j < im.width; j++) {
-      int sum_b = 0;
-      int sum_g = 0;
-      int sum_r = 0;
-      for(int k = -1; k < 1; k++) {
-        for(int l = -1; l < 1; l++) {
-          if(i + k < 0 || i + k > im.height || j + l < 0 || j + l > im.width) {
-            continue;
-          } else {
-            sum_b += im.pixels.at(i + k).at(j+l).blue * low_pass_filter_matrix_.at(k + 1).at(l + 1);
-            sum_g += im.pixels.at(i + k).at(j+l).green * low_pass_filter_matrix_.at(k + 1).at(l + 1);
-            sum_r += im.pixels.at(i + k).at(j+l).red * low_pass_filter_matrix_.at(k + 1).at(l + 1);
-          }
-        }
-      }
-      sum_r /= low_pass_filter_sum;
-      sum_g /= low_pass_filter_sum;
-      sum_b /= low_pass_filter_sum;
-      if(sum_b < 0)
-        sum_b = 0;
-      else if(sum_b > 255)
-        sum_b = 255;
-      if(sum_g < 0)
-        sum_g = 0;
-      else if(sum_g > 255)
-        sum_g = 255;
-      if(sum_r < 0)
-        sum_r = 0;
-      else if(sum_r > 255)
-        sum_r = 255;
-      low_pass_im.pixels.at(i).at(j) = {sum_r,
-                                        sum_g,
-                                        sum_b};
-    }
-  }
-  return low_pass_im;
-}
-
-// TODO(Jakub Drzewiecki): Add % 256 to every addition
-Image Quantitizer::highPassFilterImage(Image im) {
-  Image high_pass_im = im;
-  for(int i = 0; i < im.height; i++) {
-    for(int j = 0; j < im.width; j++) {
-      int sum_b = 0;
-      int sum_g = 0;
-      int sum_r = 0;
-      for(int k = -1; k < 1; k++) {
-        for(int l = -1; l < 1; l++) {
-          if(i + k < 0 || i + k > im.height || j + l < 0 || j + l > im.width) {
-            continue;
-          } else {
-            sum_b += im.pixels.at(i + k).at(j+l).blue * high_pass_filter_matrix_.at(k + 1).at(l + 1);
-            sum_g += im.pixels.at(i + k).at(j+l).green * high_pass_filter_matrix_.at(k + 1).at(l + 1);
-            sum_r += im.pixels.at(i + k).at(j+l).red * high_pass_filter_matrix_.at(k + 1).at(l + 1);
-          }
-        }
-      }
-      if(sum_b < 0)
-        sum_b = 0;
-      else if(sum_b > 255)
-        sum_b = 255;
-      if(sum_g < 0)
-        sum_g = 0;
-      else if(sum_g > 255)
-        sum_g = 255;
-      if(sum_r < 0)
-        sum_r = 0;
-      else if(sum_r > 255)
-        sum_r = 255;
-      high_pass_im.pixels.at(i).at(j) = {sum_r,
-                                        sum_g,
-                                        sum_b};
-    }
-  }
-  return high_pass_im;
-}
-
-Image Quantitizer::encodeDifferentially(Image im) {
-  Image new_im = im;
-  for(int i = im.height - 1; i >= 0; i--) {
-    for(int j = im.width - 1; j >= 0; j--) {
-      if(i == 0 && j == 0)
-        break;
-      if(j == 0) {
-        new_im.pixels.at(i).at(j) = im.pixels.at(i).at(j) - im.pixels.at(i-1).at(im.width - 1);
-      } else {
-        new_im.pixels.at(i).at(j) = im.pixels.at(i).at(j) - im.pixels.at(i).at(j-1);
-      }
-    }
-  }
-  return new_im;
-}
-
-Image Quantitizer::decodeDifferentially(Image im) {
-  Image new_im = im;
-  for(int i = 0; i < im.height; i++) {
-    for(int j = 0; j < im.width; j++) {
-      if(j + 1 == im.width && i == im.height - 1) {
-        break;
-      }
-      if(j + 1 == im.width) {
-        new_im.pixels.at(i+1).at(0) = new_im.pixels.at(i).at(j) + im.pixels.at(i+1).at(0);
-      } else {
-        new_im.pixels.at(i).at(j+1) = new_im.pixels.at(i).at(j) + im.pixels.at(i).at(j+1);
-      }
-    }
-  }
-  return new_im;
-}
-
-Image Quantitizer::quantifyNonuniform(Image im, int k) {
-  Image new_im = im;
-  long long int lvl = 1 << (k-1);
-  std::unordered_map<int, int> red_bandwidth_dist;
-  std::unordered_map<int, int> green_bandwidth_dist;
-  std::unordered_map<int, int> blue_bandwidth_dist;
-  for(int i = 0; i < 256; i++) {
-    red_bandwidth_dist[i] = 0;
-    green_bandwidth_dist[i] = 0;
-    blue_bandwidth_dist[i] = 0;
-  }
-  for(auto row : im.pixels) {
+std::vector<Pixel> Quantitizer::putToSingleVector(std::vector<std::vector<Pixel>> pixels) {
+  std::vector<Pixel> result;
+  for(auto row : pixels) {
     for(auto pix : row) {
-      red_bandwidth_dist.at(pix.red)++;
-      green_bandwidth_dist.at(pix.green)++;
-      blue_bandwidth_dist.at(pix.blue)++;
+      result.push_back(pix);
     }
   }
-  std::unordered_map<int, int> red_vals_mapping =
-      limitIntervalsCount(red_bandwidth_dist, lvl);
-  std::unordered_map<int, int> green_vals_mapping =
-      limitIntervalsCount(green_bandwidth_dist, lvl);
-  std::unordered_map<int, int> blue_vals_mapping =
-      limitIntervalsCount(blue_bandwidth_dist, lvl);
-
-  for(int i = 0; i < im.height; i++) {
-    for(int j = 0; j < im.width; j++) {
-      new_im.pixels.at(i).at(j).red = red_vals_mapping[im.pixels.at(i).at(j).red];
-      new_im.pixels.at(i).at(j).green = red_vals_mapping[im.pixels.at(i).at(j).green];
-      new_im.pixels.at(i).at(j).blue = red_vals_mapping[im.pixels.at(i).at(j).blue];
-    }
-  }
-  return new_im;
+  return result;
 }
 
-std::unordered_map<int, int> Quantitizer::limitIntervalsCount(
-    std::unordered_map<int,int> channel_distribution,
-    long long int lvl) {
-  std::vector<std::pair<std::pair<int, int>, int>> intervals;
-
-  for(int i = 0; i < channel_distribution.size(); i++) {
-    intervals.push_back({{i, i+1}, channel_distribution.at(i)});
-  }
-  while(intervals.size() > lvl) {
-    int dist_min = std::numeric_limits<int>::max();
-    int index;
-    for(int i = 0; i < intervals.size(); i++) {
-      auto set = intervals.at(i);
-      int dist = set.second;
-      if(dist < dist_min) {
-        dist_min = dist;
-        index = i;
-      }
-    }
-
-    std::vector<std::pair<std::pair<int, int>, int>> new_intervals;
-    if(index == 0) {
-      for(int i = 1; i < intervals.size(); i++) {
-        new_intervals.push_back(intervals.at(i));
-      }
-      new_intervals.at(0).first.first = intervals.at(0).first.first;
-      new_intervals.at(0).second += intervals.at(0).second;
-    } else if(index == intervals.size() - 1) {
-      for(int i = 0; i < intervals.size() - 1; i++) {
-        new_intervals.push_back(intervals.at(i));
-      }
-      new_intervals.at(index - 1).first.second = intervals.at(index).first.second;
-      new_intervals.at(index - 1).second += intervals.at(index).second;
-    } else {
-      for(int i = 0; i < index; i++) {
-        new_intervals.push_back(intervals.at(i));
-      }
-      for(int i = index + 1; i < intervals.size(); i++) {
-        new_intervals.push_back(intervals.at(i));
-      }
-      if(new_intervals.at(index - 1).second > new_intervals.at(index).second) {
-        new_intervals.at(index).first.first = new_intervals.at(index - 1).first.second;
-        new_intervals.at(index).second += intervals.at(index).second;
+std::vector<Pixel> Quantitizer::lowPassFilterImage(Image im) {
+  std::vector<Pixel> pixels;
+  for(int i = 0; i < im.height; i++) {
+    for(int j = 0; j < im.width; j++) {
+      if((i + j) % 2 == 0)
+        continue;
+      if(i == im.height - 1 && j == im.width - 1)
+        break;
+      else if(j == 0) {
+        pixels.push_back((im.pixels.at(i).at(j) + im.pixels.at(i - 1).at(im.width - 1)) / 2);
       } else {
-        new_intervals.at(index-1).first.second = new_intervals.at(index).first.first;
-        new_intervals.at(index-1).second += intervals.at(index).second;
+        pixels.push_back((im.pixels.at(i).at(j) + im.pixels.at(i).at(j - 1)) / 2);
       }
     }
-    intervals = new_intervals;
   }
+  return pixels;
+}
 
-  std::unordered_map<int, int> pixel_val_mapping;
-  int j = 0;
-  for(int i = 0; i < 256; i++) {
-    if(i >= intervals[j].first.second) {
-      j++;
+std::vector<Pixel> Quantitizer::highPassFilterImage(Image im) {
+  std::vector<Pixel> pixels;
+  for(int i = 0; i < im.height; i++) {
+    for(int j = 0; j < im.width; j++) {
+      if((i + j) % 2 == 0)
+        continue;
+      if(i == im.height - 1 && j == im.width - 1)
+        break;
+      else if(j == 0) {
+        pixels.push_back((im.pixels.at(i).at(j) - im.pixels.at(i - 1).at(im.width - 1)) / 2);
+      } else {
+        pixels.push_back((im.pixels.at(i).at(j) - im.pixels.at(i).at(j - 1)) / 2);
+      }
     }
-    pixel_val_mapping[i] = intervals[j].first.first;
   }
+  return pixels;
+}
 
-  return pixel_val_mapping;
+std::vector<Pixel> Quantitizer::encodeDifferentially(std::vector<Pixel> pixels) {
+  std::vector<Pixel> new_pixels;
+  new_pixels.push_back(pixels.at(0));
+  for(int i = 1; i < pixels.size(); i++) {
+    new_pixels.push_back(pixels.at(i) - pixels.at(i-1));
+  }
+  return new_pixels;
+}
+
+std::vector<Pixel> Quantitizer::encodeDifferentiallyMinimizingError(
+    std::vector<Pixel> pixels,
+    std::vector<std::pair<int, Pixel>> quantization_map) {
+  std::vector<Pixel> result;
+  result.push_back(pixels.at(0));
+  for(int i = 1; i < pixels.size(); i++) {
+    Pixel prev_val_after_quantization;
+    int best_index = 0;
+    int min_dist = std::numeric_limits<int>::max();
+    for(int k = 0; k < quantization_map.size(); k++) {
+      int dist = distance(result.at(i-1), quantization_map.at(k).second);
+      if(dist < min_dist) {
+        best_index = k;
+        min_dist = dist;
+      }
+    }
+    prev_val_after_quantization = quantization_map.at(best_index).second;
+    Pixel error = result.at(i-1) - prev_val_after_quantization;
+//    std::cout << error.red << " " << error.green << " " << error.blue << "\n";
+    result.push_back(pixels.at(i) - pixels.at(i-1));
+    result.at(i) + error;
+  }
+  return result;
+}
+
+std::vector<std::pair<int, Pixel>> Quantitizer::quantifyNonuniform(std::vector<Pixel> input, int k) {
+  int lvl = 1 << (k-1);
+  double epsilon = 0.01;
+  std::vector<Pixel> Y;
+  Y.push_back(avg_vector(input));
+  std::vector<std::pair<int, Pixel>> pixels_map;
+
+  while(Y.size() < lvl) {
+    std::vector<Pixel> new_y;
+    for(auto p : Y) {
+      Pixel p1 = pixelPerturbation(p, 5);
+      Pixel p2 = pixelPerturbation(p, -5);
+      new_y.push_back(p1);
+      new_y.push_back(p2);
+    }
+    Y = new_y;
+    pixels_map = splitImage(epsilon, lvl, input, Y);
+  }
+  return pixels_map;
+}
+
+Pixel Quantitizer::pixelPerturbation(Pixel p, int perturbation) {
+  p.red = (p.red + perturbation + 256) % 256;
+  p.green = (p.green + perturbation + 256) % 256;
+  p.blue = (p.blue + perturbation + 256) % 256;
+  return p;
+}
+
+std::vector<std::pair<int, Pixel>> Quantitizer::splitImage(double epsilon, int lvl, std::vector<Pixel> input, std::vector<Pixel> Y) {
+  double curr_d = 0.0;
+  double prev_d = 0.0;
+  double error = 1.0 + epsilon;
+  std::vector<Pixel> result(input.size(), {0,0,0});
+  std::vector<std::pair<int, Pixel>> pixels_map;
+  while(error >= epsilon) {
+    pixels_map.clear();
+    std::vector<std::vector<Pixel>> V(Y.size(), std::vector<Pixel>());
+    std::vector<std::vector<int>> pixels_coords(Y.size(), std::vector<int>());
+    for(int i = 0; i < input.size(); i++) {
+        int best_index = 0;
+        int min_dist = std::numeric_limits<int>::max();
+        for(int k = 0; k < Y.size(); k++) {
+          int dist = distance(input.at(i), Y.at(k));
+          if(dist < min_dist) {
+            best_index = k;
+            min_dist = dist;
+          }
+        }
+        V.at(best_index).push_back(input.at(i));
+        pixels_coords.at(best_index).push_back(i);
+    }
+
+    for(int i = 0; i < Y.size(); i++) {
+      if(V.at(i).size() > 0) {
+        Y.at(i) = avg_vector(V.at(i));
+        for(auto index : pixels_coords.at(i)) {
+          result.at(index) = Y.at(i);
+          pixels_map.push_back({index, Y.at(i)});
+        }
+      }
+    }
+
+    prev_d = curr_d;
+    curr_d = calculateDistortion(V, Y, input.size());
+
+    error = (curr_d - prev_d) / curr_d;
+  }
+  return pixels_map;
+}
+
+Pixel Quantitizer::avg_vector(std::vector<Pixel> pixels) {
+  if(pixels.size() == 0)
+    return {0,0,0};
+  long long int red = 0;
+  long long int green = 0;
+  long long int blue = 0;
+  for(auto pix : pixels) {
+    red += pix.red;
+    green += pix.green;
+    blue += pix.blue;
+  }
+  red /= (long long int)pixels.size();
+  green /= (long long int)pixels.size();
+  blue /= (long long int)pixels.size();
+  return {(int)red, (int)green, (int)blue};
 }
 
 double Quantitizer::minSquareError(Image im1, Image im2) {
@@ -249,12 +210,31 @@ double Quantitizer::minSquareError(Image im1, Image im2) {
   return sum;
 }
 
-size_t Quantitizer::distance(Pixel a, Pixel b) {
-  size_t dist = 0;
+int Quantitizer::distance(Pixel a, Pixel b) {
+  int dist = 0;
   dist += std::abs(a.red - b.red);
   dist += std::abs(a.green - b.green);
   dist += std::abs(a.blue - b.blue);
   return dist;
+}
+
+double Quantitizer::calculateDistortion(std::vector<std::vector<Pixel>> V, std::vector<Pixel> Y, int size) {
+  double sum = 0.0;
+  for(int i = 0; i < V.size(); i++) {
+    for(auto pix : V.at(i)) {
+      int dist = distance(pix, Y.at(i));
+      sum += (double)(dist * dist) / (double)(size * size);
+    }
+  }
+  return sum;
+}
+
+std::vector<Pixel> Quantitizer::reconstructImageFromQuantizationMap(
+    std::vector<std::pair<int, Pixel>> map, std::vector<Pixel> input) {
+  for(auto pair : map) {
+    input.at(pair.first) = pair.second;
+  }
+  return input;
 }
 
 void Quantitizer::signalNoiseRatio(Image im1, Image im2) {
@@ -292,4 +272,27 @@ void Quantitizer::minSquareChannelsError(Image im1, Image im2) {
   std::cout << "Mean square error - red channel: " << sum_r << std::endl;
   std::cout << "Mean square error - green channel: " << sum_g << std::endl;
   std::cout << "Mean square error - blue channel: " << sum_b << std::endl;
+}
+
+Image Quantitizer::sumImages(std::vector<Pixel> y, std::vector<Pixel> z, Image original_im) {
+  std::vector<Pixel> y_decoded;
+  y_decoded.push_back(y.at(0));
+  for(int i = 1; i < y.size(); i++) {
+    y_decoded.push_back(y_decoded.at(i-1) + y.at(i));
+//    std::cout << z.at(i).red << " " << z.at(i).green << " " << z.at(i).blue << " ";
+  }
+
+  int h_ind = -1;
+  for(int i = 0; i < y.size() * 2; i++) {
+    if(i % original_im.width == 0)
+      h_ind++;
+
+    if(i%2 == 0) {
+      original_im.pixels.at(h_ind).at(i % original_im.width) = y.at(i / 2) + z.at(i / 2);
+    } else {
+      original_im.pixels.at(h_ind).at(i % original_im.width) = y.at(i / 2) - z.at(i / 2);
+    }
+//    std::cout << original_im.pixels.at(h_ind).at(i % original_im.width).red << " " << original_im.pixels.at(h_ind).at(i % original_im.width).green << " " << original_im.pixels.at(h_ind).at(i % original_im.width).blue << "\n";
+  }
+  return original_im;
 }

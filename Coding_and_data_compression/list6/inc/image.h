@@ -11,17 +11,11 @@ typedef struct pixel {
 } Pixel;
 
 Pixel operator+(Pixel p1, Pixel p2) {
-  return {(p1.red + p2.red) % 256, (p1.green + p2.green) % 256, (p1.blue + p2.blue) % 256};
+  return {(p1.red + p2.red), (p1.green + p2.green), (p1.blue + p2.blue)};
 }
 
 Pixel operator-(Pixel p1, Pixel p2) {
   Pixel res = {p1.red - p2.red, p1.green - p2.green, p1.blue - p2.blue};
-  while(res.red < 0)
-    res.red += 256;
-  while(res.green < 0)
-    res.green += 256;
-  while(res.blue < 0)
-    res.blue += 256;
   return res;
 }
 
