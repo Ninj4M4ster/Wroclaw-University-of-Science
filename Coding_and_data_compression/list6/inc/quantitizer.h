@@ -14,10 +14,9 @@ class Quantitizer {
   std::vector<Pixel> highPassFilterImage(Image im);
 
   std::vector<Pixel> encodeDifferentially(std::vector<Pixel> pixels);
-  std::vector<Pixel> encodeDifferentiallyMinimizingError(std::vector<Pixel> pixels,
-                                                         std::vector<std::pair<int, Pixel>> quantization_map);
 
-  std::vector<std::pair<int, Pixel>> quantifyNonuniform(std::vector<Pixel> input, int k);
+  std::vector<Pixel> quantify(std::vector<Pixel> input, int k);
+  std::vector<int> quantifySingleChannel(std::vector<int> single_channel, int lvl);
   std::vector<std::pair<int, Pixel>> splitImage(double epsilon, int lvl, std::vector<Pixel> input, std::vector<Pixel> Y);
   Pixel avg_vector(std::vector<Pixel> pixels);
   Pixel pixelPerturbation(Pixel p, int perturbation);
