@@ -15,7 +15,7 @@ class CycleCreator {
   CycleCreator(std::shared_ptr<Graph> graph);
   std::vector<int> createRandomCycle();
 
-  static size_t calculateCycleCost(std::vector<int> & cycle, std::shared_ptr<Graph> graph);
+  size_t calculateCycleCost(std::vector<int> & cycle);
 
  private:
   std::shared_ptr<Graph> graph_;

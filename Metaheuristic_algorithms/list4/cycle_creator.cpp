@@ -29,11 +29,11 @@ std::vector<int> CycleCreator::createRandomCycle() {
  *
  * @return Cost of travelling the cycle.
  */
-size_t CycleCreator::calculateCycleCost(std::vector<int> & cycle, std::shared_ptr<Graph> graph) {
+size_t CycleCreator::calculateCycleCost(std::vector<int> & cycle) {
   std::size_t cost = 0;
   for(std::size_t i = 0; i < cycle.size() - 1; i++) {
-    cost += graph->at(cycle.at(i)).at(cycle.at(i+1));
+    cost += graph_->at(cycle.at(i)).at(cycle.at(i+1));
   }
-  cost += graph->at(cycle.at(cycle.size() - 1)).at(cycle.at(0));
+  cost += graph_->at(cycle.at(cycle.size() - 1)).at(cycle.at(0));
   return cost;
 }
