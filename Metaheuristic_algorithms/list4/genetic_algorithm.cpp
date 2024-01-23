@@ -1,4 +1,6 @@
 #include "inc/genetic_algorithm.h"
+#include <thread>
+#include <mutex>
 
 GeneticAlgorithm::GeneticAlgorithm(int population_size,
                                    double mutation_probability,
@@ -13,18 +15,18 @@ GeneticAlgorithm::GeneticAlgorithm(int population_size,
 
   // TODO(Jakub Drzewiecki): Consider checking if permutation has been already added.
   for(int i = 0; i < population_size; i++) {
-    std::vector<int> new_individual = cycle_creator->createRandomCycle();
+    std::vector<int> new_individual = cycle_creator->createMstBasedRandomCycle();
     population_.push_back({new_individual, cycle_creator_->calculateCycleCost(new_individual)});
   }
   islands_.push_back(population_);
 
-  selection_size_ = population_size_ / 10;
+  selection_size_ = population_size_ / 20;
 }
 
 std::pair<std::vector<int>, long long> GeneticAlgorithm::start() {
   std::pair<std::vector<int>, long long> best_result = findBestGene();
   for(int i = 0; i < number_of_generations_; i++) {
-    std::cout << i << std::endl;
+//    std::cout << i << std::endl;
     selectIndividuals();
     crossIndividuals();
     mutateIndividuals();
@@ -63,32 +65,74 @@ void GeneticAlgorithm::selectIndividuals() {
 }
 
 void GeneticAlgorithm::crossIndividuals() {
-  while(population_.size() < population_size_) {
-    std::uniform_int_distribution<int> distribution{0, static_cast<int>(population_.size() - 1)};
-    int first_index = distribution(random_gen_);
-    int second_index = first_index;
-    while(second_index == first_index) {
-      second_index = distribution(random_gen_);
+  int missing_population = population_size_ - population_.size();
+  int single_thread_step = missing_population / std::thread::hardware_concurrency();
+  int current_pop = population_.size();
+  std::mutex pop_acc_mutex;
+  std::vector<std::thread> threads;
+  for(int i = 0; i < std::thread::hardware_concurrency(); i++) {
+    if(i == std::thread::hardware_concurrency() - 1) {
+      single_thread_step = population_size_ - current_pop;
     }
-    std::pair<std::vector<int>, long long> child;
-    switch(curr_hybridization_type_) {
-      case HybridizationType::PMX:
-        child = pmx(population_.at(first_index), population_.at(second_index));
-        break;
-      case HybridizationType::OX1:
-        break;
-    }
-    population_.push_back(child);
+    threads.emplace_back([this, single_thread_step, &pop_acc_mutex]() {
+      for(int j = 0; j < single_thread_step; j++) {
+        pop_acc_mutex.lock();
+        std::uniform_int_distribution<int> distribution{0, static_cast<int>(population_.size() - 1)};
+        int first_index = distribution(random_gen_);
+        int second_index = first_index;
+        while(second_index == first_index) {
+          second_index = distribution(random_gen_);
+        }
+        auto first_parent = population_.at(first_index);
+        auto second_parent = population_.at(second_index);
+        auto hybr_type = curr_hybridization_type_;
+        pop_acc_mutex.unlock();
+        std::pair<std::vector<int>, long long> child;
+        switch(hybr_type) {
+          case HybridizationType::PMX:
+            child = pmx(first_parent, second_parent);
+            break;
+          case HybridizationType::OX1:
+            break;
+        }
+        pop_acc_mutex.lock();
+        population_.push_back(child);
+        pop_acc_mutex.unlock();
+      }
+    });
+
+    current_pop += single_thread_step;
+  }
+  for(auto & t : threads) {
+    t.join();
   }
 }
 
 void GeneticAlgorithm::mutateIndividuals() {
-  static std::uniform_real_distribution<double> distribution{0.0, 1.0};
-  for(int i = 0; i < population_.size(); i++) {
-    double chance = distribution(random_gen_);
-    if(chance < mutation_probability_) {
-      population_.at(i) = inverse(population_.at(i).first);
+  std::mutex access_mutex;
+  std::uniform_real_distribution<double> distribution{0.0, 1.0};
+  std::vector<std::thread> threads;
+  int range = population_.size() / std::thread::hardware_concurrency();
+  int range_start = 0;
+  for(int i = 0; i < std::thread::hardware_concurrency(); i++) {
+    if(i == std::thread::hardware_concurrency() - 1) {
+      range = population_.size() - range_start;
     }
+    threads.emplace_back([this, range_start, range, &distribution, &access_mutex]() {
+      for(int j = range_start; j < range; j++) {
+        access_mutex.lock();
+        double chance = distribution(random_gen_);
+        double prob = mutation_probability_;
+        access_mutex.unlock();
+        if(chance < prob) {
+          population_.at(j) = inverse(population_.at(j).first);
+        }
+      }
+    });
+    range_start += range;
+  }
+  for(auto & t : threads) {
+    t.join();
   }
 }
 

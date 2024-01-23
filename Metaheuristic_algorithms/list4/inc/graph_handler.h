@@ -24,12 +24,15 @@ class GraphHandler {
  public:
   GraphHandler(std::string file_name);
   std::shared_ptr<Graph> getGraph() const;
+  std::shared_ptr<Graph> getMst() const;
 
  private:
   int euc_2d(const std::pair<int, int>& l, const std::pair<int, int>& r);
   void readFile(std::string file_name);
+  void primMst(int source);
 
   std::shared_ptr<Graph> graph_ = std::make_shared<Graph>();
+  std::shared_ptr<Graph> mst_ = std::make_shared<Graph>();
 };
 
 #endif //WROCLAW_UNIVERSITY_OF_SCIENCE_METAHEURISTIC_ALGORITHMS_LIST4_GRAPH_HANDLER_H_

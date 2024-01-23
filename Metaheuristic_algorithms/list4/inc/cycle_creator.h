@@ -12,14 +12,17 @@
  */
 class CycleCreator {
  public:
-  CycleCreator(std::shared_ptr<Graph> graph);
-  std::vector<int> createRandomCycle();
+  CycleCreator(std::shared_ptr<Graph> mst, std::shared_ptr<Graph> graph);
+  std::vector<int> createMstBasedRandomCycle();
 
   size_t calculateCycleCost(std::vector<int> & cycle);
 
  private:
   std::shared_ptr<Graph> graph_;
+  std::shared_ptr<Graph> mst_;
   std::mt19937_64 random_generator_{std::random_device{}()};
+
+  void createCycle(int curr_vert, std::vector<int> & cycle, std::vector<bool> & visited);
 };
 
 #endif //WROCLAW_UNIVERSITY_OF_SCIENCE_METAHEURISTIC_ALGORITHMS_LIST4_CYCLE_CREATOR_H_

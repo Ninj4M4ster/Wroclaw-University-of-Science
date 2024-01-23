@@ -5,8 +5,9 @@
  *
  * @param graph Graph loaded from file.
  */
-CycleCreator::CycleCreator(std::shared_ptr<Graph> graph) {
+CycleCreator::CycleCreator(std::shared_ptr<Graph> mst, std::shared_ptr<Graph> graph) {
   graph_ = graph;
+  mst_ = mst;
 }
 
 /**
@@ -15,13 +16,12 @@ CycleCreator::CycleCreator(std::shared_ptr<Graph> graph) {
  *
  * @return Array that indicates a cycle.
  */
-std::vector<int> CycleCreator::createRandomCycle() {
-  std::vector<int> start_cycle(graph_->size());
-  for(int i = 0; i < graph_->size(); i++) {
-    start_cycle.at(i) = i;
-  }
-  std::shuffle(start_cycle.begin(), start_cycle.end(), random_generator_);
-  return start_cycle;
+std::vector<int> CycleCreator::createMstBasedRandomCycle() {
+  std::uniform_int_distribution<int> distribution{0, static_cast<int>(mst_->size() - 1)};
+  std::vector<bool> visited(graph_->size(), false);
+  std::vector<int> cycle;
+  createCycle(distribution(random_generator_), cycle, visited);
+  return cycle;
 }
 
 /**
@@ -36,4 +36,23 @@ size_t CycleCreator::calculateCycleCost(std::vector<int> & cycle) {
   }
   cost += graph_->at(cycle.at(cycle.size() - 1)).at(cycle.at(0));
   return cost;
+}
+
+/**
+ * Find MST in given graph using dfs algorithm.
+ * This is main dfs pipeline.
+ * Based on order of visited vertices, cycle is created.
+ *
+ * @param curr_vert Current vertex
+ * @param cycle Array in which cycle is created
+ * @param visited Array indicating if given vertex has been already visited.
+ */
+void CycleCreator::createCycle(int curr_vert, std::vector<int> & cycle, std::vector<bool> & visited) {
+  visited.at(curr_vert) = true;
+  cycle.push_back(curr_vert);
+  for(auto & pair : mst_->at(curr_vert)) {
+    if(!visited.at(pair.first)) {
+      createCycle(pair.first, cycle, visited);
+    }
+  }
 }

@@ -9,6 +9,7 @@
  */
 GraphHandler::GraphHandler(std::string file_name) {
   readFile(file_name);
+  primMst(0);
 }
 
 /**
@@ -18,6 +19,15 @@ GraphHandler::GraphHandler(std::string file_name) {
  */
 std::shared_ptr<Graph> GraphHandler::getGraph() const {
   return graph_;
+}
+
+/**
+ * Return created mst graph.
+ *
+ * @return Mst graph.
+ */
+std::shared_ptr<Graph> GraphHandler::getMst() const {
+  return mst_;
 }
 
 /**
@@ -81,4 +91,46 @@ void GraphHandler::readFile(std::string file_name) {
   }
 
   f.close();
+}
+
+/**
+ * Find MST in given graph. This function implements Prim's algorithm.
+ *
+ * @param source Source vertex
+ * @param graph Graph to find mst
+ * @return Cost of the mst.
+ */
+void GraphHandler::primMst(int source) {
+  std::vector<int> C(graph_->size(), std::numeric_limits<int>::max());
+  std::vector<int> parent(graph_->size(), -1);
+  auto compare =
+      [](std::pair<int, int> l, std::pair<int, int> r) {return l.second > r.second;};
+  std::vector<bool> visited(graph_->size(), false);
+
+  std::priority_queue<std::pair<int, int>, std::vector<std::pair<int, int>>, decltype(compare)> pq(compare);
+  C.at(source) = 0;
+  pq.emplace(source, 0);
+  while(!pq.empty()) {
+    auto curr = pq.top();
+    pq.pop();
+
+    if(visited.at(curr.first)) {
+      continue;
+    }
+    visited.at(curr.first) = true;
+    for(auto neighbours : graph_->at(curr.first)) {
+      if(!visited.at(neighbours.first) && C.at(neighbours.first) > neighbours.second) {
+        C.at(neighbours.first) = neighbours.second;
+        pq.emplace(neighbours.first, C.at(neighbours.first));
+        parent.at(neighbours.first) = curr.first;
+      }
+    }
+  }
+  // push mst to graph structure
+  for(int i = 0; i < parent.size(); i++) {
+    if(parent.at(i) != -1) {
+      mst_->operator[](i)[parent.at(i)] = graph_->at(i).at(parent.at(i));
+      mst_->operator[](parent.at(i))[i] = graph_->at(parent.at(i)).at(i);
+    }
+  }
 }

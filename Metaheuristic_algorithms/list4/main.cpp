@@ -2,10 +2,10 @@
 #include "cycle_creator.cpp"
 #include "genetic_algorithm.cpp"
 
-static constexpr int population_size = 1000;
+static constexpr int population_size = 2000;
 static constexpr double mutation_probability = 0.1;
 static constexpr bool island_type = false;
-static constexpr long long int number_of_generations = 5000;
+static constexpr long long int number_of_generations = 7000;
 
 size_t findMin(std::vector<long long> & arr) {
   size_t res = std::numeric_limits<size_t>::max();
@@ -33,14 +33,13 @@ int main() {
                                        "data/xit1083.tsp", "data/icw1483.tsp",
                                        "data/djc1785.tsp", "data/dcb2086.tsp",
                                        "data/pds2566.tsp"};
-  for(int i = 0; i < 5; i++) {
+  for(int i = 0; i < 15; i++) {
     std::cout << graph_names.at(i) << std::endl;
     std::vector<long long> results;
     for(int j = 0; j < 3; j++) {
-      std::cout << graph_names.at(i) << std::endl;
       GraphHandler gh(graph_names.at(i));
       std::shared_ptr<CycleCreator> cycle_creator =
-          std::make_shared<CycleCreator>(gh.getGraph());
+          std::make_shared<CycleCreator>(gh.getMst(), gh.getGraph());
       std::shared_ptr<GeneticAlgorithm> genetic_algorithm =
           std::make_shared<GeneticAlgorithm>(population_size,
                                              mutation_probability,
