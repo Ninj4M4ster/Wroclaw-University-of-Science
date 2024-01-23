@@ -34,11 +34,14 @@ class GeneticAlgorithm {
   std::vector<std::pair<std::vector<int>, long long int>> population_;
   std::vector<std::vector<std::pair<std::vector<int>, long long int>>> islands_;
 
-  std::vector<std::pair<std::vector<int>, long long int>> selectIndividuals();
-  std::vector<std::pair<std::vector<int>, long long int>> crossIndividuals(
-      std::vector<std::pair<std::vector<int>, long long int>> individuals);
+  void selectIndividuals();
+  void crossIndividuals();
   std::vector<std::pair<std::vector<int>, long long int>> mutateIndividuals(
       std::vector<std::pair<std::vector<int>, long long int>> individuals);
+
+  std::pair<std::vector<int>, long long int> pmx(
+      std::pair<std::vector<int>, long long int> first_parent,
+      std::pair<std::vector<int>, long long int> second_parent);
 };
 
 #endif //WROCLAW_UNIVERSITY_OF_SCIENCE_METAHEURISTIC_ALGORITHMS_LIST4_INC_GENETIC_ALGORITHM_H_

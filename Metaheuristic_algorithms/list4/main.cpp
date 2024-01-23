@@ -9,7 +9,7 @@ static constexpr long long int max_iterations_count = 10000;
 static constexpr long long int number_of_generations = 1000;
 
 int main() {
-  std::string graph_path = "data/bcl380.tsp";
+  std::string graph_path = "data/xqf131.tsp";
   std::shared_ptr<GraphHandler> graph_handler =
       std::make_shared<GraphHandler>(graph_path);
   std::shared_ptr<CycleCreator> cycle_creator =

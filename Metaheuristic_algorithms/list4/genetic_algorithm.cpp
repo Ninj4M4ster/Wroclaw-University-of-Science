@@ -25,6 +25,7 @@ GeneticAlgorithm::GeneticAlgorithm(int population_size,
 
 void GeneticAlgorithm::start() {
   selectIndividuals();
+  crossIndividuals();
 }
 
 /**
@@ -32,7 +33,7 @@ void GeneticAlgorithm::start() {
  *
  * @return
  */
-std::vector<std::pair<std::vector<int>, long long int>> GeneticAlgorithm::selectIndividuals() {
+void GeneticAlgorithm::selectIndividuals() {
   static auto compare =
       [](const std::pair<std::vector<int>, long long int> & left,
           const std::pair<std::vector<int>, long long int> & right) {
@@ -50,10 +51,81 @@ std::vector<std::pair<std::vector<int>, long long int>> GeneticAlgorithm::select
     pq.pop();
     selection.push_back(val);
   }
-  return selection;
+  population_ = selection;
 }
 
-std::vector<std::pair<std::vector<int>, long long>> GeneticAlgorithm::crossIndividuals(
-    std::vector<std::pair<std::vector<int>, long long>> individuals) {
+void GeneticAlgorithm::crossIndividuals() {
+  while(population_.size() < population_size_) {
+    std::uniform_int_distribution<int> distribution{0, static_cast<int>(population_.size() - 1)};
+    int first_index = distribution(random_gen_);
+    int second_index = first_index;
+    while(second_index == first_index) {
+      second_index = distribution(random_gen_);
+    }
+    std::pair<std::vector<int>, long long> child;
+    switch(curr_hybridization_type_) {
+      case HybridizationType::PMX:
+        child = pmx(population_.at(first_index), population_.at(second_index));
+        break;
+      case HybridizationType::OX1:
+        break;
+    }
+    population_.push_back(child);
+  }
+}
 
+std::pair<std::vector<int>, long long> GeneticAlgorithm::pmx(
+    std::pair<std::vector<int>, long long> first_parent,
+    std::pair<std::vector<int>, long long> second_parent) {
+  std::uniform_int_distribution<int> distribution{0, static_cast<int>(first_parent.first.size() - 1)};
+  int first_index = distribution(random_gen_);
+  int second_index = first_index;
+  while(second_index == first_index) {
+    second_index = distribution(random_gen_);
+  }
+  if(first_index > second_index) {
+    std::swap(first_index, second_index);
+  }
+  if(first_index == 0 && second_index == first_parent.first.size() - 1) {
+    while(first_index == 0) {
+      first_index = distribution(random_gen_);
+    }
+  }
+  std::vector<bool> taken_positions(first_parent.first.size(), false);
+  std::vector<bool> copied_values(first_parent.first.size(), false);
+  std::pair<std::vector<int>, long long> child = {std::vector<int>(first_parent.first.size(), -1), 0};
+  for(int i = first_index; i <= second_index; i++) {
+    child.first.at(i) = first_parent.first.at(i);
+    taken_positions.at(i) = true;
+    copied_values.at(child.first.at(i)) = true;
+  }
+  for(int i = first_index; i <= second_index; i++) {
+    if(copied_values.at(second_parent.first.at(i)))
+      continue;
+    int to_copy = second_parent.first.at(i);
+    int already_copied = first_parent.first.at(i);
+    int index = 0;
+    for(; index < second_parent.first.size(); index++) {
+      if(second_parent.first.at(index) == already_copied)
+        break;
+    }
+    while(taken_positions.at(index)) {
+      already_copied = first_parent.first.at(index);
+      index = 0;
+      for(; index < second_parent.first.size(); index++) {
+        if(second_parent.first.at(index) == already_copied)
+          break;
+      }
+    }
+    child.first.at(index) = to_copy;
+    taken_positions.at(index) = true;
+    copied_values.at(to_copy) = true;
+  }
+  for(int i = 0; i < child.first.size(); i++) {
+    if(!copied_values.at(second_parent.first.at(i))) {
+      child.first.at(i) = second_parent.first.at(i);
+    }
+  }
+  child.second = cycle_creator_->calculateCycleCost(child.first);
+  return child;
 }
