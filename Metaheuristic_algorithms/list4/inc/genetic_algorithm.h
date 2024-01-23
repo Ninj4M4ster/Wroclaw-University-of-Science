@@ -14,10 +14,9 @@ class GeneticAlgorithm {
   GeneticAlgorithm(int population_size,
                    double mutation_probability,
                    bool island_type_population,
-                   long long int max_iterations_count,
                    long long int number_of_generations,
                    std::shared_ptr<CycleCreator> cycle_creator);
-  void start();
+  std::pair<std::vector<int>, long long> start();
  private:
   int population_size_;
   double mutation_probability_;
@@ -36,12 +35,15 @@ class GeneticAlgorithm {
 
   void selectIndividuals();
   void crossIndividuals();
-  std::vector<std::pair<std::vector<int>, long long int>> mutateIndividuals(
-      std::vector<std::pair<std::vector<int>, long long int>> individuals);
+  void mutateIndividuals();
 
   std::pair<std::vector<int>, long long int> pmx(
       std::pair<std::vector<int>, long long int> first_parent,
       std::pair<std::vector<int>, long long int> second_parent);
+
+  std::pair<std::vector<int>, long long int> inverse(std::vector<int> permutation);
+
+  std::pair<std::vector<int>, long long int> findBestGene();
 };
 
 #endif //WROCLAW_UNIVERSITY_OF_SCIENCE_METAHEURISTIC_ALGORITHMS_LIST4_INC_GENETIC_ALGORITHM_H_

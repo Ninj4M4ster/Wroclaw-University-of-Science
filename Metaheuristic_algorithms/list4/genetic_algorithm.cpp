@@ -3,13 +3,11 @@
 GeneticAlgorithm::GeneticAlgorithm(int population_size,
                                    double mutation_probability,
                                    bool island_type_population,
-                                   long long int max_iterations_count,
                                    long long int number_of_generations,
                                    std::shared_ptr<CycleCreator> cycle_creator) {
   population_size_ = population_size;
   mutation_probability_ = mutation_probability;
   island_type_population_ = island_type_population;
-  max_iterations_count_ = max_iterations_count;
   number_of_generations_ = number_of_generations;
   cycle_creator_ = cycle_creator;
 
@@ -23,9 +21,19 @@ GeneticAlgorithm::GeneticAlgorithm(int population_size,
   selection_size_ = population_size_ / 10;
 }
 
-void GeneticAlgorithm::start() {
-  selectIndividuals();
-  crossIndividuals();
+std::pair<std::vector<int>, long long> GeneticAlgorithm::start() {
+  std::pair<std::vector<int>, long long> best_result = findBestGene();
+  for(int i = 0; i < number_of_generations_; i++) {
+    std::cout << i << std::endl;
+    selectIndividuals();
+    crossIndividuals();
+    mutateIndividuals();
+    std::pair<std::vector<int>, long long> curr_best = findBestGene();
+    if(curr_best.second < best_result.second) {
+      best_result = curr_best;
+    }
+  }
+  return best_result;
 }
 
 /**
@@ -71,6 +79,16 @@ void GeneticAlgorithm::crossIndividuals() {
         break;
     }
     population_.push_back(child);
+  }
+}
+
+void GeneticAlgorithm::mutateIndividuals() {
+  static std::uniform_real_distribution<double> distribution{0.0, 1.0};
+  for(int i = 0; i < population_.size(); i++) {
+    double chance = distribution(random_gen_);
+    if(chance < mutation_probability_) {
+      population_.at(i) = inverse(population_.at(i).first);
+    }
   }
 }
 
@@ -128,4 +146,36 @@ std::pair<std::vector<int>, long long> GeneticAlgorithm::pmx(
   }
   child.second = cycle_creator_->calculateCycleCost(child.first);
   return child;
+}
+
+std::pair<std::vector<int>, long long> GeneticAlgorithm::inverse(std::vector<int> permutation) {
+  std::uniform_int_distribution<int> distribution{0, static_cast<int>(permutation.size() - 1)};
+  int first_index = distribution(random_gen_);
+  int second_index = first_index;
+  while(second_index == first_index) {
+    second_index = distribution(random_gen_);
+  }
+  if(second_index < first_index)
+    std::swap(first_index, second_index);
+  if(first_index == 0 && second_index == permutation.size() - 1) {
+    while(first_index == 0) {
+      first_index = distribution(random_gen_);
+    }
+  }
+  while(first_index < second_index) {
+    std::swap(permutation.at(first_index), permutation.at(second_index));
+    first_index++;
+    second_index--;
+  }
+  return {permutation, cycle_creator_->calculateCycleCost(permutation)};
+}
+
+std::pair<std::vector<int>, long long> GeneticAlgorithm::findBestGene() {
+  std::pair<std::vector<int>, long long> best_gene;
+  best_gene.second = std::numeric_limits<int>::max();
+  for(auto p : population_) {
+    if(p.second < best_gene.second)
+      best_gene = p;
+  }
+  return best_gene;
 }
