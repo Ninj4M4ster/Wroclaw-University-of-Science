@@ -38,6 +38,10 @@ std::pair<std::vector<int>, long long> GeneticAlgorithm::start() {
   return best_result;
 }
 
+void GeneticAlgorithm::setHybridizationType(HybridizationType type) {
+  curr_hybridization_type_ = type;
+}
+
 /**
  * Selection function. It implements rank method of selection.
  *
@@ -93,6 +97,7 @@ void GeneticAlgorithm::crossIndividuals() {
             child = pmx(first_parent, second_parent);
             break;
           case HybridizationType::OX1:
+            child = ox1(first_parent, second_parent);
             break;
         }
         pop_acc_mutex.lock();
@@ -186,6 +191,46 @@ std::pair<std::vector<int>, long long> GeneticAlgorithm::pmx(
   for(int i = 0; i < child.first.size(); i++) {
     if(!copied_values.at(second_parent.first.at(i))) {
       child.first.at(i) = second_parent.first.at(i);
+    }
+  }
+  child.second = cycle_creator_->calculateCycleCost(child.first);
+  return child;
+}
+
+std::pair<std::vector<int>, long long> GeneticAlgorithm::ox1(
+    std::pair<std::vector<int>, long long> first_parent,
+    std::pair<std::vector<int>, long long> second_parent) {
+  std::uniform_int_distribution<int> distribution{0, static_cast<int>(first_parent.first.size() - 1)};
+  int first_index = distribution(random_gen_);
+  int second_index = first_index;
+  while(second_index == first_index) {
+    second_index = distribution(random_gen_);
+  }
+  if(first_index > second_index) {
+    std::swap(first_index, second_index);
+  }
+  if(first_index == 0 && second_index == first_parent.first.size() - 1) {
+    while(first_index == 0) {
+      first_index = distribution(random_gen_);
+    }
+  }
+  std::pair<std::vector<int>, long long> child = {std::vector<int>(first_parent.first.size(), -1), 0};
+  std::vector<bool> copied_values(first_parent.first.size(), false);
+  for(int i = first_index; i < second_index; i++) {
+    child.first.at(first_index) = first_parent.first.at(first_index);
+    copied_values.at(child.first.at(first_index)) = true;
+  }
+  std::vector<int> not_copied_values_order;
+  for(auto val : second_parent.first) {
+    if(!copied_values.at(val)) {
+      not_copied_values_order.push_back(val);
+    }
+  }
+  int not_copied_vals_index = 0;
+  for(int i = 0; i < child.first.size(); i++) {
+    if(child.first.at(i) == -1) {
+      child.first.at(i) = not_copied_values_order.at(not_copied_vals_index);
+      not_copied_vals_index++;
     }
   }
   child.second = cycle_creator_->calculateCycleCost(child.first);

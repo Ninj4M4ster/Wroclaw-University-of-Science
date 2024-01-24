@@ -46,6 +46,7 @@ int main() {
                                              island_type,
                                              number_of_generations,
                                              cycle_creator);
+      genetic_algorithm->setHybridizationType(HybridizationType::OX1);
 
       std::pair<std::vector<int>, long long> result = genetic_algorithm->start();
       std::cout << "Result: " << result.second << std::endl;

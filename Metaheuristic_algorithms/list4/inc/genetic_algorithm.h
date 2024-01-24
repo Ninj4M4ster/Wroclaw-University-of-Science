@@ -17,6 +17,7 @@ class GeneticAlgorithm {
                    long long int number_of_generations,
                    std::shared_ptr<CycleCreator> cycle_creator);
   std::pair<std::vector<int>, long long> start();
+  void setHybridizationType(HybridizationType type);
  private:
   int population_size_;
   double mutation_probability_;
@@ -38,6 +39,9 @@ class GeneticAlgorithm {
   void mutateIndividuals();
 
   std::pair<std::vector<int>, long long int> pmx(
+      std::pair<std::vector<int>, long long int> first_parent,
+      std::pair<std::vector<int>, long long int> second_parent);
+  std::pair<std::vector<int>, long long int> ox1(
       std::pair<std::vector<int>, long long int> first_parent,
       std::pair<std::vector<int>, long long int> second_parent);
 
