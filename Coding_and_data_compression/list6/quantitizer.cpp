@@ -4,36 +4,20 @@
 #include "inc/quantitizer.h"
 
 Image Quantitizer::encode(Image im, int bits_count) {
-  std::vector<Pixel> original_im_pixels = putToSingleVector(im.pixels);
+
   std::vector<Pixel> high_pass_filtered = highPassFilterImage(im);
-  std::vector<Pixel> quant_high = quantify(high_pass_filtered, bits_count);
+  std::vector<std::vector<int>> quant_maps = quantify(high_pass_filtered, bits_count);
+  std::vector<Pixel> quant_high = reconstructImageFromQuantizationMap(quant_maps, high_pass_filtered);
 
   std::vector<Pixel> low_pass_filtered = lowPassFilterImage(im);
   std::vector<Pixel> diff_encoded_low = encodeDifferentially(low_pass_filtered);
+  quant_maps = quantify(diff_encoded_low, bits_count);
+  std::vector<Pixel> diff_encoded_min_err_low = encodeDifferentiallyMinimizingError(low_pass_filtered, quant_maps);
 
-//  errors.clear();
-//  for(int i = 0; i < quant_diff.size(); i++) {
-//    errors.push_back(diff_encoded_low.at(i) - minimized_error_quant_diff.at(i));
-//    std::cout << errors.at(i).red << " " << errors.at(i).green << " " << errors.at(i).blue << std::endl;
-//  }
-
-//  for(auto pix : quant_high) {
-//    std::cout << pix.red << " " << pix.green << " " << pix.blue << std::endl;
-//  }
-  Image sum = sumImages(diff_encoded_low, quant_high, im);
+  Image sum = sumImages(diff_encoded_min_err_low, quant_high, im);
   std::cout << "Statistics\n";
   signalNoiseRatio(im, sum);
   return sum;
-}
-
-std::vector<Pixel> Quantitizer::putToSingleVector(std::vector<std::vector<Pixel>> pixels) {
-  std::vector<Pixel> result;
-  for(auto row : pixels) {
-    for(auto pix : row) {
-      result.push_back(pix);
-    }
-  }
-  return result;
 }
 
 std::vector<Pixel> Quantitizer::lowPassFilterImage(Image im) {
@@ -81,7 +65,35 @@ std::vector<Pixel> Quantitizer::encodeDifferentially(std::vector<Pixel> pixels) 
   return new_pixels;
 }
 
-std::vector<Pixel> Quantitizer::quantify(std::vector<Pixel> input, int k) {
+std::vector<Pixel> Quantitizer::encodeDifferentiallyMinimizingError(std::vector<Pixel> pixels,
+                                                                    std::vector<std::vector<int>> quant_ranges) {
+  std::vector<Pixel> new_pixels;
+  Pixel reconstruction = {0, 0, 0};
+  for(int i = 0; i < pixels.size(); i++) {
+    Pixel new_pix;
+    if(i == 0) {
+      int range_index = findIndex(pixels.at(i).red, quant_ranges.at(0));
+      new_pix.red = quant_ranges.at(0).at(range_index);
+      range_index = findIndex(pixels.at(i).green, quant_ranges.at(1));
+      new_pix.green = quant_ranges.at(1).at(range_index);
+      range_index = findIndex(pixels.at(i).blue, quant_ranges.at(2));
+      new_pix.blue = quant_ranges.at(2).at(range_index);
+    } else {
+      new_pix = pixels.at(i) - reconstruction;
+      int range_index = findIndex(new_pix.red, quant_ranges.at(0));
+      new_pix.red = quant_ranges.at(0).at(range_index);
+      range_index = findIndex(new_pix.green, quant_ranges.at(1));
+      new_pix.green = quant_ranges.at(1).at(range_index);
+      range_index = findIndex(new_pix.blue, quant_ranges.at(2));
+      new_pix.blue = quant_ranges.at(2).at(range_index);
+    }
+    new_pixels.push_back(new_pix);
+    reconstruction = reconstruction + new_pix;
+  }
+  return new_pixels;
+}
+
+std::vector<std::vector<int>> Quantitizer::quantify(std::vector<Pixel> input, int k) {
   int lvl = 1 << (k - 1);
   std::vector<int> red_pixels;
   std::vector<int> green_pixels;
@@ -91,15 +103,11 @@ std::vector<Pixel> Quantitizer::quantify(std::vector<Pixel> input, int k) {
     green_pixels.push_back(pix.green);
     blue_pixels.push_back(pix.blue);
   }
-  std::vector<int> quantified_red_pixels = quantifySingleChannel(red_pixels, lvl);
-  std::vector<int> quantified_green_pixels = quantifySingleChannel(green_pixels, lvl);
-  std::vector<int> quantified_blue_pixels = quantifySingleChannel(blue_pixels, lvl);
-  for(int i = 0; i < input.size(); i++) {
-    input.at(i).red = quantified_red_pixels.at(i);
-    input.at(i).green = quantified_green_pixels.at(i);
-    input.at(i).blue = quantified_blue_pixels.at(i);
-  }
-  return input;
+  std::vector<std::vector<int>> quantizers;
+  quantizers.push_back(quantifySingleChannel(red_pixels, lvl));
+  quantizers.push_back(quantifySingleChannel(green_pixels, lvl));
+  quantizers.push_back(quantifySingleChannel(blue_pixels, lvl));
+  return quantizers;
 }
 
 std::vector<int> Quantitizer::quantifySingleChannel(std::vector<int> single_channel, int lvl) {
@@ -118,84 +126,9 @@ std::vector<int> Quantitizer::quantifySingleChannel(std::vector<int> single_chan
     ranges.push_back(min);
     min += step;
   }
-  for(auto & val : single_channel) {
-    int ranges_index = 0;
-    while(ranges_index < ranges.size() - 1) {
-      if(val > ranges.at(ranges_index + 1))
-        ranges_index++;
-      else
-        break;
-    }
-    val = ranges.at(ranges_index);
-  }
-  return single_channel;
+  return ranges;
 }
 
-Pixel Quantitizer::pixelPerturbation(Pixel p, int perturbation) {
-  p.red = (p.red + perturbation + 256) % 256;
-  p.green = (p.green + perturbation + 256) % 256;
-  p.blue = (p.blue + perturbation + 256) % 256;
-  return p;
-}
-
-std::vector<std::pair<int, Pixel>> Quantitizer::splitImage(double epsilon, int lvl, std::vector<Pixel> input, std::vector<Pixel> Y) {
-  double curr_d = 0.0;
-  double prev_d;
-  double error = 1.0 + epsilon;
-  std::vector<Pixel> result(input.size(), {0,0,0});
-  std::vector<std::pair<int, Pixel>> pixels_map;
-  while(error >= epsilon) {
-    pixels_map.clear();
-    std::vector<std::vector<Pixel>> V(Y.size(), std::vector<Pixel>());
-    std::vector<std::vector<int>> pixels_coords(Y.size(), std::vector<int>());
-    for(int i = 0; i < input.size(); i++) {
-        int best_index = 0;
-        int min_dist = std::numeric_limits<int>::max();
-        for(int k = 0; k < Y.size(); k++) {
-          int dist = distance(input.at(i), Y.at(k));
-          if(dist < min_dist) {
-            best_index = k;
-            min_dist = dist;
-          }
-        }
-        V.at(best_index).push_back(input.at(i));
-        pixels_coords.at(best_index).push_back(i);
-    }
-
-    for(int i = 0; i < Y.size(); i++) {
-      if(V.at(i).size() > 0) {
-        Y.at(i) = avg_vector(V.at(i));
-        for(auto index : pixels_coords.at(i)) {
-          result.at(index) = Y.at(i);
-          pixels_map.push_back({index, Y.at(i)});
-        }
-      }
-    }
-
-    prev_d = curr_d;
-    curr_d = calculateDistortion(V, Y, input.size());
-
-    error = (curr_d - prev_d) / curr_d;
-  }
-  return pixels_map;
-}
-
-Pixel Quantitizer::avg_vector(std::vector<Pixel> pixels) {
-  if(pixels.size() == 0)
-    return {0,0,0};
-  long long int red = 0;
-  long long int green = 0;
-  long long int blue = 0;
-  for(auto pix : pixels) {
-    red += pix.red;
-    green += pix.green;
-    blue += pix.blue;
-  }
-  red /= (long long int)pixels.size();
-  green /= (long long int)pixels.size();
-  blue /= (long long int)pixels.size();
-  return {(int)red, (int)green, (int)blue};
-}
 
 double Quantitizer::minSquareError(Image im1, Image im2) {
   double sum = 0.0;
@@ -216,21 +149,26 @@ int Quantitizer::distance(Pixel a, Pixel b) {
   return dist;
 }
 
-double Quantitizer::calculateDistortion(std::vector<std::vector<Pixel>> V, std::vector<Pixel> Y, int size) {
-  double sum = 0.0;
-  for(int i = 0; i < V.size(); i++) {
-    for(auto pix : V.at(i)) {
-      int dist = distance(pix, Y.at(i));
-      sum += (double)(dist * dist) / (double)(size * size);
-    }
+int Quantitizer::findIndex(int val, std::vector<int> range) {
+  int ranges_index = 0;
+  while(ranges_index < range.size() - 1) {
+    if(val > range.at(ranges_index + 1))
+      ranges_index++;
+    else
+      break;
   }
-  return sum;
+  return ranges_index;
 }
 
 std::vector<Pixel> Quantitizer::reconstructImageFromQuantizationMap(
-    std::vector<std::pair<int, Pixel>> map, std::vector<Pixel> input) {
-  for(auto pair : map) {
-    input.at(pair.first) = pair.second;
+    std::vector<std::vector<int>> ranges, std::vector<Pixel> input) {
+  for(auto & pix : input) {
+    int range_index = findIndex(pix.red, ranges.at(0));
+    pix.red = ranges.at(0).at(range_index);
+    range_index = findIndex(pix.green, ranges.at(1));
+    pix.green = ranges.at(1).at(range_index);
+    range_index = findIndex(pix.blue, ranges.at(2));
+    pix.blue = ranges.at(2).at(range_index);
   }
   return input;
 }
@@ -277,7 +215,6 @@ Image Quantitizer::sumImages(std::vector<Pixel> y, std::vector<Pixel> z, Image o
   y_decoded.push_back(y.at(0));
   for(int i = 1; i < y.size(); i++) {
     y_decoded.push_back(y_decoded.at(i-1) + y.at(i));
-//    std::cout << z.at(i).red << " " << z.at(i).green << " " << z.at(i).blue << " ";
   }
 
   int h_ind = -1;
@@ -290,7 +227,6 @@ Image Quantitizer::sumImages(std::vector<Pixel> y, std::vector<Pixel> z, Image o
     } else {
       original_im.pixels.at(h_ind).at(i % original_im.width) = y_decoded.at(i / 2) - z.at(i / 2);
     }
-//    std::cout << original_im.pixels.at(h_ind).at(i % original_im.width).red << " " << original_im.pixels.at(h_ind).at(i % original_im.width).green << " " << original_im.pixels.at(h_ind).at(i % original_im.width).blue << "\n";
   }
   return original_im;
 }
