@@ -33,10 +33,34 @@ int main() {
                                        "data/xit1083.tsp", "data/icw1483.tsp",
                                        "data/djc1785.tsp", "data/dcb2086.tsp",
                                        "data/pds2566.tsp"};
+  std::cout << "PMX" << std::endl;
   for(int i = 0; i < 15; i++) {
     std::cout << graph_names.at(i) << std::endl;
     std::vector<long long> results;
-    for(int j = 0; j < 3; j++) {
+    for(int j = 0; j < 100; j++) {
+      GraphHandler gh(graph_names.at(i));
+      std::shared_ptr<CycleCreator> cycle_creator =
+          std::make_shared<CycleCreator>(gh.getMst(), gh.getGraph());
+      std::shared_ptr<GeneticAlgorithm> genetic_algorithm =
+          std::make_shared<GeneticAlgorithm>(population_size,
+                                             mutation_probability,
+                                             island_type,
+                                             number_of_generations,
+                                             cycle_creator);
+
+      std::pair<std::vector<int>, long long> result = genetic_algorithm->start();
+      std::cout << "Result: " << result.second << std::endl;
+      results.push_back(result.second);
+    }
+    std::cout << "Finished\n";
+    std::cout << "Best result: " << findMin(results) << std::endl;
+    std::cout << "Mean result: " << arrayMean(results) << std::endl;
+  }
+  std::cout << "OX1" << std::endl;
+  for(int i = 0; i < 15; i++) {
+    std::cout << graph_names.at(i) << std::endl;
+    std::vector<long long> results;
+    for(int j = 0; j < 100; j++) {
       GraphHandler gh(graph_names.at(i));
       std::shared_ptr<CycleCreator> cycle_creator =
           std::make_shared<CycleCreator>(gh.getMst(), gh.getGraph());

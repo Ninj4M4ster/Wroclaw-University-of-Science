@@ -145,17 +145,23 @@ std::pair<std::vector<int>, long long> GeneticAlgorithm::pmx(
     std::pair<std::vector<int>, long long> first_parent,
     std::pair<std::vector<int>, long long> second_parent) {
   std::uniform_int_distribution<int> distribution{0, static_cast<int>(first_parent.first.size() - 1)};
+  rand_gen_mutex.lock();
   int first_index = distribution(random_gen_);
+  rand_gen_mutex.unlock();
   int second_index = first_index;
   while(second_index == first_index) {
+    rand_gen_mutex.lock();
     second_index = distribution(random_gen_);
+    rand_gen_mutex.unlock();
   }
   if(first_index > second_index) {
     std::swap(first_index, second_index);
   }
   if(first_index == 0 && second_index == first_parent.first.size() - 1) {
-    while(first_index == 0) {
+    while(first_index == 0 || first_index == second_index) {
+      rand_gen_mutex.lock();
       first_index = distribution(random_gen_);
+      rand_gen_mutex.unlock();
     }
   }
   std::vector<bool> taken_positions(first_parent.first.size(), false);
@@ -201,17 +207,23 @@ std::pair<std::vector<int>, long long> GeneticAlgorithm::ox1(
     std::pair<std::vector<int>, long long> first_parent,
     std::pair<std::vector<int>, long long> second_parent) {
   std::uniform_int_distribution<int> distribution{0, static_cast<int>(first_parent.first.size() - 1)};
+  rand_gen_mutex.lock();
   int first_index = distribution(random_gen_);
+  rand_gen_mutex.unlock();
   int second_index = first_index;
   while(second_index == first_index) {
+    rand_gen_mutex.lock();
     second_index = distribution(random_gen_);
+    rand_gen_mutex.unlock();
   }
   if(first_index > second_index) {
     std::swap(first_index, second_index);
   }
   if(first_index == 0 && second_index == first_parent.first.size() - 1) {
-    while(first_index == 0) {
+    while(first_index == 0 || first_index == second_index) {
+      rand_gen_mutex.lock();
       first_index = distribution(random_gen_);
+      rand_gen_mutex.unlock();
     }
   }
   std::pair<std::vector<int>, long long> child = {std::vector<int>(first_parent.first.size(), -1), 0};
@@ -239,16 +251,22 @@ std::pair<std::vector<int>, long long> GeneticAlgorithm::ox1(
 
 std::pair<std::vector<int>, long long> GeneticAlgorithm::inverse(std::vector<int> permutation) {
   std::uniform_int_distribution<int> distribution{0, static_cast<int>(permutation.size() - 1)};
+  rand_gen_mutex.lock();
   int first_index = distribution(random_gen_);
+  rand_gen_mutex.unlock();
   int second_index = first_index;
   while(second_index == first_index) {
+    rand_gen_mutex.lock();
     second_index = distribution(random_gen_);
+    rand_gen_mutex.unlock();
   }
   if(second_index < first_index)
     std::swap(first_index, second_index);
   if(first_index == 0 && second_index == permutation.size() - 1) {
-    while(first_index == 0) {
+    while(first_index == 0 || first_index == second_index) {
+      rand_gen_mutex.lock();
       first_index = distribution(random_gen_);
+      rand_gen_mutex.unlock();
     }
   }
   while(first_index < second_index) {

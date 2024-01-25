@@ -2,6 +2,7 @@
 #define WROCLAW_UNIVERSITY_OF_SCIENCE_METAHEURISTIC_ALGORITHMS_LIST4_INC_GENETIC_ALGORITHM_H_
 
 #include <queue>
+#include <mutex>
 #include "cycle_creator.h"
 
 enum class HybridizationType {
@@ -29,6 +30,7 @@ class GeneticAlgorithm {
 
   int selection_size_;
 
+  std::mutex rand_gen_mutex;
   std::mt19937_64 random_gen_{std::random_device{}()};
 
   std::vector<std::pair<std::vector<int>, long long int>> population_;
