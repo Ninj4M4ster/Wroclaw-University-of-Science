@@ -257,21 +257,32 @@ void generateCycles(Graph & graph) {
 }
 
 int main() {
-  Graph graph;
-  readFile("data/xql662.tsp", graph);
+  std::vector<std::string> graph_names{"data/xqf131.tsp", "data/xqg237.tsp",
+                                       "data/pma343.tsp", "data/pka379.tsp",
+                                       "data/bcl380.tsp", "data/pbl395.tsp",
+                                       "data/pbk411.tsp", "data/pbn423.tsp",
+                                       "data/pbm436.tsp", "data/xql662.tsp",
+                                       "data/xit1083.tsp", "data/icw1483.tsp",
+                                       "data/djc1785.tsp", "data/dcb2086.tsp",
+                                       "data/pds2566.tsp"};
+  for(auto g : graph_names) {
+    std::cout << g << std::endl;
+    Graph graph;
+    readFile(g, graph);
 
-  Graph mst = primMst(0, graph);
-  for(auto pair : mst.at(0)) {
-    std::cout << "0 - " << pair.first << std::endl;
-  }
+    Graph mst = primMst(0, graph);
+    for(auto pair : mst.at(0)) {
+      std::cout << "0 - " << pair.first << std::endl;
+    }
 
-  std::cout << "Koszt MST: " << calculateMstCost(mst) << std::endl;
-  std::vector<int> cycle = createCycle(0, mst);
-  std::cout << "Cykl: " << std::endl << "[";
-  for(auto v : cycle) {
-    std::cout << v << ", ";
+    std::cout << "Koszt MST: " << calculateMstCost(mst) << std::endl;
+    std::vector<int> cycle = createCycle(0, mst);
+//  std::cout << "Cykl: " << std::endl << "[";
+//  for(auto v : cycle) {
+//    std::cout << v << ", ";
+//  }
+//  std::cout << "]" << std::endl;
+    std::cout << "Koszt cyklu: " << calculateCycleCost(cycle, graph) << std::endl;
+    generateCycles(graph);
   }
-  std::cout << "]" << std::endl;
-  std::cout << "Koszt cyklu: " << calculateCycleCost(cycle, graph) << std::endl;
-  generateCycles(graph);
 }
