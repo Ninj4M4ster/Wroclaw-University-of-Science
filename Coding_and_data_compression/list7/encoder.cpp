@@ -3,7 +3,7 @@
 #include <fstream>
 #include <bitset>
 
-std::vector<int> scalar_vector(std::vector<std::vector<int>> mat, std::vector<int> x) {
+std::vector<int> scalar_product(std::vector<std::vector<int>> mat, std::vector<int> x) {
   std::vector<int> result;
   for(auto set : mat) {
     int res = 0;
@@ -24,7 +24,7 @@ void encode(std::string input_name, std::string output_name) {
       {0, 1, 0, 0},
       {0, 0, 1, 0},
       {0, 0, 0, 1},
-      {1, 1, 1, 1}
+      {1, 1, 1, 0}
   };
   std::fstream in_f, out_f;
   in_f.open(input_name, std::ios::binary | std::ios::in);
@@ -38,15 +38,14 @@ void encode(std::string input_name, std::string output_name) {
       int bits = input & (0b1111);
       input >>= 4;
       std::vector<int> single_bits;
-      for(int j = 0; j < 4; j++) {
-        single_bits.push_back(bits & 0b1);
-        bits >>= 1;
+      for(int j = 3; j >= 0; j--) {
+        single_bits.push_back((bits & (0b1 << i)) >> i);
       }
-      std::vector<int> output_bits = scalar_vector(G, single_bits);
-      int offset = 0;
+      std::vector<int> output_bits = scalar_product(G, single_bits);
+      int offset = 7;
       for(auto val : output_bits) {
         output |= (val << offset);
-        offset++;
+        offset--;
       }
       out_f.put((int)output);
     }
@@ -59,7 +58,7 @@ void encode(std::string input_name, std::string output_name) {
 }
 
 int main() {
-  std::string input_file = "data/test2.bin";
+  std::string input_file = "data/test1.bin";
   std::string output_file = "output.txt";
   encode(input_file, output_file);
 }
