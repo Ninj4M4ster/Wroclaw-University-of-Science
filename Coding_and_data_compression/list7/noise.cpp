@@ -13,6 +13,7 @@ void applyNoise(std::string input, std::string output, double p) {
   while(!f_in.eof()) {
     int offset = 0;
     int output_val = 0;
+    int pos = 0;
     while(offset < 8) {
       double chance = distribution(random_gen);
       int bit = ((val & (1 << offset)) >> offset);
@@ -21,6 +22,10 @@ void applyNoise(std::string input, std::string output, double p) {
       }
       output_val |= (bit << offset);
       offset++;
+
+      if(offset > 3) {
+        pos = 0;
+      }
     }
     f_out.put(output_val);
     val = f_in.get();

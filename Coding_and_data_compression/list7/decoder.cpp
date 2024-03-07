@@ -23,9 +23,6 @@ int correct(std::vector<int> bits, std::vector<int> product, int & double_bit_er
     bits.at(error_column) = (bits.at(error_column) + 1) % 2;
   } else {
     if(error_column > 0) {
-      error_column -= 1;
-      if(error_column < 0)
-        error_column += 8;
       double_bit_error = 1;
     }
   }

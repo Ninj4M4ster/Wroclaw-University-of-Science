@@ -39,7 +39,7 @@ void encode(std::string input_name, std::string output_name) {
       input >>= 4;
       std::vector<int> single_bits;
       for(int j = 3; j >= 0; j--) {
-        single_bits.push_back((bits & (0b1 << i)) >> i);
+        single_bits.push_back((bits & (0b1 << j)) >> j);
       }
       std::vector<int> output_bits = scalar_product(G, single_bits);
       int offset = 7;
@@ -58,7 +58,7 @@ void encode(std::string input_name, std::string output_name) {
 }
 
 int main() {
-  std::string input_file = "data/test1.bin";
-  std::string output_file = "output.txt";
+  std::string input_file = "data/pan-tadeusz-czyli-ostatni-zajazd-na-litwie.txt";
+  std::string output_file = "tmp_output.txt";
   encode(input_file, output_file);
 }
