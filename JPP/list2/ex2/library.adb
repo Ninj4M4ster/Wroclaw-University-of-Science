@@ -1,4 +1,8 @@
 package body Library is
+    -- This function iteratively calculates factorial of given number.
+    -- 
+    -- param arg Argument of factorial.
+    -- return Factorial of given argument or 0, if factorial is not possible to calculate.
     function factorial(n : factorial_argument) return Natural is
     result: Natural := 1;
     it: Natural := 2;
@@ -10,6 +14,11 @@ package body Library is
         return result;
     end factorial;
 
+    -- This function iteratively calculates the greatest common measure of two given numbers.
+    -- 
+    -- param a First number.
+    -- param b Second number.
+    -- return Greatest common measure of two given numbers.
     function gcm(a : Natural; b : Natural) return Natural is
     tmp: Natural;
     a_copy: Natural := a;
@@ -23,6 +32,15 @@ package body Library is
         return a_copy;
     end gcm;
 
+    -- This function iteratively finds the result of a diophantine equation of the following form:
+    -- ax + by = c.
+    -- 
+    -- param a Value a in equation.
+    -- param b Value b in equation.
+    -- param c Value c in equation.
+    -- return Structure holding result x and y of equation and error status. 
+    --        If error status == 1 - two zeros for a and b were given and c is != 0. 
+    --        If error status == 2 - there is no integral result available.
     function dioph(a : Integer; b : Integer; c : Integer) return dioph_result is
     a_copy: Integer := a;
     b_copy: Integer := b;
@@ -88,6 +106,10 @@ package body Library is
         return result;
     end dioph;
 
+    -- This function recursively calculates factorial of given number.
+    -- 
+    -- param arg Argument of factorial.
+    -- return Factorial of given argument or 0, if factorial is not possible to calculate.
     function factorialRecursive(n : factorial_argument) return Natural is
     begin
         if n <= 1 then
@@ -96,6 +118,11 @@ package body Library is
         return n * factorialRecursive(n - 1);
     end factorialRecursive;
 
+    -- This function recursively calculates the greatest common measure of two given numbers.
+    -- 
+    -- param a First number.
+    -- param b Second number.
+    -- return Greatest common measure of two given numbers.
     function gcmRecursive(a : Natural; b : Natural) return Natural is
     begin
         if b = 0 then
@@ -104,6 +131,15 @@ package body Library is
         return gcmRecursive(b, a mod b);
     end gcmRecursive;
 
+    -- This is a helper function. It implements recursive extended euclides algorithm.
+    -- It finds results of following equation: ax + by = gcm(a, b)
+    -- 
+    -- param a Value of a.
+    -- param b Value of b.
+    -- param x Current result of x.
+    -- param y Current result of y.
+    -- param x_temp Temporary value of x.
+    -- param y_temp Temporary value of y.
     function recursiveExtendedEuclides(a : Integer; 
                                        b : Integer; 
                                        x : Integer; 
@@ -122,6 +158,15 @@ package body Library is
         return result;
     end recursiveExtendedEuclides;
 
+    -- This function recursively finds the result of a diophantine equation of the following form:
+    -- ax + by = c.
+    -- 
+    -- param a Value a in equation.
+    -- param b Value b in equation.
+    -- param c Value c in equation.
+    -- return Structure holding result x and y of equation and error status. 
+    --         If error status == 1 - two zeros for a and b were given and c is != 0. 
+    --         If error status == 2 - there is no integral result available.
     function diophRecursive(a : Integer; b : Integer; c : Integer) return dioph_result is
     a_copy: Integer := a;
     b_copy: Integer := b;

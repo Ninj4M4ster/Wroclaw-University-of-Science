@@ -1,11 +1,20 @@
 package main
 
+/**
+ * @brief Structure for holding result of diophantine equation.
+ */
 type dioph_res struct {
 	x            int64
 	y            int64
 	error_status uint8
 }
 
+/**
+ * This function iteratively calculates factorial of given number.
+ *
+ * @param arg Argument of factorial.
+ * @return Factorial of given argument or 0, if factorial is not possible to calculate.
+ */
 func factorial(n uint8) uint64 {
 	var result uint64 = 1
 	var it uint64 = 2
@@ -19,6 +28,13 @@ func factorial(n uint8) uint64 {
 	return result
 }
 
+/**
+ * This function iteratively calculates the greatest common measure of two given numbers.
+ *
+ * @param a First number.
+ * @param b Second number.
+ * @return Greatest common measure of two given numbers.
+ */
 func gcm(a uint64, b uint64) uint64 {
 	var help uint64
 	for b != 0 {
@@ -29,6 +45,17 @@ func gcm(a uint64, b uint64) uint64 {
 	return a
 }
 
+/**
+ * This function iteratively finds the result of a diophantine equation of the following form:
+ * ax + by = c.
+ *
+ * @param a Value a in equation.
+ * @param b Value b in equation.
+ * @param c Value c in equation.
+ * @return Structure holding result x and y of equation and error status.
+ *         If error status == 1 - two zeros for a and b were given and c is != 0.
+ *         If error status == 2 - there is no integral result available.
+ */
 func dioph(a int64, b int64, c int64) dioph_res {
 	var result dioph_res = dioph_res{0, 0, 0}
 	var reversed = false
@@ -93,6 +120,12 @@ func dioph(a int64, b int64, c int64) dioph_res {
 	return result
 }
 
+/**
+ * This function recursively calculates factorial of given number.
+ *
+ * @param arg Argument of factorial.
+ * @return Factorial of given argument or 0, if factorial is not possible to calculate.
+ */
 func factorialRecursive(arg uint8) uint64 {
 	if arg <= 1 {
 		return 1
@@ -104,6 +137,13 @@ func factorialRecursive(arg uint8) uint64 {
 	return current_result * (uint64)(arg)
 }
 
+/**
+ * This function recursively calculates the greatest common measure of two given numbers.
+ *
+ * @param a First number.
+ * @param b Second number.
+ * @return Greatest common measure of two given numbers.
+ */
 func gcmRecursive(a uint64, b uint64) uint64 {
 	if b == 0 {
 		return a
@@ -111,6 +151,17 @@ func gcmRecursive(a uint64, b uint64) uint64 {
 	return gcmRecursive(b, a%b)
 }
 
+/**
+ * This is a helper function. It implements recursive extended euclides algorithm.
+ * It finds results of following equation: ax + by = gcm(a, b)
+ *
+ * @param a Value of a.
+ * @param b Value of b.
+ * @param x Current result of x.
+ * @param y Current result of y.
+ * @param x_temp Temporary value of x.
+ * @param y_temp Temporary value of y.
+ */
 func recursiveExtendedEuclides(a int64,
 	b int64,
 	x int64,
@@ -125,6 +176,17 @@ func recursiveExtendedEuclides(a int64,
 	return result
 }
 
+/**
+ * This function recursively finds the result of a diophantine equation of the following form:
+ * ax + by = c.
+ *
+ * @param a Value a in equation.
+ * @param b Value b in equation.
+ * @param c Value c in equation.
+ * @return Structure holding result x and y of equation and error status.
+ *         If error status == 1 - two zeros for a and b were given and c is != 0.
+ *         If error status == 2 - there is no integral result available.
+ */
 func diophRecursive(a int64, b int64, c int64) dioph_res {
 	var result dioph_res = dioph_res{0, 0, 0}
 	var reversed bool = false

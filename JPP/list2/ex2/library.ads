@@ -1,10 +1,12 @@
 package Library is
+    -- Structure for holding result of diophantine equation.
     type dioph_result is record
         x : Integer := 0;
         y: Integer := 0;
         error_status: Integer := 0;
     end record;
 
+    -- Argument type of a factorial function.
     subtype factorial_argument is Natural range 0 .. 12 ;
 
     function factorial(n : factorial_argument) return Natural;
