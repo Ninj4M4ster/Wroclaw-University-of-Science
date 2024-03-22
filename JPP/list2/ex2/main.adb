@@ -1,9 +1,9 @@
 with Library; use Library;
 with Text_IO; use Text_IO;
+with test; use test;
 
 procedure main is
-result: Natural;
 begin
-    result := gcmRecursive(15, 5);
-    Put_Line(Natural'Image(result));
+    iterativeLibTest;
+    recursiveLibTest;
 end main;
