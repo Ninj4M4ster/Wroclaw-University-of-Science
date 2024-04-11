@@ -27,9 +27,7 @@ end
 
 function nwd(x::GaussNumber, y::GaussNumber)
     while(y.a != 0 || y.b != 0)
-        tmp = y
-        y = divWithRest(x, y)[2]
-        x = tmp
+        x, y = y, divWithRest(x, y)[2]
     end
     return x
 end
@@ -38,8 +36,7 @@ function nww(x::GaussNumber, y::GaussNumber)
     if(y.a == 0 && y.b == 0)
         return y
     end
-    common_divider = nwd(x, y)
-    return x / common_divider * y
+    return x / nwd(x, y) * y
 end
 
 function findSpecificIdeal()
