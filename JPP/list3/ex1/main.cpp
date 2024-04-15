@@ -2,9 +2,9 @@
 
 int main() {
     GF1234577 a;
-    GF1234577 b = 5;
+    GF1234577 b = -12345678;
     std::cin >> a;
     a += b;
-    std::cout << a << std::endl;
+    std::cout << a << " " << b << std::endl;
     std::cout << GF1234577::Characteristic() << std::endl;
 }
