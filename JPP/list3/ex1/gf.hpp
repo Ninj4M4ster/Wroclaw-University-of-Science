@@ -109,7 +109,7 @@ inline GF1234577 GF1234577::operator*(const GF1234577& other) {
 
 inline GF1234577 GF1234577::operator/(const GF1234577& other) {
     size_t inverse = 1;
-    while((inverse * other.value_) % BODY != 1) {
+    while((inverse * other.value_) % BODY != 1 && inverse < BODY) {
         inverse++;
     }
     if(inverse == BODY) {
@@ -140,7 +140,7 @@ inline GF1234577& GF1234577::operator*=(const GF1234577& other) {
 
 inline GF1234577& GF1234577::operator/=(const GF1234577& other) {
     size_t inverse = 1;
-    while((inverse * other.value_) % BODY != 1) {
+    while((inverse * other.value_) % BODY != 1 && inverse < BODY) {
         inverse++;
     }
     if(inverse == BODY) {

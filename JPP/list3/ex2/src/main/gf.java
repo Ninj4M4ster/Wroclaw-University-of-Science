@@ -98,7 +98,7 @@ class Gf1234577 {
 
     public static Gf1234577 divide(Gf1234577 first, Gf1234577 second) {
         long inverse = 1;
-        while((inverse * other.value_) % Gf1234577.BODY != 1) {
+        while((inverse * other.value_) % Gf1234577.BODY != 1 && inverse < Gf1234577.BODY) {
             inverse++;
         }
         if(inverse == Gf1234577.BODY) {
@@ -133,7 +133,7 @@ class Gf1234577 {
 
     public void divideEqual(Gf1234577 other) {
         long inverse = 1;
-        while((inverse * other.value_) % Gf1234577.BODY != 1) {
+        while((inverse * other.value_) % Gf1234577.BODY != 1 && inverse < Gf1234577.BODY) {
             inverse++;
         }
         if(inverse == Gf1234577.BODY) {
