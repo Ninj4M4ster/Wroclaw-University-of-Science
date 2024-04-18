@@ -100,7 +100,11 @@ inline GF1234577 GF1234577::operator+(const GF1234577& other) {
 }
 
 inline GF1234577 GF1234577::operator-(const GF1234577& other) {
-    return {(value_ - other.value_) % BODY};
+    long long int val = value_ - other.value_;
+    if(val < 0) {
+        val = BODY + val;
+    }
+    return {(size_t)(val) % BODY};
 }
 
 inline GF1234577 GF1234577::operator*(const GF1234577& other) {
@@ -129,7 +133,11 @@ inline GF1234577& GF1234577::operator+=(const GF1234577& other) {
 }
 
 inline GF1234577& GF1234577::operator-=(const GF1234577& other) {
-    value_ = (value_ - other.value_) % BODY;
+    long long val = value_ - other.value_;
+    if(val < 0) {
+        val = BODY - val;
+    }
+    value_ = (size_t)(val) % BODY;
     return *this;
 }
 

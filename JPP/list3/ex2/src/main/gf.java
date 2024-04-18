@@ -96,13 +96,13 @@ class Gf1234577 {
         return new Gf1234577(first.value_ * second.value_);
     }
 
-    public static Gf1234577 divide(Gf1234577 first, Gf1234577 second) {
+    public static Gf1234577 divide(Gf1234577 first, Gf1234577 second) throws Exception{
         long inverse = 1;
-        while((inverse * other.value_) % Gf1234577.BODY != 1 && inverse < Gf1234577.BODY) {
+        while((inverse * second.value_) % Gf1234577.BODY != 1 && inverse < Gf1234577.BODY) {
             inverse++;
         }
         if(inverse == Gf1234577.BODY) {
-            throw new Exception(String.valueOf(other.value_) + " is not reversible.");
+            throw new Exception(String.valueOf(second.value_) + " is not reversible.");
         }
         return new Gf1234577(first.value_ * inverse);
     }

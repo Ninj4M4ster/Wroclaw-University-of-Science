@@ -11,6 +11,9 @@ class Gf1234577:
 
         self._value = val % self.BODY
 
+    def __str__(self):
+        return str(self._value)
+
     @staticmethod
     def Characteristic():
         counter = 1
