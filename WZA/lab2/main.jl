@@ -27,3 +27,5 @@ a = [-12.0, -4.0, 3.0, 1.0]
 b = [-4.0, 1.0]
 
 println(divWithRest(a, b))
+
+# TODO: Zadanie 6, zadanie 8
