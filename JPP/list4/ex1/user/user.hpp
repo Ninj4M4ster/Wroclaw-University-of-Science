@@ -1,5 +1,6 @@
 #include "../dh_setup/dh_setup.hpp"
 #include <memory>
+#include <exception>
 
 template<typename T>
 class User {
@@ -41,7 +42,7 @@ void User<T>::setKey(T a) {
 template<typename T>
 T User<T>::encrypt(T m) {
     if(!key_set_) {
-        throw std::runtime_error();
+        throw std::runtime_error("No key was set, data cannot be encrypted");
     }
     return m * encrypting_key_;
 }
@@ -49,7 +50,7 @@ T User<T>::encrypt(T m) {
 template<typename T>
 T User<T>::decrypt(T c) {
     if(!key_set_) {
-        throw std::runtime_error();
+        throw std::runtime_error("No key was set, data cannot be encrypted");
     }
     return c / encrypting_key_;
 }

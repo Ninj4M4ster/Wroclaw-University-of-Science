@@ -45,7 +45,6 @@ bool DHSetup<T>::isGeneratorLegal(T possible_generator, std::vector<size_t> divi
 template<typename T>
 DHSetup<T>::DHSetup() {
     size_t characteristic = T::Characteristic() - 1;
-    std::cout << characteristic << std::endl;
     std::uniform_int_distribution<size_t> distribution(1, characteristic);
     std::vector<size_t> dividers;
     for(size_t i = 1; i <= std::sqrt(characteristic); i++) {
