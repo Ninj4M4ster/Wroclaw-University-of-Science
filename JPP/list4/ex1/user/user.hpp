@@ -4,7 +4,7 @@
 template<typename T>
 class User {
     public:
-        User(std::shared_ptr<DHSetup> dh_setup);
+        User(std::shared_ptr<DHSetup<T>> dh_setup);
 
         T getPublicKey();
         void setKey(T a);

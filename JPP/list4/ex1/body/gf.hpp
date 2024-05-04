@@ -47,10 +47,9 @@ public:
     // characteristic
     static size_t Characteristic();
 
-private:
-    size_t value_;
-
+    virtual size_t GetBody();
 protected:
+    size_t value_;
     static constexpr size_t BODY = 1234577; 
 };
 
@@ -96,30 +95,30 @@ inline bool GF1234577::operator<(const GF1234577& other) {
 }
 
 inline GF1234577 GF1234577::operator+(const GF1234577& other) {
-    return {(value_ + other.value_) % BODY};
+    return {(value_ + other.value_) % GetBody()};
 }
 
 inline GF1234577 GF1234577::operator-(const GF1234577& other) {
     long long int val = value_ - other.value_;
     if(val < 0) {
-        val = BODY + val;
+        val = GetBody() + val;
     }
-    return {(size_t)(val) % BODY};
+    return {(size_t)(val) % GetBody()};
 }
 
 inline GF1234577 GF1234577::operator*(const GF1234577& other) {
-    return {(value_ * other.value_) % BODY};
+    return {(value_ * other.value_) % GetBody()};
 }
 
 inline GF1234577 GF1234577::operator/(const GF1234577& other) {
     size_t inverse = 1;
-    while((inverse * other.value_) % BODY != 1 && inverse < BODY) {
+    while((inverse * other.value_) % GetBody() != 1 && inverse < GetBody()) {
         inverse++;
     }
-    if(inverse == BODY) {
+    if(inverse == GetBody()) {
         throw std::runtime_error(std::to_string(other.value_) + " is not reversible.");
     }
-    return {(value_ * inverse) % BODY};
+    return {(value_ * inverse) % GetBody()};
 }
 
 inline GF1234577& GF1234577::operator=(const GF1234577& other) {
@@ -128,33 +127,33 @@ inline GF1234577& GF1234577::operator=(const GF1234577& other) {
 }
 
 inline GF1234577& GF1234577::operator+=(const GF1234577& other) {
-    value_ = (value_ + other.value_) % BODY;
+    value_ = (value_ + other.value_) % GetBody();
     return *this;
 }
 
 inline GF1234577& GF1234577::operator-=(const GF1234577& other) {
     long long val = value_ - other.value_;
     if(val < 0) {
-        val = BODY - val;
+        val = GetBody() - val;
     }
-    value_ = (size_t)(val) % BODY;
+    value_ = (size_t)(val) % GetBody();
     return *this;
 }
 
 inline GF1234577& GF1234577::operator*=(const GF1234577& other) {
-    value_ = (value_ * other.value_) % BODY;
+    value_ = (value_ * other.value_) % GetBody();
     return *this;
 }
 
 inline GF1234577& GF1234577::operator/=(const GF1234577& other) {
     size_t inverse = 1;
-    while((inverse * other.value_) % BODY != 1 && inverse < BODY) {
+    while((inverse * other.value_) % GetBody() != 1 && inverse < GetBody()) {
         inverse++;
     }
-    if(inverse == BODY) {
+    if(inverse == GetBody()) {
         throw std::runtime_error(std::to_string(other.value_) + " is not reversible.");
     }
-    value_ = (value_ * inverse) % BODY;
+    value_ = (value_ * inverse) % GetBody();
     return *this;
 }
 
