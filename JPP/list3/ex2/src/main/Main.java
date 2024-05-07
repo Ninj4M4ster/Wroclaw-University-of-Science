@@ -1,6 +1,6 @@
 package main;
 
-public class Program {
+public class Main {
     public static void main(String[] args) throws Exception {
         Gf1234577 a = new Gf1234577(5);
         Gf1234577 b = new Gf1234577(27);
