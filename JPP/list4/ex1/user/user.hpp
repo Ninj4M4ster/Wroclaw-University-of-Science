@@ -50,7 +50,7 @@ T User<T>::encrypt(T m) {
 template<typename T>
 T User<T>::decrypt(T c) {
     if(!key_set_) {
-        throw std::runtime_error("No key was set, data cannot be encrypted");
+        throw std::runtime_error("No key was set, data cannot be decrypted");
     }
     return c / encrypting_key_;
 }
