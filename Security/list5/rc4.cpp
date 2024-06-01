@@ -96,14 +96,20 @@ std::vector<std::string> decodeBankCodes(std::vector<std::string> codes) {
 
 int main() {
     std::string first = rc4("Key", "Plaintext", false);
+    std::cout << "First key: Key" << std::endl;
     std::cout << first << std::endl;
-    std::cout << rc4("Key", first, true) << "\n";
     std::cout << rc4("Key", "Adsdv", false) << std::endl;
-    std::cout << rc4("Key", "mjhrgsvsd", false) << std::endl;
+    std::cout << rc4("Key", "mjhrgsvsd", false) << std::endl << std::endl;
+
+    std::cout << "Second key: Key2" << std::endl;
+    std::cout << rc4("Key2", "Plaintext", false) << std::endl;
+    std::cout << rc4("Key2", "Adsdv", false) << std::endl;
+    std::cout << rc4("Key2", "mjhrgsvsd", false) << std::endl << std::endl;
+    
     std::string a = rc4("Key", "safDFsdfsdfs", false);
     std::string b = rc4("sd", ",./,./67iasfdfsdfg43534thtrd", false);
     std::string c = rc4("sd", "asdaaaadasfsdbdbfd", false);
-    std::cout << checkTwoCodes(b, c) << std::endl;
+    std::cout << checkTwoCodes(b, c) << std::endl << std::endl;
 
     std::string shared_key = "Key";
     std::vector<std::string> bank_numbers = {
