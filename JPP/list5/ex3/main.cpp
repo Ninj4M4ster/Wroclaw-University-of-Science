@@ -12,16 +12,14 @@ int main() {
         std::make_shared<Philosopher>(0, 
         meals_to_eat, 
         forks.at(forks.size() - 1), 
-        forks.at(0), 
-        philosophers));
+        forks.at(0)));
     for(int i = 1; i < philosophers_count - 1; i++) {
         philosophers.push_back(
             std::make_shared<Philosopher>(
                 i,
                 meals_to_eat,
                 nullptr,
-                forks.at(i),
-                philosophers
+                forks.at(i)
             )
         );
     }
@@ -29,19 +27,22 @@ int main() {
         philosophers_count - 1,
         meals_to_eat,
         nullptr,
-        nullptr,
-        philosophers
+        nullptr
     ));
+
+    for(auto p : philosophers) {
+      p->AssignPhilosophersVector(philosophers);
+    }
 
     std::promise<bool> all_finished_promise;
     std::shared_future<bool> all_finished(all_finished_promise.get_future());
-    std::vector<std::future<bool>*> philosophers_finished_futures;
+    std::vector<std::future<bool>> philosophers_finished_futures;
     for(auto p : philosophers) {
         std::future<bool> res = p->StartProcess(all_finished);
-        philosophers_finished_futures.push_back(&res);
+        philosophers_finished_futures.push_back(std::move(res));
     }
-    for(auto f : philosophers_finished_futures) {
-        f->get();
+    for(int i = 0; i < philosophers_finished_futures.size(); i++) {
+        philosophers_finished_futures.at(i).get();
     }
     all_finished_promise.set_value(true);
     return 0;

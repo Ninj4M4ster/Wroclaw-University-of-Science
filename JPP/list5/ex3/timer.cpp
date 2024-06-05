@@ -3,9 +3,9 @@
 Timer::Timer(int miliseconds) {
     std::promise<bool> finished_promise;
     result = finished_promise.get_future();
-    std::thread([&finished_promise, miliseconds]() {
+    std::thread([pr = std::move(finished_promise), miliseconds]() mutable {
         std::this_thread::sleep_for(std::chrono::milliseconds(miliseconds));
-        finished_promise.set_value(true);
+        pr.set_value(true);
     }).detach();
 }
 
