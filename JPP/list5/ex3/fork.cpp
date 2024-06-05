@@ -1,9 +1,9 @@
 #include "fork.hpp"
 
-Fork::IsClean() {
+bool Fork::IsClean() {
     return is_clean_;
 }
 
-Fork::ChangeState(bool clean) {
+void Fork::ChangeState(bool clean) {
     is_clean_ = clean;
 }
