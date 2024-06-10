@@ -1,3 +1,5 @@
+import qualified Data.List as List
+
 -- Binomial
 binomial :: Integer -> Integer -> Integer
 binomial n k = 
@@ -61,10 +63,6 @@ prime_factors n = if n <= 0 then [] else divisor:[] ++ prime_factors (n `div` di
     divisor = smallest_divisor n 2
 
 -- Totient
--- gcd :: Integer -> Integer -> Integer
--- gcd a 0 = a
--- gcd a b = gcd b (a `mod` b)
-
 totient_step :: Integer -> Integer -> Integer -> Integer
 totient_step n i count = if i == n then count else 
     if q == 1 then totient_step n (i+1) (count + 1) else totient_step n (i+1) count where
@@ -81,7 +79,7 @@ totient2_step n (p:ps) = totient2_step (n * (p - 1) `div` p) ps
 
 totient2 :: Integer -> Integer
 totient2 n = if n <= 0 then 0 else totient2_step n divisors where
-    divisors = prime_factors n
+    divisors = List.nub (prime_factors n)
 
 -- Primes
 is_prime_step :: Integer -> Integer -> Bool
@@ -97,4 +95,4 @@ primes_step n i curr_list = if i > n then curr_list else
 primes :: Integer -> [Integer]
 primes n = if n < 2 then [] else primes_step n 2 [] 
 
-main = print (primes 23)
+main = print (totient2 20)
