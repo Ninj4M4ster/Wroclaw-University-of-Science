@@ -1,0 +1,2 @@
+all:
+	sml lib.sml

@@ -30,7 +30,7 @@ mergeSortConnect :: [Integer] -> [Integer] -> [Integer]
 mergeSortConnect [] [] = []
 mergeSortConnect a [] = a
 mergeSortConnect [] b = b
-mergeSortConnect (a:as) (b:bs) = if a < b then a:[] ++ b:[] ++ mergeSortConnect as bs else b:[] ++ a:[] ++ mergeSortConnect as bs
+mergeSortConnect (a:as) (b:bs) = if a < b then a:[] ++ mergeSortConnect as (b:[] ++ bs) else b:[] ++ mergeSortConnect (a:[] ++ as) bs
 
 mergeSortSplit :: [Integer] -> [Integer]
 mergeSortSplit [] = []
@@ -95,4 +95,4 @@ primes_step n i curr_list = if i > n then curr_list else
 primes :: Integer -> [Integer]
 primes n = if n < 2 then [] else primes_step n 2 [] 
 
-main = print (totient2 20)
+main = print (mergesort [2, 35 ,1, 5, 1, 6, 8])
