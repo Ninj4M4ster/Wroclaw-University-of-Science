@@ -32,15 +32,11 @@ mergeSortConnect a [] = a
 mergeSortConnect [] b = b
 mergeSortConnect (a:as) (b:bs) = if a < b then a:[] ++ mergeSortConnect as (b:[] ++ bs) else b:[] ++ mergeSortConnect (a:[] ++ as) bs
 
-mergeSortSplit :: [Integer] -> [Integer]
-mergeSortSplit [] = []
-mergeSortSplit [a] = [a]
-mergeSortSplit a = do mergeSortConnect (mergeSortSplit a1) (mergeSortSplit a2) where
-    (a1, a2) = splitAt (((length a) + 1) `div` 2) a 
-
 mergesort :: [Integer] -> [Integer]
 mergesort [] = []
-mergesort l = mergeSortSplit l
+mergesort [a] = [a]
+mergesort l = do mergeSortConnect (mergesort a1) (mergesort a2) where
+    (a1, a2) = splitAt (((length l) + 1) `div` 2) l 
 
 -- Diophantine equation
 extendedGcd :: Integer -> Integer -> Integer -> Integer -> Integer -> Integer -> (Integer, Integer, Integer)
