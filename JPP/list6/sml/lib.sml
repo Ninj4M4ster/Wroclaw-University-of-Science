@@ -114,9 +114,23 @@ fun primes (n:int) : int list =
 (* Main *)
 val _ = 
 let
-    val res = primes(100)
+    val res1 = binomial(15, 7)
+    val res2 = binomial2(15, 7)
+    val res3 = mergesort([2, 35 ,1, 5, 1, 6, 8])
+    val res4 = de(5, 3)
+    val res5 = prime_factors(22)
+    val res6 = totient(23)
+    val res7 = totient2(23)
+    val res8 = primes(100)
     fun listToString ([]) = "\n"
         | listToString (x::xs) = Int.toString(x) ^ ", " ^ listToString(xs);
 in
-    print(listToString(res) ^ "\n")
+    (print(Int.toString res1 ^ "\n");
+    print(Int.toString res2 ^ "\n");
+    print(listToString(res3));
+    print(listToString(res4));
+    print(listToString(res5));
+    print(Int.toString res6 ^ "\n");
+    print(Int.toString res7 ^ "\n");
+    print(listToString(res8)))
 end

@@ -129,4 +129,11 @@
     (if (< n 2) nil (primes_step n 2 nil))
 )
 
-(write-line (write-to-string (primes 20)))
+(write-line (write-to-string(binomial 15 7)))
+(write-line (write-to-string(binomial2 15 7)))
+(write-line (write-to-string(mergesort (list 2 35 1 5 1 6 8))))
+(write-line (write-to-string (de 5 3)))
+(write-line (write-to-string(prime_factors 22)))
+(write-line (write-to-string(totient 23)))
+(write-line (write-to-string(totient2 23)))
+(write-line (write-to-string(primes 100)))

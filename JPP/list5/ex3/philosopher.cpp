@@ -40,7 +40,7 @@ std::future<bool> Philosopher::StartProcess(std::shared_future<bool> main_finish
  * Philosopher main loop.
  */
 void Philosopher::run() {
-  std::uniform_int_distribution<int> dist{0, 5000};
+  std::uniform_int_distribution<int> dist{0, 1000};
   bool is_thinking = false;
   int left_id = id_ - 1 < 0 ? philosophers_.size() - 1 : id_ - 1;
   int right_id = id_ + 1 == philosophers_.size() ? 0 : id_ + 1;
